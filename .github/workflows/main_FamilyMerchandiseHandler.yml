@@ -40,7 +40,7 @@ jobs:
         with:
           client-id: ${{ secrets.__clientidsecretname__ }}
           tenant-id: ${{ secrets.__tenantidsecretname__ }}
-          allow-no-subscription-id: true
+          subscription-id: ${{ secrets.__subscriptionidsecretname__ }}
 
       - name: "Run Azure Functions Action"
         uses: Azure/functions-action@v1
