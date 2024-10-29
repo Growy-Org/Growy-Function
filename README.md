@@ -40,3 +40,16 @@ Spacial
 Memory
 Calculation
 
+## UI
+
+Fun fact about this DOB (some chinese tradition), zodiac
+Some management
+
+## Some analytics
+
+What matters to kids these days at different age?
+What makes parent proud ? Most commonly achievement set by different parent at different age
+
+## Mission
+- Would it not be great to Track on your kids growth? collection of memory
+- Only Recruit Parent who loves kids and share the same vision
