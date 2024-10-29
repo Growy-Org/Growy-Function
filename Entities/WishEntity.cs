@@ -1,4 +1,5 @@
-public interface Wish
+
+public interface WishEntity
 {
     public string Name { get; set; }
     public string Description { get; set; }
@@ -6,6 +7,5 @@ public interface Wish
     public int? PointsCost { get; set; }
     public DateTime CreatedDateUtc { get; set; }
     public DateTime UpdatedDateUtc { get; set; }
-    public bool IsFulfilled { get; set; }
-    public Child Wisher { get; set; }
+    public DateTime? FullFilledDateUtc { get; set; }
 }
