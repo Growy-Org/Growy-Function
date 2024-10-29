@@ -31,5 +31,12 @@ Get a achievement
 
 
 
-
+## Future Feature
+### Game Category Profile & Mini Game 
+Inference
+Creativity
+Observation
+Spacial
+Memory
+Calculation
 
