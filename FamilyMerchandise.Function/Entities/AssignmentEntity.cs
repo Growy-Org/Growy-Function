@@ -1,6 +1,6 @@
 namespace FamilyMerchandise.Function.Entities;
 
-public record TaskEntity
+public record AssignmentEntity
 {
     public Guid Id { get; set; }
     public string Name { get; set; }

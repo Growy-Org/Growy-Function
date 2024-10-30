@@ -1,6 +1,6 @@
 namespace FamilyMerchandise.Function.Models;
 
-public record Task
+public record Assignment
 {
     public string Name { get; set; }
     public string Description { get; set; }
