@@ -8,6 +8,7 @@ public class FamilyMerchandiseDBHelper : IClassFixture<FunctionTestFixture>
 {
     private readonly FunctionTestFixture _fixture;
     private readonly Faker _faker;
+    private const string HOME_TABLE = "inventory.homes";
     private const string CHILDREN_TABLE = "inventory.children";
     private const string PARENTS_TABLE = "inventory.parents";
 
@@ -33,6 +34,19 @@ public class FamilyMerchandiseDBHelper : IClassFixture<FunctionTestFixture>
             $"INSERT INTO {CHILDREN_TABLE} (Name, IconCode, DOB, Gender, PointsEarned) VALUES (@Name, @IconCode, @DOB, @Gender, @PointsEarned) RETURNING Id";
         await con.ExecuteScalarAsync<Guid>(query, child);
     }
+    [Fact]
+    public async Task InsertHome()
+    {
+        using var con = _fixture.ConnectionFactory.GetFamilyMerchandiseDBConnection();
+        var home = new HomeEntity()
+        {
+            Name = _faker.Address.FullAddress(),
+        };
+
+        var query =
+            $"INSERT INTO {HOME_TABLE} (Name) VALUES (@Name) RETURNING Id";
+        await con.ExecuteScalarAsync<Guid>(query, home);
+    }
 
     [Fact]
     public async Task InsertParent()
@@ -42,19 +56,12 @@ public class FamilyMerchandiseDBHelper : IClassFixture<FunctionTestFixture>
         {
             Name = _faker.Name.FullName(),
             IconCode = _faker.Random.Int(0, 100),
-            DOB = _faker.Date.Past(18),
-            Role = _faker.Random.Int(0, 1),
-        };
-        var parent2 = new ParentEntity
-        {
-            Name = _faker.Name.FullName(),
-            IconCode = _faker.Random.Int(0, 100),
+            HomeId = Guid.Parse("6271aec4-610a-4342-804f-c180904e735a"),
             DOB = _faker.Date.Past(18),
             Role = _faker.Random.Int(0, 1),
         };
         var query =
-            $"INSERT INTO {PARENTS_TABLE} (Name, IconCode, DOB, Role) VALUES (@Name, @IconCode, @DOB, @Role) RETURNING Id";
+            $"INSERT INTO {PARENTS_TABLE} (Name, HomeId, IconCode, DOB, Role) VALUES (@Name, @HomeId, @IconCode, @DOB, @Role) RETURNING Id";
         await con.ExecuteScalarAsync<Guid>(query, parent);
-        await con.ExecuteScalarAsync<Guid>(query, parent2);
     }
 }

@@ -9,6 +9,6 @@ public record Achievement
     public DateTime CreatedDateUtc { get; set; }
     public DateTime UpdatedDateUtc { get; set; }
     public DateTime? AchievementDateUtc { get; set; }
-    public Child Beneficiary { get; set; }
+    public Child AchievedBy { get; set; }
     public Parent CreatedBy { get; set; }
 }

@@ -1,3 +1,5 @@
+using FamilyMerchandise.Function.Models;
+
 namespace FamilyMerchandise.Function.Entities;
 
 public record HomeEntity
