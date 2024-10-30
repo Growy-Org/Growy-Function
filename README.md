@@ -40,9 +40,6 @@ Spacial
 Memory
 Calculation
 
-## Tech Debt
-Better folder structure Fix dependencies issue
-
 ## UI
 
 Fun fact about this DOB (some chinese tradition), zodiac
