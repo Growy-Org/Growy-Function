@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "FamilyMerchandise_Function": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7020",
+      "launchBrowser": false
+    }
+  }
+}
