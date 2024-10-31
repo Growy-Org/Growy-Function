@@ -18,6 +18,18 @@ public static class ModelConversionExtension
         };
     }
 
+    public static ParentEntity ToParentEntity(this Parent p, Guid homeId)
+    {
+        return new ParentEntity
+        {
+            Name = p.Name,
+            IconCode = p.IconCode ?? 5, // Default Child Avatar
+            DOB = p.DOB,
+            Role = p.Role.ToString(),
+            HomeId = homeId,
+        };
+    }
+
     public static HomeEntity ToHomeEntity(this Home h)
     {
         return new HomeEntity()

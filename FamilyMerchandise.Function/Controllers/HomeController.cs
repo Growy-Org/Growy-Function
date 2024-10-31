@@ -55,7 +55,7 @@ public class HomeController(ILogger<HomeController> logger, IHomeService homeSer
     public async Task<IActionResult> AddParent(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/{id}/parent")]
         HttpRequest req,
-        string id, [FromBody] Child child)
+        string id, [FromBody] Parent parent)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
@@ -63,7 +63,7 @@ public class HomeController(ILogger<HomeController> logger, IHomeService homeSer
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await homeService.AddChildToHome(homeId, child);
+        var res = await homeService.AddParentToHome(homeId, parent);
         return new OkObjectResult(res);
     }
 }

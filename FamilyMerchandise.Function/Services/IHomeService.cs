@@ -15,7 +15,7 @@ public interface IHomeService
     public Child RemoveChild(Guid childId);
     
     // Parent
-    public Parent AddParentToHome(Guid parentId, Parent parent);
+    public Task<Guid> AddParentToHome(Guid parentId, Parent parent);
     public Parent UpdateParentInfo(Guid parentId, Parent parent);
     public Parent RemoveParent(Guid parentId);
 }

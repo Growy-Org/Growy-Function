@@ -4,18 +4,22 @@ using Microsoft.Extensions.Logging;
 
 namespace FamilyMerchandise.Function.Services;
 
-public class HomeService(IHomeRepository homeRepository, IChildRepository childRepository, ILogger<HomeService> logger)
+public class HomeService(
+    IHomeRepository homeRepository,
+    IChildRepository childRepository,
+    IParentRepository parentRepository,
+    ILogger<HomeService> logger)
     : IHomeService
 {
     public async Task<Home> GetHomeInfoById(Guid homeId)
     {
-        logger.LogInformation($"Getting Home By Id: {homeId}");
+        logger.LogInformation($"Getting Home by Id: {homeId}");
         return await homeRepository.GetHome(homeId);
     }
 
     public async Task<Guid> CreateHome(Home home)
     {
-        logger.LogInformation($"Adding a New Home: {home.Name}");
+        logger.LogInformation($"Adding a new Home: {home.Name}");
         var homeId = await homeRepository.InsertHome(home);
         logger.LogInformation($"Successfully added a home: {homeId}");
         return homeId;
@@ -23,10 +27,18 @@ public class HomeService(IHomeRepository homeRepository, IChildRepository childR
 
     public async Task<Guid> AddChildToHome(Guid homeId, Child child)
     {
-        logger.LogInformation($"Adding a New Child to Home: {homeId}");
+        logger.LogInformation($"Adding a new Child to Home: {homeId}");
         var childId = await childRepository.InsertChild(homeId, child);
         logger.LogInformation($"Successfully added a child : {childId} to Home: {homeId}");
         return childId;
+    }
+
+    public async Task<Guid> AddParentToHome(Guid homeId, Parent parent)
+    {
+        logger.LogInformation($"Adding a new Parent to Home: {homeId}");
+        var parentId = await parentRepository.InsertParent(homeId, parent);
+        logger.LogInformation($"Successfully added a parent : {parentId} to Home: {homeId}");
+        return parentId;
     }
 
     public void EditHome(Guid homeId)
@@ -50,10 +62,6 @@ public class HomeService(IHomeRepository homeRepository, IChildRepository childR
         throw new NotImplementedException();
     }
 
-    public Parent AddParentToHome(Guid parentId, Parent parent)
-    {
-        throw new NotImplementedException();
-    }
 
     public Child UpdateChildInfo()
     {

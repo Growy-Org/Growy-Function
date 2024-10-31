@@ -4,7 +4,7 @@ namespace FamilyMerchandise.Function.Models;
 
 public record Child
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public int? IconCode { get; set; }
     
     [JsonConverter(typeof(JsonStringEnumConverter))]

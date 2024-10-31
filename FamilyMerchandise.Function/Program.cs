@@ -15,6 +15,7 @@ var host = new HostBuilder()
         services.AddSingleton<IHomeService, HomeService>();
         services.AddSingleton<IHomeRepository, HomeRepository>();
         services.AddSingleton<IChildRepository, ChildRepository>();
+        services.AddSingleton<IParentRepository, ParentRepository>();
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
     })
