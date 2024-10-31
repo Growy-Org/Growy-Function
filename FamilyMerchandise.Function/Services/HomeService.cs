@@ -1,18 +1,32 @@
 using FamilyMerchandise.Function.Models;
 using FamilyMerchandise.Function.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace FamilyMerchandise.Function.Services;
 
-public class HomeService(IHomeRepository repository) : IHomeService
+public class HomeService(IHomeRepository homeRepository, IChildRepository childRepository, ILogger<HomeService> logger)
+    : IHomeService
 {
-    public Child AddChild()
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<Home> GetHomeInfoById(Guid homeId)
     {
-        return await repository.GetHome(homeId);
+        logger.LogInformation($"Getting Home By Id: {homeId}");
+        return await homeRepository.GetHome(homeId);
+    }
+
+    public async Task<Guid> CreateHome(Home home)
+    {
+        logger.LogInformation($"Adding a New Home: {home.Name}");
+        var homeId = await homeRepository.InsertHome(home);
+        logger.LogInformation($"Successfully added a home: {homeId}");
+        return homeId;
+    }
+
+    public async Task<Guid> AddChildToHome(Guid homeId, Child child)
+    {
+        logger.LogInformation($"Adding a New Child to Home: {homeId}");
+        var childId = await childRepository.InsertChild(homeId, child);
+        logger.LogInformation($"Successfully added a child : {childId} to Home: {homeId}");
+        return childId;
     }
 
     public void EditHome(Guid homeId)
@@ -25,10 +39,6 @@ public class HomeService(IHomeRepository repository) : IHomeService
         throw new NotImplementedException();
     }
 
-    public Child AddChildToHome(Guid childId, Child child)
-    {
-        throw new NotImplementedException();
-    }
 
     public Child UpdateChildInfo(Guid childId, Child child)
     {

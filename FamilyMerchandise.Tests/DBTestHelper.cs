@@ -27,13 +27,14 @@ public class FamilyMerchandiseDBHelper : IClassFixture<FunctionTestFixture>
             Name = _faker.Name.FullName(),
             IconCode = _faker.Random.Int(0, 100),
             DOB = _faker.Date.Past(18),
-            Gender = _faker.Random.Int(0, 1),
+            Gender = _faker.PickRandom("BOY", "GIRL"),
             PointsEarned = _faker.Random.Int(0, 9999),
         };
         var query =
             $"INSERT INTO {CHILDREN_TABLE} (Name, IconCode, DOB, Gender, PointsEarned) VALUES (@Name, @IconCode, @DOB, @Gender, @PointsEarned) RETURNING Id";
         await con.ExecuteScalarAsync<Guid>(query, child);
     }
+
     [Fact]
     public async Task InsertHome()
     {

@@ -5,11 +5,12 @@ public interface IHomeService
 {
     // Home 
     public Task<Home> GetHomeInfoById(Guid homeId);
+    public Task<Guid> CreateHome(Home home);
     public void EditHome(Guid homeId);
     public void RemoveHome(Guid homeId);
     
     // Children
-    public Child AddChildToHome(Guid childId, Child child);
+    public Task<Guid> AddChildToHome(Guid childId, Child child);
     public Child UpdateChildInfo(Guid childId, Child child);
     public Child RemoveChild(Guid childId);
     

@@ -12,8 +12,17 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"SELECT * FROM {HOMES_TABLE} WHERE Id=@Id";
+            $"SELECT * FROM {HOMES_TABLE} WHERE Id = @Id";
         var homeEntity = await con.QuerySingleAsync<HomeEntity>(query, new { Id = homeId });
         return homeEntity.ToHome();
+    }
+
+    public async Task<Guid> InsertHome(Home home)
+    {
+        var homeEntity = home.ToHomeEntity();
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"INSERT INTO {HOMES_TABLE} (Name) VALUES (@Name) RETURNING Id";
+        return await con.ExecuteScalarAsync<Guid>(query, home);
     }
 }

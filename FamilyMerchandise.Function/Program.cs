@@ -11,9 +11,10 @@ var host = new HostBuilder()
     .ConfigureServices((context, services) =>
     {
         services.Configure<ConnectionStrings>(context.Configuration.GetSection(ConnectionStrings.KEY));
-        services.AddSingleton<IConnectionFactory,ConnectionFactory>();
-        services.AddSingleton<IHomeService,HomeService>();
-        services.AddSingleton<IHomeRepository,HomeRepository>();
+        services.AddSingleton<IConnectionFactory, ConnectionFactory>();
+        services.AddSingleton<IHomeService, HomeService>();
+        services.AddSingleton<IHomeRepository, HomeRepository>();
+        services.AddSingleton<IChildRepository, ChildRepository>();
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
     })
