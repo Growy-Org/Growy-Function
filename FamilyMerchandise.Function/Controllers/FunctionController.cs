@@ -12,7 +12,8 @@ namespace FamilyMerchandise.Function.Controllers;
 public class FunctionController(
     ILogger<FunctionController> logger,
     IHomeService homeService,
-    IParentServices parentServices)
+    IParentService parentService,
+    IChildService childService)
 {
     [Function("GetHome")]
     public async Task<IActionResult> GetHome(
@@ -76,7 +77,34 @@ public class FunctionController(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/assignment")]
         HttpRequest req, [FromBody] CreateAssignmentRequest assignmentRequest)
     {
-        var res = await parentServices.CreateAssignment(assignmentRequest);
+        var res = await parentService.CreateAssignment(assignmentRequest);
+        return new OkObjectResult(res);
+    }
+
+    [Function("CreateWish")]
+    public async Task<IActionResult> CreateWish(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/wish")]
+        HttpRequest req, [FromBody] CreateWishRequest wishRequest)
+    {
+        var res = await childService.CreateWish(wishRequest);
+        return new OkObjectResult(res);
+    }
+
+    [Function("CreateAchievement")]
+    public async Task<IActionResult> CreateAchievement(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/achievement")]
+        HttpRequest req, [FromBody] CreateAssignmentRequest assignmentRequest)
+    {
+        var res = await parentService.CreateAssignment(assignmentRequest);
+        return new OkObjectResult(res);
+    }
+
+    [Function("CreatePenalty")]
+    public async Task<IActionResult> CreatePenalty(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/penalty")]
+        HttpRequest req, [FromBody] CreateAssignmentRequest assignmentRequest)
+    {
+        var res = await parentService.CreateAssignment(assignmentRequest);
         return new OkObjectResult(res);
     }
 }

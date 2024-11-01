@@ -3,7 +3,7 @@ using FamilyMerchandise.Function.Models;
 
 namespace FamilyMerchandise.Function.Services;
 
-public interface IParentServices
+public interface IParentService
 {
     // Assignments
     public List<Assignment> GetAllAssignmentsByHomeId(Guid homeId);

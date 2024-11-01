@@ -11,11 +11,16 @@ var host = new HostBuilder()
     .ConfigureServices((context, services) =>
     {
         services.Configure<ConnectionStrings>(context.Configuration.GetSection(ConnectionStrings.KEY));
-        services.AddSingleton<IConnectionFactory, ConnectionFactory>();
+        // Services
         services.AddSingleton<IHomeService, HomeService>();
-        services.AddSingleton<IParentServices, ParentService>();
+        services.AddSingleton<IParentService, ParentService>();
+        services.AddSingleton<IChildService, ChildService>();
+        
+        // Repositories 
+        services.AddSingleton<IConnectionFactory, ConnectionFactory>();
         services.AddSingleton<IHomeRepository, HomeRepository>();
         services.AddSingleton<IChildRepository, ChildRepository>();
+        services.AddSingleton<IWishRepository, WishRepository>();
         services.AddSingleton<IParentRepository, ParentRepository>();
         services.AddSingleton<IAssignmentRepository, AssignmentRepository>();
         services.AddApplicationInsightsTelemetryWorkerService();

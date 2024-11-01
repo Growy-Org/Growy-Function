@@ -19,6 +19,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
         var childRepo = new ChildRepository(fixture.ConnectionFactory);
         var parentRepo = new ParentRepository(fixture.ConnectionFactory);
         var assignmentRepo = new AssignmentRepository(fixture.ConnectionFactory);
+        var wishRepo = new WishRepository(fixture.ConnectionFactory);
 
         var home = new Home()
         {
@@ -72,5 +73,17 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
 
         await assignmentRepo.InsertAssignment(assignmentRequest1);
         await assignmentRepo.InsertAssignment(assignmentRequest2);
+        
+        var wishRequest = new CreateWishRequest()
+        {
+            HomeId = homeId,
+            ParentId = parentId,
+            ChildId = childId,
+            WishName = _faker.Random.Word(),
+            WishDescription = _faker.Lorem.Sentence(50),
+            WishIconCode = _faker.Random.Int(0, 100),
+        };
+        
+        await wishRepo.InsertWish(wishRequest);
     }
 }

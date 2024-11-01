@@ -8,7 +8,7 @@ namespace FamilyMerchandise.Function.Services;
 public class ParentService(
     IAssignmentRepository assignmentRepository,
     ILogger<ParentService> logger)
-    : IParentServices
+    : IParentService
 {
     public List<Assignment> GetAllAssignmentsByHomeId(Guid homeId)
     {

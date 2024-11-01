@@ -1,4 +1,5 @@
 using FamilyMerchandise.Function.Models;
+using FamilyMerchandise.Function.Models.Dtos;
 
 namespace FamilyMerchandise.Function.Services;
 
@@ -13,7 +14,7 @@ public interface IChildService
     
     // Wishes
     public List<Wish> GetWishes();
-    public Wish CreateWish();
+    public Task<Guid> CreateWish(CreateWishRequest request);
     public Wish EditWish(Guid wishId);
     
     // Achievements

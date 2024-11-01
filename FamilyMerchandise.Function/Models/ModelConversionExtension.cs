@@ -54,4 +54,17 @@ public static class ModelConversionExtension
             AssignerId = r.ParentId
         };
     }
+
+    public static WishEntity ToWishEntity(this CreateWishRequest r)
+    {
+        return new WishEntity
+        {
+            HomeId = r.HomeId,
+            GenieId = r.ParentId,
+            WisherId = r.ChildId,
+            Name = r.WishName,
+            Description = r.WishDescription,
+            IconCode = r.WishIconCode
+        };
+    }
 }
