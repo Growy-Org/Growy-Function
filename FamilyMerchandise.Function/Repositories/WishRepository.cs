@@ -7,14 +7,14 @@ namespace FamilyMerchandise.Function.Repositories;
 
 public class WishRepository(IConnectionFactory connectionFactory) : IWishRepository
 {
-    public const string WISHES_TABLE = "inventory.wishes";
+    public const string WishesTable = "inventory.wishes";
 
     public async Task<Guid> InsertWish(CreateWishRequest request)
     {
         var wishEntity = request.ToWishEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"INSERT INTO {WISHES_TABLE} (Name, HomeId, IconCode, Description, GenieId, WisherId) VALUES (@Name, @HomeId, @IconCode, @Description, @GenieId, @WisherId) RETURNING Id";
+            $"INSERT INTO {WishesTable} (Name, HomeId, IconCode, Description, GenieId, WisherId) VALUES (@Name, @HomeId, @IconCode, @Description, @GenieId, @WisherId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, wishEntity);
     }
 }

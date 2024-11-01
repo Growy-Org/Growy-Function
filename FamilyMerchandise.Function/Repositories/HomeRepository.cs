@@ -6,13 +6,13 @@ namespace FamilyMerchandise.Function.Repositories;
 
 public class HomeRepository(IConnectionFactory connectionFactory) : IHomeRepository
 {
-    public const string HOMES_TABLE = "inventory.homes";
+    private const string HomesTable = "inventory.homes";
 
     public async Task<Home> GetHome(Guid homeId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"SELECT * FROM {HOMES_TABLE} WHERE Id = @Id";
+            $"SELECT * FROM {HomesTable} WHERE Id = @Id";
         var homeEntity = await con.QuerySingleAsync<HomeEntity>(query, new { Id = homeId });
         return homeEntity.ToHome();
     }
@@ -22,7 +22,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         var homeEntity = home.ToHomeEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"INSERT INTO {HOMES_TABLE} (Name) VALUES (@Name) RETURNING Id";
+            $"INSERT INTO {HomesTable} (Name) VALUES (@Name) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, home);
     }
 }

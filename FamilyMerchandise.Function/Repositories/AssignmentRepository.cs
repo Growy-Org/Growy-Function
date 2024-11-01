@@ -7,14 +7,14 @@ namespace FamilyMerchandise.Function.Repositories;
 
 public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssignmentRepository
 {
-    public const string ASSIGNMENTS_TABLE = "inventory.assignments";
+    private const string AssignmentsTable = "inventory.assignments";
 
     public async Task<Guid> InsertAssignment(CreateAssignmentRequest request)
     {
         var assignmentEntity = request.ToAssignmentEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"INSERT INTO {ASSIGNMENTS_TABLE} (Name, HomeId, IconCode, Points, Description, RepeatAfter, DueDate, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @IconCode, @Points, @Description, @RepeatAfter, @DueDate, @AssigneeId, @AssignerId) RETURNING Id";
+            $"INSERT INTO {AssignmentsTable} (Name, HomeId, IconCode, Points, Description, RepeatAfter, DueDate, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @IconCode, @Points, @Description, @RepeatAfter, @DueDate, @AssigneeId, @AssignerId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, assignmentEntity);
     }
 }

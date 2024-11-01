@@ -20,6 +20,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
         var parentRepo = new ParentRepository(fixture.ConnectionFactory);
         var assignmentRepo = new AssignmentRepository(fixture.ConnectionFactory);
         var wishRepo = new WishRepository(fixture.ConnectionFactory);
+        var achievementRepo = new AchievementRepository(fixture.ConnectionFactory);
 
         var home = new Home()
         {
@@ -85,5 +86,18 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
         };
         
         await wishRepo.InsertWish(wishRequest);
+        
+        var achievementRequest = new CreateAchievementRequest()
+        {
+            HomeId = homeId,
+            ParentId = parentId,
+            ChildId = childId,
+            AchievementName = "Achievement 1",
+            AchievementDescription = _faker.Lorem.Sentence(50),
+            AchievementIconCode = _faker.Random.Int(0, 100),
+            AchievementPointsGranted = _faker.Random.Int(100, 9999),
+        };
+        
+        await achievementRepo.InsertAchievement(achievementRequest);
     }
 }

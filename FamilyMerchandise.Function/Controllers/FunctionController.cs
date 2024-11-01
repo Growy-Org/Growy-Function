@@ -93,9 +93,9 @@ public class FunctionController(
     [Function("CreateAchievement")]
     public async Task<IActionResult> CreateAchievement(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/achievement")]
-        HttpRequest req, [FromBody] CreateAssignmentRequest assignmentRequest)
+        HttpRequest req, [FromBody] CreateAchievementRequest achievementRequest)
     {
-        var res = await parentService.CreateAssignment(assignmentRequest);
+        var res = await parentService.CreateAchievement(achievementRequest);
         return new OkObjectResult(res);
     }
 

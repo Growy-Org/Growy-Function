@@ -7,6 +7,7 @@ namespace FamilyMerchandise.Function.Services;
 
 public class ParentService(
     IAssignmentRepository assignmentRepository,
+    IAchievementRepository achievementRepository,
     ILogger<ParentService> logger)
     : IParentService
 {
@@ -25,7 +26,7 @@ public class ParentService(
         logger.LogInformation($"Adding a new Assignment to Home: {request.HomeId}");
         var assignmentId = await assignmentRepository.InsertAssignment(request);
         logger.LogInformation(
-            $"Successfully added an assignment : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");
+            $"Successfully added an Assignment : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");
         return assignmentId;
     }
 
@@ -64,9 +65,13 @@ public class ParentService(
         throw new NotImplementedException();
     }
 
-    public Achievement CreateAchievement()
+    public async Task<Guid> CreateAchievement(CreateAchievementRequest request)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Adding a new Achievement to Home: {request.HomeId}");
+        var assignmentId = await achievementRepository.InsertAchievement(request);
+        logger.LogInformation(
+            $"Successfully added an Achievement : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");
+        return assignmentId;
     }
 
     public void EditAchievement(Guid achievementId)

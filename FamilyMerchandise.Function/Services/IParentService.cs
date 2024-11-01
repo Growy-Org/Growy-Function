@@ -8,7 +8,7 @@ public interface IParentService
     // Assignments
     public List<Assignment> GetAllAssignmentsByHomeId(Guid homeId);
     public Assignment GetAssignment(Guid assignmentId);
-    public Task<Guid> CreateAssignment(CreateAssignmentRequest assignment);
+    public Task<Guid> CreateAssignment(CreateAssignmentRequest request);
     public void EditAssignment(Guid assignmentId, Assignment assignment);
     public void CompleteAssignment(Guid assignmentId);
     public Assignment CreateStepToAssignment(Guid assignmentId);
@@ -20,7 +20,7 @@ public interface IParentService
 
     // Achievements
     public List<Assignment> GetAllAchievementByHomeId(Guid homeId);
-    public Achievement CreateAchievement();
+    public Task<Guid> CreateAchievement(CreateAchievementRequest request);
     public void EditAchievement(Guid achievementId);
     public void GrantAchievementBonus(Guid achievementId);
 

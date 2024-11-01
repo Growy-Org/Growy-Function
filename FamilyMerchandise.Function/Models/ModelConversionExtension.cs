@@ -67,4 +67,18 @@ public static class ModelConversionExtension
             IconCode = r.WishIconCode
         };
     }
+
+    public static AchievementEntity TocAchievementEntity(this CreateAchievementRequest r)
+    {
+        return new AchievementEntity()
+        {
+            HomeId = r.HomeId,
+            VisionaryId = r.ParentId,
+            AchieverId = r.ChildId,
+            Name = r.AchievementName,
+            Description = r.AchievementDescription,
+            IconCode = r.AchievementIconCode,
+            PointsGranted = r.AchievementPointsGranted
+        };
+    }
 }
