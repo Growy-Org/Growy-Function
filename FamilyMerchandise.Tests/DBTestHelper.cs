@@ -3,6 +3,7 @@ using FamilyMerchandise.Function.Entities;
 using Bogus;
 using Bogus.DataSets;
 using FamilyMerchandise.Function.Models;
+using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Repositories;
 
 namespace FamilyMerchandise.Tests;
@@ -17,6 +18,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
         var homeRepo = new HomeRepository(fixture.ConnectionFactory);
         var childRepo = new ChildRepository(fixture.ConnectionFactory);
         var parentRepo = new ParentRepository(fixture.ConnectionFactory);
+        var assignmentRepo = new AssignmentRepository(fixture.ConnectionFactory);
 
         var home = new Home()
         {
@@ -32,7 +34,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.GIRL),
             PointsEarned = _faker.Random.Int(0, 9999),
         };
-        await childRepo.InsertChild(homeId, child);
+        var childId = await childRepo.InsertChild(homeId, child);
 
         var parent = new Parent
         {
@@ -42,6 +44,33 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             Role = _faker.PickRandom(ParentRole.FATHER, ParentRole.MOTHER),
         };
 
-        await parentRepo.InsertParent(homeId, parent);
+        var parentId = await parentRepo.InsertParent(homeId, parent);
+
+        var assignmentRequest1 = new CreateAssignmentRequest
+        {
+            HomeId = homeId,
+            ParentId = parentId,
+            ChildId = childId,
+            AssignmentName = "Assignment 1",
+            AssignmentIconCode = _faker.Random.Int(0, 100),
+            AssignmentDescription = _faker.Lorem.Sentence(50),
+            DueDate = _faker.Date.Recent(50),
+            Points = _faker.Random.Int(100, 999)
+        };
+        
+        var assignmentRequest2 = new CreateAssignmentRequest
+        {
+            HomeId = homeId,
+            ParentId = parentId,
+            ChildId = childId,
+            AssignmentName = "Assignment 2",
+            AssignmentDescription = _faker.Lorem.Sentence(50),
+            AssignmentIconCode = _faker.Random.Int(0, 100),
+            DueDate = _faker.Date.Recent(50),
+            Points = _faker.Random.Int(100, 999)
+        };
+
+        await assignmentRepo.InsertAssignment(assignmentRequest1);
+        await assignmentRepo.InsertAssignment(assignmentRequest2);
     }
 }

@@ -1,3 +1,4 @@
+using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Entities;
 using FamilyMerchandise.Function.Models;
 
@@ -35,6 +36,22 @@ public static class ModelConversionExtension
         return new HomeEntity()
         {
             Name = h.Name
+        };
+    }
+
+    public static AssignmentEntity ToAssignmentEntity(this CreateAssignmentRequest r)
+    {
+        return new AssignmentEntity
+        {
+            Name = r.AssignmentName,
+            Description = r.AssignmentDescription,
+            HomeId = r.HomeId,
+            IconCode = r.AssignmentIconCode,
+            Points = r.Points,
+            RepeatAfter = r.RepeatAfter,
+            DueDate = r.DueDate,
+            AssigneeId = r.ChildId,
+            AssignerId = r.ParentId
         };
     }
 }

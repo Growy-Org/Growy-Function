@@ -1,3 +1,4 @@
+using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Models;
 using FamilyMerchandise.Function.Services;
 using Microsoft.Azure.Functions.Worker;
@@ -8,7 +9,10 @@ using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribut
 
 namespace FamilyMerchandise.Function.Controllers;
 
-public class HomeController(ILogger<HomeController> logger, IHomeService homeService)
+public class FunctionController(
+    ILogger<FunctionController> logger,
+    IHomeService homeService,
+    IParentServices parentServices)
 {
     [Function("GetHome")]
     public async Task<IActionResult> GetHome(
@@ -29,7 +33,7 @@ public class HomeController(ILogger<HomeController> logger, IHomeService homeSer
     [Function("AddHome")]
     public async Task<IActionResult> AddHome(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home")]
-        HttpRequest req,[FromBody] Home home)
+        HttpRequest req, [FromBody] Home home)
     {
         var res = await homeService.CreateHome(home);
         return new OkObjectResult(res);
@@ -64,6 +68,15 @@ public class HomeController(ILogger<HomeController> logger, IHomeService homeSer
         }
 
         var res = await homeService.AddParentToHome(homeId, parent);
+        return new OkObjectResult(res);
+    }
+
+    [Function("CreateAssignment")]
+    public async Task<IActionResult> CreateAssignmentToHome(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/assignment")]
+        HttpRequest req, [FromBody] CreateAssignmentRequest assignmentRequest)
+    {
+        var res = await parentServices.CreateAssignment(assignmentRequest);
         return new OkObjectResult(res);
     }
 }

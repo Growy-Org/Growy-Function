@@ -24,6 +24,7 @@ Some management
 - Authorisation
 - Pagination
 - Http version 
+- Request validation
 
 ## Some analytics
 

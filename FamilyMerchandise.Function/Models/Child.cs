@@ -4,6 +4,7 @@ namespace FamilyMerchandise.Function.Models;
 
 public record Child
 {
+    public Guid Id { get; init; }
     public string Name { get; set; } = string.Empty;
     public int? IconCode { get; set; }
     
