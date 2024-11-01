@@ -11,7 +11,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<Guid> InsertAchievement(CreateAchievementRequest request)
     {
-        var achievementEntity = request.TocAchievementEntity();
+        var achievementEntity = request.ToAchievementEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"INSERT INTO {AchievementsTable} (Name, HomeId, IconCode, PointsGranted, Description, VisionaryId, AchieverId) VALUES (@Name, @HomeId, @IconCode, @PointsGranted, @Description, @VisionaryId, @AchieverId) RETURNING Id";

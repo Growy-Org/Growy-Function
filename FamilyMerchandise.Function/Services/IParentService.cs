@@ -26,5 +26,5 @@ public interface IParentService
 
     // Penalties
     public List<Penalty> GetAllPenaltiesByHomeId(Guid homeId);
-    public Penalty CreatePenalty();
+    public Task<Guid> CreatePenalty(CreatePenaltyRequest request);
 }

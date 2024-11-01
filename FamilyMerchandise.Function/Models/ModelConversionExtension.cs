@@ -68,7 +68,7 @@ public static class ModelConversionExtension
         };
     }
 
-    public static AchievementEntity TocAchievementEntity(this CreateAchievementRequest r)
+    public static AchievementEntity ToAchievementEntity(this CreateAchievementRequest r)
     {
         return new AchievementEntity()
         {
@@ -79,6 +79,20 @@ public static class ModelConversionExtension
             Description = r.AchievementDescription,
             IconCode = r.AchievementIconCode,
             PointsGranted = r.AchievementPointsGranted
+        };
+    }
+    
+    public static PenaltyEntity ToPenaltyEntity(this CreatePenaltyRequest r)
+    {
+        return new PenaltyEntity()
+        {
+            HomeId = r.HomeId,
+            EnforcerId = r.ParentId,
+            ViolatorId = r.ChildId,
+            Name = r.PenaltyName,
+            Reason = r.PenaltyReason,
+            IconCode = r.PenaltyIconCode,
+            PointsDeducted = r.PenaltyPointsDeducted
         };
     }
 }

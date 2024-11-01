@@ -102,9 +102,9 @@ public class FunctionController(
     [Function("CreatePenalty")]
     public async Task<IActionResult> CreatePenalty(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/penalty")]
-        HttpRequest req, [FromBody] CreateAssignmentRequest assignmentRequest)
+        HttpRequest req, [FromBody] CreatePenaltyRequest penaltyRequest)
     {
-        var res = await parentService.CreateAssignment(assignmentRequest);
+        var res = await parentService.CreatePenalty(penaltyRequest);
         return new OkObjectResult(res);
     }
 }

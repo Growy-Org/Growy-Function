@@ -24,6 +24,7 @@ var host = new HostBuilder()
         services.AddSingleton<IParentRepository, ParentRepository>();
         services.AddSingleton<IAssignmentRepository, AssignmentRepository>();
         services.AddSingleton<IAchievementRepository, AchievementRepository>();
+        services.AddSingleton<IPenaltyRepository, PenaltyRepository>();
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
     })

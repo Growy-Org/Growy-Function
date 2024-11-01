@@ -8,6 +8,7 @@ namespace FamilyMerchandise.Function.Services;
 public class ParentService(
     IAssignmentRepository assignmentRepository,
     IAchievementRepository achievementRepository,
+    IPenaltyRepository penaltyRepository,
     ILogger<ParentService> logger)
     : IParentService
 {
@@ -89,8 +90,12 @@ public class ParentService(
         throw new NotImplementedException();
     }
 
-    public Penalty CreatePenalty()
+    public async Task<Guid> CreatePenalty(CreatePenaltyRequest request)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Adding a new Penalty to Home: {request.HomeId}");
+        var penaltyId = await penaltyRepository.InsertPenalty(request);
+        logger.LogInformation(
+            $"Successfully added a Penalty : {penaltyId}, by Parent {request.ParentId} to Child {request.ChildId}");
+        return penaltyId;
     }
 }
