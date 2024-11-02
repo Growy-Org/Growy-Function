@@ -8,6 +8,15 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
 {
     private const string ParentsTable = "inventory.parents";
 
+    public async Task<List<Parent>> GetParentsByHomeId(Guid homeId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"SELECT * FROM {ParentsTable} WHERE HomeId = @HomeId";
+        var parentEntities = await con.QueryAsync<ParentEntity>(query, new { HomeId = homeId });
+        return parentEntities.Select(e => e.ToParent()).ToList();
+    }
+
     public async Task<Guid> InsertParent(Guid homeId, Parent parent)
     {
         var parentEntity = parent.ToParentEntity(homeId);

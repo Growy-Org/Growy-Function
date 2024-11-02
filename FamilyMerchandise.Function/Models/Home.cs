@@ -2,8 +2,8 @@ namespace FamilyMerchandise.Function.Models;
 
 public record Home
 {
-    public Guid Id { get; init; }
-    public string Name { get; set; }
-    public List<Parent> Parents { get; set; }
-    public List<Child> Children { get; set; }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public List<Parent> Parents { get; set; } = new();
+    public List<Child> Children { get; set; } = new();
 }

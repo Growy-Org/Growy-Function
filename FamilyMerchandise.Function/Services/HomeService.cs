@@ -1,3 +1,4 @@
+using FamilyMerchandise.Function.Entities;
 using FamilyMerchandise.Function.Models;
 using FamilyMerchandise.Function.Repositories;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,14 @@ public class HomeService(
     public async Task<Home> GetHomeInfoById(Guid homeId)
     {
         logger.LogInformation($"Getting Home by Id: {homeId}");
-        return await homeRepository.GetHome(homeId);
+        var home = await homeRepository.GetHome(homeId);
+        logger.LogInformation($"Getting Parents Info with HomeId: {homeId}");
+        var parents = await parentRepository.GetParentsByHomeId(homeId);
+        home.HydrateParents(parents);
+        logger.LogInformation($"Getting Children Info with HomeId: {homeId}");
+        var children = await childRepository.GetChildrenByHomeId(homeId);
+        home.HydrateChildren(children);
+        return home;
     }
 
     public async Task<Guid> CreateHome(Home home)

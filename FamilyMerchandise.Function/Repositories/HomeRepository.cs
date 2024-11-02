@@ -7,7 +7,7 @@ namespace FamilyMerchandise.Function.Repositories;
 public class HomeRepository(IConnectionFactory connectionFactory) : IHomeRepository
 {
     private const string HomesTable = "inventory.homes";
-
+ 
     public async Task<Home> GetHome(Guid homeId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();

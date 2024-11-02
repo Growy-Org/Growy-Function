@@ -8,6 +8,15 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
 {
     private const string ChildrenTable = "inventory.children";
 
+    public async Task<List<Child>> GetChildrenByHomeId(Guid homeId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"SELECT * FROM {ChildrenTable} WHERE HomeId = @HomeId";
+        var childEntities = await con.QueryAsync<ChildEntity>(query, new { HomeId = homeId });
+        return childEntities.Select(e => e.ToChild()).ToList();
+    }
+
     public async Task<Guid> InsertChild(Guid homeId, Child child)
     {
         var childEntity = child.ToChildEntity(homeId);

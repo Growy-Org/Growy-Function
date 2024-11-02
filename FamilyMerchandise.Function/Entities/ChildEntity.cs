@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using FamilyMerchandise.Function.Models;
+
 namespace FamilyMerchandise.Function.Entities;
 
 public record ChildEntity
@@ -7,7 +10,10 @@ public record ChildEntity
     public string Name { get; set; } = string.Empty;
     public int IconCode { get; set; }
     public DateTime DOB { get; set; }
-    public string Gender { get; set; } = string.Empty;
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public ChildGender Gender { get; init; }
+
     public int PointsEarned { get; set; }
     public DateTime CreatedDateUtc { get; set; }
     public DateTime UpdatedDateUtc { get; set; }

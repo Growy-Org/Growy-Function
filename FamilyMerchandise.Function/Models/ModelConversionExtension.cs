@@ -13,7 +13,7 @@ public static class ModelConversionExtension
             Name = c.Name,
             IconCode = c.IconCode ?? 15, // Default Child Avatar
             DOB = c.DOB,
-            Gender = c.Gender.ToString(),
+            Gender = c.Gender,
             HomeId = homeId,
             PointsEarned = c.PointsEarned ?? 0,
         };
@@ -26,7 +26,7 @@ public static class ModelConversionExtension
             Name = p.Name,
             IconCode = p.IconCode ?? 5, // Default Child Avatar
             DOB = p.DOB,
-            Role = p.Role.ToString(),
+            Role = p.Role,
             HomeId = homeId,
         };
     }
