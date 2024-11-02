@@ -13,15 +13,6 @@ public static class EntityConversionExtension
         };
     }
 
-    public static void HydrateParents(this Home h, List<Parent> parents)
-    {
-        h.Parents.AddRange(parents);
-    }
-
-    public static void HydrateChildren(this Home h, List<Child> children)
-    {
-        h.Children.AddRange(children);
-    }
 
     public static Parent ToParent(this ParentEntity p)
     {
@@ -45,6 +36,31 @@ public static class EntityConversionExtension
             IconCode = c.IconCode,
             PointsEarned = c.PointsEarned,
             DOB = c.DOB,
+        };
+    }
+
+    public static Assignment ToAssignment(this AssignmentEntity a)
+    {
+        return new Assignment
+        {
+            Id = a.Id,
+            Name = a.Name,
+            Description = a.Description,
+            IconCode = a.IconCode,
+            Points = a.Points,
+            RepeatAfter = a.RepeatAfter,
+            DueDate = a.DueDate,
+            Assignee = new Child()
+            {
+                Id = a.AssigneeId,
+            },
+            Assigner = new Parent()
+            {
+                Id = a.AssignerId,
+            },
+            CreatedDateUtc = a.CreatedDateUtc,
+            UpdatedDateUtc = a.UpdatedDateUtc,
+            CompletedDateUtc = a.UpdatedDateUtc,
         };
     }
 }

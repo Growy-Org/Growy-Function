@@ -6,7 +6,7 @@ namespace FamilyMerchandise.Function.Services;
 public interface IParentService
 {
     // Assignments
-    public List<Assignment> GetAllAssignmentsByHomeId(Guid homeId);
+    public Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId);
     public Assignment GetAssignment(Guid assignmentId);
     public Task<Guid> CreateAssignment(CreateAssignmentRequest request);
     public void EditAssignment(Guid assignmentId, Assignment assignment);

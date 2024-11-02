@@ -22,9 +22,10 @@ public class HomeService(
         logger.LogInformation($"Getting Children Info with HomeId: {homeId}");
         var children = await childRepository.GetChildrenByHomeId(homeId);
         home.HydrateChildren(children);
+        logger.LogInformation($"Successfully getting information for Home: {homeId}");
         return home;
     }
-
+    
     public async Task<Guid> CreateHome(Home home)
     {
         logger.LogInformation($"Adding a new Home: {home.Name}");

@@ -72,6 +72,21 @@ public class FunctionController(
         return new OkObjectResult(res);
     }
 
+    [Function("GetAllAssignments")]
+    public async Task<IActionResult> GetAllAssignments(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/assignments")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.GetAllAssignmentsByHomeId(homeId);
+        return new OkObjectResult(res);
+    }
+
     [Function("CreateAssignment")]
     public async Task<IActionResult> CreateAssignmentToHome(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/assignment")]

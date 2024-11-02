@@ -6,6 +6,38 @@ namespace FamilyMerchandise.Function.Models;
 
 public static class ModelConversionExtension
 {
+    public static void HydrateParents(this Home h, List<Parent> parents)
+    {
+        h.Parents.AddRange(parents);
+    }
+
+    public static void HydrateChildren(this Home h, List<Child> children)
+    {
+        h.Children.AddRange(children);
+    }
+
+    public static void SetAssignee(this Assignment h, List<Child> children)
+    {
+        children.ForEach(c =>
+        {
+            if (h.Assignee.Id == c.Id)
+            {
+                h.Assignee = c;
+            }
+        });
+    }
+
+    public static void SetAssigner(this Assignment h, List<Parent> parents)
+    {
+        parents.ForEach(p =>
+        {
+            if (h.Assigner.Id == p.Id)
+            {
+                h.Assigner = p;
+            }
+        });
+    }
+
     public static ChildEntity ToChildEntity(this Child c, Guid homeId)
     {
         return new ChildEntity
@@ -81,7 +113,7 @@ public static class ModelConversionExtension
             PointsGranted = r.AchievementPointsGranted
         };
     }
-    
+
     public static PenaltyEntity ToPenaltyEntity(this CreatePenaltyRequest r)
     {
         return new PenaltyEntity()

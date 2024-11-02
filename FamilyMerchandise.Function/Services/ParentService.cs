@@ -6,15 +6,30 @@ using Microsoft.Extensions.Logging;
 namespace FamilyMerchandise.Function.Services;
 
 public class ParentService(
+    IParentRepository parentRepository,
+    IChildRepository childRepository,
     IAssignmentRepository assignmentRepository,
     IAchievementRepository achievementRepository,
     IPenaltyRepository penaltyRepository,
     ILogger<ParentService> logger)
     : IParentService
 {
-    public List<Assignment> GetAllAssignmentsByHomeId(Guid homeId)
+    public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Getting all assignments by HomeId: {homeId}");
+        var assignments = await assignmentRepository.GetAllAssignmentsByHomeId(homeId);
+        logger.LogInformation($"Getting Parents Info with HomeId: {homeId}");
+        var parents = await parentRepository.GetParentsByHomeId(homeId);
+        logger.LogInformation($"Getting Children Info with HomeId: {homeId}");
+        var children = await childRepository.GetChildrenByHomeId(homeId);
+        assignments.ForEach(a =>
+        {
+            a.SetAssignee(children);
+            a.SetAssigner(parents);
+        });
+        logger.LogInformation(
+            $"Successfully getting all assignments by HomeId : {homeId}");
+        return assignments;
     }
 
     public Assignment GetAssignment(Guid assignmentId)
