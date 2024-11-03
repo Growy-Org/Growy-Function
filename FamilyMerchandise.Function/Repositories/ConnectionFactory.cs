@@ -1,5 +1,6 @@
 using System.Data;
 using FamilyMerchandise.Function.Options;
+using FamilyMerchandise.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Options;
 using Npgsql;
 

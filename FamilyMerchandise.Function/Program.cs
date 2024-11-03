@@ -1,5 +1,6 @@
 using FamilyMerchandise.Function.Options;
 using FamilyMerchandise.Function.Repositories;
+using FamilyMerchandise.Function.Repositories.Interfaces;
 using FamilyMerchandise.Function.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +26,7 @@ var host = new HostBuilder()
         services.AddSingleton<IAssignmentRepository, AssignmentRepository>();
         services.AddSingleton<IAchievementRepository, AchievementRepository>();
         services.AddSingleton<IPenaltyRepository, PenaltyRepository>();
+        services.AddSingleton<IStepRepository, StepRepository>();
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
     })

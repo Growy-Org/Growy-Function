@@ -27,6 +27,11 @@ public static class ModelConversionExtension
         });
     }
 
+    public static void SetSteps(this Assignment h, List<Step> steps)
+    {
+        h.Steps.AddRange(steps);
+    }
+
     public static void SetAssigner(this Assignment h, List<Parent> parents)
     {
         parents.ForEach(p =>
@@ -86,6 +91,17 @@ public static class ModelConversionExtension
             AssignerId = r.ParentId
         };
     }
+
+    public static StepEntity ToStepEntity(this CreateStepRequest r)
+    {
+        return new StepEntity()
+        {
+            StepOrder = r.StepOrder,
+            AssignmentId = r.AssignmentId,
+            Description = r.StepDescription,
+        };
+    }
+
 
     public static WishEntity ToWishEntity(this CreateWishRequest r)
     {

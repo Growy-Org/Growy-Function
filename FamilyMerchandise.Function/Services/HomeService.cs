@@ -1,6 +1,5 @@
-using FamilyMerchandise.Function.Entities;
 using FamilyMerchandise.Function.Models;
-using FamilyMerchandise.Function.Repositories;
+using FamilyMerchandise.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace FamilyMerchandise.Function.Services;

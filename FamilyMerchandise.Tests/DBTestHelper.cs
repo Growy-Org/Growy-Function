@@ -19,6 +19,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
         var childRepo = new ChildRepository(fixture.ConnectionFactory);
         var parentRepo = new ParentRepository(fixture.ConnectionFactory);
         var assignmentRepo = new AssignmentRepository(fixture.ConnectionFactory);
+        var stepRepo = new StepRepository(fixture.ConnectionFactory);
         var wishRepo = new WishRepository(fixture.ConnectionFactory);
         var achievementRepo = new AchievementRepository(fixture.ConnectionFactory);
         var penaltyRepo = new PenaltyRepository(fixture.ConnectionFactory);
@@ -91,8 +92,32 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             Points = _faker.Random.Int(100, 999)
         };
 
-        await assignmentRepo.InsertAssignment(assignmentRequest1);
-        await assignmentRepo.InsertAssignment(assignmentRequest2);
+        var assignmentId1 = await assignmentRepo.InsertAssignment(assignmentRequest1);
+        var assignmentId2 = await assignmentRepo.InsertAssignment(assignmentRequest2);
+
+        var stepRequest1 = new CreateStepRequest
+        {
+            AssignmentId = assignmentId1,
+            StepOrder = 0,
+            StepDescription = _faker.Lorem.Sentence(20),
+        };
+
+        var stepRequest2 = new CreateStepRequest
+        {
+            AssignmentId = assignmentId1,
+            StepOrder = 1,
+            StepDescription = _faker.Lorem.Sentence(20),
+        };
+
+        var stepRequest3 = new CreateStepRequest
+        {
+            AssignmentId = assignmentId2,
+            StepOrder = 0,
+            StepDescription = _faker.Lorem.Sentence(20),
+        };
+        await stepRepo.InsertStep(stepRequest1);
+        await stepRepo.InsertStep(stepRequest2);
+        await stepRepo.InsertStep(stepRequest3);
 
         var wishRequest = new CreateWishRequest()
         {

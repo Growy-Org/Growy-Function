@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace FamilyMerchandise.Function.Repositories;
+namespace FamilyMerchandise.Function.Repositories.Interfaces;
 
 public interface IConnectionFactory
 {

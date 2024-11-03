@@ -1,6 +1,7 @@
 using Dapper;
 using FamilyMerchandise.Function.Entities;
 using FamilyMerchandise.Function.Models;
+using FamilyMerchandise.Function.Repositories.Interfaces;
 
 namespace FamilyMerchandise.Function.Repositories;
 

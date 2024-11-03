@@ -6,20 +6,21 @@ namespace FamilyMerchandise.Function.Services;
 public interface IChildService
 {
     // Profile
-    public Child GetProfileByChildId(Guid childId);
+    public Task<Child> GetProfileByChildId(Guid childId);
     
     // Assignments
-    public List<Assignment> GetAllAssignmentsByChildId(Guid childId);
-    public Assignment GetAssignment(Guid assignmentId);
+    public Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId);
+    public Task<List<Step>> GetAllStepsByAssignmentId(Guid assignmentId);
+    public Task<Assignment> GetAssignment(Guid assignmentId);
     
     // Wishes
-    public List<Wish> GetWishes();
+    public Task<List<Wish>> GetAllWishesByChildId(Guid childId);
     public Task<Guid> CreateWish(CreateWishRequest request);
-    public Wish EditWish(Guid wishId);
+    public Task EditWish(Guid wishId);
     
     // Achievements
-    public List<Achievement> GetAchievementsByChildId(Guid childId);
+    public Task<List<Achievement>> GetAchievementsByChildId(Guid childId);
     
     // Penalties
-    public List<Penalty> GetPenaltiesByChildId(Guid childId);
+    public Task<List<Penalty>> GetPenaltiesByChildId(Guid childId);
 }

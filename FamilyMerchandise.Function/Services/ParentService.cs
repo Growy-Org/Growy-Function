@@ -1,6 +1,7 @@
 using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Models;
 using FamilyMerchandise.Function.Repositories;
+using FamilyMerchandise.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace FamilyMerchandise.Function.Services;
@@ -9,6 +10,7 @@ public class ParentService(
     IParentRepository parentRepository,
     IChildRepository childRepository,
     IAssignmentRepository assignmentRepository,
+    IStepRepository stepRepository,
     IAchievementRepository achievementRepository,
     IPenaltyRepository penaltyRepository,
     ILogger<ParentService> logger)
@@ -22,17 +24,21 @@ public class ParentService(
         var parents = await parentRepository.GetParentsByHomeId(homeId);
         logger.LogInformation($"Getting Children Info with HomeId: {homeId}");
         var children = await childRepository.GetChildrenByHomeId(homeId);
-        assignments.ForEach(a =>
+        
+        foreach (var assignment in assignments)
         {
-            a.SetAssignee(children);
-            a.SetAssigner(parents);
-        });
+            logger.LogInformation($"Getting Children Info with HomeId: {homeId}");
+            var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
+            assignment.SetSteps(steps);
+            assignment.SetAssignee(children);
+            assignment.SetAssigner(parents);   
+        }
         logger.LogInformation(
             $"Successfully getting all assignments by HomeId : {homeId}");
         return assignments;
     }
 
-    public Assignment GetAssignment(Guid assignmentId)
+    public Task<Assignment> GetAssignment(Guid assignmentId)
     {
         throw new NotImplementedException();
     }
@@ -46,37 +52,46 @@ public class ParentService(
         return assignmentId;
     }
 
-    public void EditAssignment(Guid assignmentId, Assignment assignment)
+    public Task EditAssignment(Guid assignmentId, Assignment assignment)
     {
         throw new NotImplementedException();
     }
 
-    public void CompleteAssignment(Guid assignmentId)
+    public Task CompleteAssignment(Guid assignmentId)
     {
         throw new NotImplementedException();
     }
 
-    public Assignment CreateStepToAssignment(Guid assignmentId)
+    public Task<List<Step>> GetAllStepsByAssignmentId(Guid assignmentId)
     {
         throw new NotImplementedException();
     }
 
-    public void EditStep(Guid stepId)
+    public async Task<Guid> CreateStepToAssignment(CreateStepRequest request)
+    {
+        logger.LogInformation($"Adding a new Step to Assignment: {request.AssignmentId}");
+        var stepId = await stepRepository.InsertStep(request);
+        logger.LogInformation(
+            $"Successfully added a Atep : {stepId}, to Assignment {request.AssignmentId}");
+        return stepId;
+    }
+
+    public Task EditStep(Guid stepId)
     {
         throw new NotImplementedException();
     }
 
-    public List<Wish> GetWishesByHomeId(Guid homeId)
+    public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId)
     {
         throw new NotImplementedException();
     }
 
-    public Wish EditWishCost(Guid wishId)
+    public Task EditWishCost(Guid wishId)
     {
         throw new NotImplementedException();
     }
 
-    public List<Assignment> GetAllAchievementByHomeId(Guid homeId)
+    public Task<List<Assignment>> GetAllAchievementByHomeId(Guid homeId)
     {
         throw new NotImplementedException();
     }
@@ -90,17 +105,17 @@ public class ParentService(
         return assignmentId;
     }
 
-    public void EditAchievement(Guid achievementId)
+    public Task EditAchievement(Guid achievementId)
     {
         throw new NotImplementedException();
     }
 
-    public void GrantAchievementBonus(Guid achievementId)
+    public Task GrantAchievementBonus(Guid achievementId)
     {
         throw new NotImplementedException();
     }
 
-    public List<Penalty> GetAllPenaltiesByHomeId(Guid homeId)
+    public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
     {
         throw new NotImplementedException();
     }

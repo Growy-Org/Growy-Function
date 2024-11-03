@@ -1,6 +1,6 @@
 using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Models;
-using FamilyMerchandise.Function.Repositories;
+using FamilyMerchandise.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace FamilyMerchandise.Function.Services;
@@ -10,9 +10,6 @@ public class ChildService(
     ILogger<ParentService> logger)
     : IChildService
 {
-    
-
-
     public async Task<Guid> CreateWish(CreateWishRequest request)
     {
         logger.LogInformation($"Adding a new Assignment to Home: {request.HomeId}");
@@ -22,38 +19,42 @@ public class ChildService(
         return wishId;
     }
 
-
-    public Child GetProfileByChildId(Guid childId)
+    public Task<Child> GetProfileByChildId(Guid childId)
     {
         throw new NotImplementedException();
     }
 
-    public List<Assignment> GetAllAssignmentsByChildId(Guid childId)
+    public Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId)
     {
         throw new NotImplementedException();
     }
 
-    public Assignment GetAssignment(Guid assignmentId)
+    public Task<List<Step>> GetAllStepsByAssignmentId(Guid assignmentId)
     {
         throw new NotImplementedException();
     }
 
-    public List<Wish> GetWishes()
+    public Task<Assignment> GetAssignment(Guid assignmentId)
     {
         throw new NotImplementedException();
     }
 
-    public Wish EditWish(Guid wishId)
+    public Task<List<Wish>> GetAllWishesByChildId(Guid childId)
     {
         throw new NotImplementedException();
     }
 
-    public List<Achievement> GetAchievementsByChildId(Guid childId)
+    public Task EditWish(Guid wishId)
     {
         throw new NotImplementedException();
     }
 
-    public List<Penalty> GetPenaltiesByChildId(Guid childId)
+    public Task<List<Achievement>> GetAchievementsByChildId(Guid childId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<Penalty>> GetPenaltiesByChildId(Guid childId)
     {
         throw new NotImplementedException();
     }

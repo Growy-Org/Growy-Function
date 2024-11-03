@@ -1,7 +1,7 @@
 
 using FamilyMerchandise.Function.Models;
 
-namespace FamilyMerchandise.Function.Repositories;
+namespace FamilyMerchandise.Function.Repositories.Interfaces;
 
 public interface IHomeRepository
 {

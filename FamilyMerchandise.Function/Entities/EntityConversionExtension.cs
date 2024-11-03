@@ -63,4 +63,15 @@ public static class EntityConversionExtension
             CompletedDateUtc = a.UpdatedDateUtc,
         };
     }
+
+    public static Step ToStep(this StepEntity s)
+    {
+        return new Step()
+        {
+            Id = s.Id,
+            StepOrder = s.StepOrder,
+            Description = s.Description,
+            IsCompleted = s.CompletedDateUtc != null,
+        };
+    }
 }

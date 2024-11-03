@@ -1,5 +1,6 @@
 using FamilyMerchandise.Function.Options;
 using FamilyMerchandise.Function.Repositories;
+using FamilyMerchandise.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 

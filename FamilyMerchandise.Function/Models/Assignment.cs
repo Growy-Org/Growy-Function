@@ -19,6 +19,8 @@ public record Assignment
 
 public record Step
 {
+    public Guid Id { get; init; }
+    public int StepOrder { get; set; }
     public string Description { get; set; } = string.Empty;
     public bool IsCompleted { get; set; }
 }
