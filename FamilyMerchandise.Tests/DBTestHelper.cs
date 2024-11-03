@@ -141,7 +141,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
         await wishRepo.InsertWish(wishRequest1);
         await wishRepo.InsertWish(wishRequest2);
 
-        var achievementRequest = new CreateAchievementRequest()
+        var achievementRequest1 = new CreateAchievementRequest()
         {
             HomeId = homeId,
             ParentId = parentId,
@@ -151,8 +151,19 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             AchievementIconCode = _faker.Random.Int(0, 100),
             AchievementPointsGranted = _faker.Random.Int(100, 9999),
         };
+        var achievementRequest2 = new CreateAchievementRequest()
+        {
+            HomeId = homeId,
+            ParentId = parentId2,
+            ChildId = childId2,
+            AchievementName = "Achievement 1",
+            AchievementDescription = _faker.Lorem.Sentence(50),
+            AchievementIconCode = _faker.Random.Int(0, 100),
+            AchievementPointsGranted = _faker.Random.Int(100, 9999),
+        };
 
-        await achievementRepo.InsertAchievement(achievementRequest);
+        await achievementRepo.InsertAchievement(achievementRequest1);
+        await achievementRepo.InsertAchievement(achievementRequest2);
 
         var penaltyRequest = new CreatePenaltyRequest()
         {

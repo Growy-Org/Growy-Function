@@ -2,12 +2,13 @@ namespace FamilyMerchandise.Function.Models;
 
 public record Penalty
 {
-    public string Name { get; set; }
-    public string Reason { get; set; }
+    public Guid Id { get; init; }
+    public string Name { get; set; } = string.Empty;
+    public string Reason { get; set; } = string.Empty;
     public int IconCode { get; set; }
     public int PointsDeduced { get; set; }
     public DateTime CreatedDateUtc { get; set; }
     public DateTime UpdatedDateUtc { get; set; }
-    public Child Violator { get; set; }
-    public Parent Enforcer { get; set; }
+    public Child Violator { get; set; } = new();
+    public Parent Enforcer { get; set; } = new();
 }

@@ -18,7 +18,7 @@ public interface IParentService
     public Task EditWishCost(Guid wishId);
 
     // Achievements
-    public Task<List<Assignment>> GetAllAchievementByHomeId(Guid homeId);
+    public Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId);
     public Task<Guid> CreateAchievement(CreateAchievementRequest request);
     public Task EditAchievement(Guid achievementId);
     public Task GrantAchievementBonus(Guid achievementId);

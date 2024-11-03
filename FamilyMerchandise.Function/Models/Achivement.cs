@@ -2,13 +2,14 @@ namespace FamilyMerchandise.Function.Models;
 
 public record Achievement
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public int IconCode { get; set; }
-    public int PointsGranted { get; set; }
-    public DateTime CreatedDateUtc { get; set; }
-    public DateTime UpdatedDateUtc { get; set; }
-    public DateTime? AchievementDateUtc { get; set; }
-    public Child AchievedBy { get; set; }
-    public Parent CreatedBy { get; set; }
+    public Guid Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+    public int IconCode { get; init; }
+    public int PointsGranted { get; init; }
+    public DateTime CreatedDateUtc { get; init; }
+    public DateTime UpdatedDateUtc { get; init; }
+    public DateTime? AchievementDateUtc { get; init; }
+    public Child Achiever { get; set; } = new();
+    public Parent Visionary { get; set; } = new();
 }

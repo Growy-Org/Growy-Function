@@ -10,6 +10,16 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
 {
     private const string PenaltyTable = "inventory.penalties";
 
+    public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Guid> InsertPenalty(CreatePenaltyRequest request)
     {
         var penaltyEntity = request.ToPenaltyEntity();

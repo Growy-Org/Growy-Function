@@ -50,14 +50,6 @@ public static class EntityConversionExtension
             Points = a.Points,
             RepeatAfter = a.RepeatAfter,
             DueDate = a.DueDate,
-            Assignee = new Child()
-            {
-                Id = a.AssigneeId,
-            },
-            Assigner = new Parent()
-            {
-                Id = a.AssignerId,
-            },
             CreatedDateUtc = a.CreatedDateUtc,
             UpdatedDateUtc = a.UpdatedDateUtc,
             CompletedDateUtc = a.UpdatedDateUtc,
@@ -87,14 +79,35 @@ public static class EntityConversionExtension
             CreatedDateUtc = w.CreatedDateUtc,
             UpdatedDateUtc = w.UpdatedDateUtc,
             FullFilledDateUtc = w.FullFilledDateUtc,
-            Wisher = new Child()
-            {
-                Id = w.WisherId,
-            },
-            Genie = new Parent()
-            {
-                Id = w.GenieId,
-            },
+        };
+    }
+
+    public static Achievement ToAchievement(this AchievementEntity a)
+    {
+        return new Achievement
+        {
+            Id = a.Id,
+            Name = a.Name,
+            Description = a.Description,
+            IconCode = a.IconCode,
+            PointsGranted = a.PointsGranted,
+            CreatedDateUtc = a.CreatedDateUtc,
+            UpdatedDateUtc = a.UpdatedDateUtc,
+            AchievementDateUtc = a.AchievedDateUtc,
+        };
+    }
+
+    public static Penalty ToPenalty(this PenaltyEntity p)
+    {
+        return new Penalty
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Reason = p.Reason,
+            IconCode = p.IconCode,
+            PointsDeduced = p.PointsDeducted,
+            CreatedDateUtc = p.CreatedDateUtc,
+            UpdatedDateUtc = p.UpdatedDateUtc,
         };
     }
 }

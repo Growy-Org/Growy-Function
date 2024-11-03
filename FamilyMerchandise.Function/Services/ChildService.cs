@@ -15,19 +15,12 @@ public class ChildService(
     ILogger<ParentService> logger)
     : IChildService
 {
-    public async Task<Guid> CreateWish(CreateWishRequest request)
-    {
-        logger.LogInformation($"Adding a new Assignment to Home: {request.HomeId}");
-        var wishId = await wishRepository.InsertWish(request);
-        logger.LogInformation(
-            $"Successfully added a wish : {wishId}, by Child {request.ChildId} to Parent {request.ParentId}");
-        return wishId;
-    }
-
     public Task<Child> GetProfileByChildId(Guid childId)
     {
         throw new NotImplementedException();
     }
+
+    #region Assignments
 
     public async Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId)
     {
@@ -56,6 +49,24 @@ public class ChildService(
         throw new NotImplementedException();
     }
 
+    #endregion
+
+
+    #region Achievements
+
+    public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId)
+    {
+        logger.LogInformation($"Getting all achievements by ChildId: {childId}");
+        var achievements = await achievementRepository.GetAllAchievementsByChildId(childId);
+        logger.LogInformation(
+            $"Successfully getting all achievements by ChildId : {childId}");
+        return achievements;
+    }
+
+    #endregion
+
+    #region Wishes
+
     public async Task<List<Wish>> GetAllWishesByChildId(Guid childId)
     {
         logger.LogInformation($"Getting all wishes by ChildId: {childId}");
@@ -65,18 +76,28 @@ public class ChildService(
         return wishes;
     }
 
+    public async Task<Guid> CreateWish(CreateWishRequest request)
+    {
+        logger.LogInformation($"Adding a new Assignment to Home: {request.HomeId}");
+        var wishId = await wishRepository.InsertWish(request);
+        logger.LogInformation(
+            $"Successfully added a wish : {wishId}, by Child {request.ChildId} to Parent {request.ParentId}");
+        return wishId;
+    }
+
     public Task EditWish(Guid wishId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<List<Achievement>> GetAchievementsByChildId(Guid childId)
-    {
-        throw new NotImplementedException();
-    }
+    #endregion
+
+    #region Penalties
 
     public Task<List<Penalty>> GetPenaltiesByChildId(Guid childId)
     {
         throw new NotImplementedException();
     }
+
+    #endregion
 }

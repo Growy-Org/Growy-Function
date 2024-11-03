@@ -89,9 +89,13 @@ public class ParentService(
 
     #region Achievements
 
-    public Task<List<Assignment>> GetAllAchievementByHomeId(Guid homeId)
+    public async Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Getting all achievements by HomeId: {homeId}");
+        var achievements = await achievementRepository.GetAllAchievementsByHomeId(homeId);
+        logger.LogInformation(
+            $"Successfully getting all achievements by HomeId : {homeId}");
+        return achievements;
     }
 
     public async Task<Guid> CreateAchievement(CreateAchievementRequest request)
@@ -117,9 +121,13 @@ public class ParentService(
 
     #region Penalties
 
-    public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
+    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Getting all penalties by HomeId: {homeId}");
+        var penalties = await penaltyRepository.GetAllPenaltiesByHomeId(homeId);
+        logger.LogInformation(
+            $"Successfully getting all penalties by HomeId : {homeId}");
+        return penalties;
     }
 
     public async Task<Guid> CreatePenalty(CreatePenaltyRequest request)

@@ -19,7 +19,7 @@ public interface IChildService
     public Task EditWish(Guid wishId);
     
     // Achievements
-    public Task<List<Achievement>> GetAchievementsByChildId(Guid childId);
+    public Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId);
     
     // Penalties
     public Task<List<Penalty>> GetPenaltiesByChildId(Guid childId);
