@@ -11,11 +11,14 @@ public class ParentService(
     IChildRepository childRepository,
     IAssignmentRepository assignmentRepository,
     IStepRepository stepRepository,
+    IWishRepository wishRepository,
     IAchievementRepository achievementRepository,
     IPenaltyRepository penaltyRepository,
     ILogger<ParentService> logger)
     : IParentService
 {
+    #region Assignments
+
     public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId)
     {
         logger.LogInformation($"Getting all assignments by HomeId: {homeId}");
@@ -31,8 +34,9 @@ public class ParentService(
             var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
             assignment.SetSteps(steps);
             assignment.SetAssignee(children);
-            assignment.SetAssigner(parents);   
+            assignment.SetAssigner(parents);
         }
+
         logger.LogInformation(
             $"Successfully getting all assignments by HomeId : {homeId}");
         return assignments;
@@ -71,15 +75,27 @@ public class ParentService(
         throw new NotImplementedException();
     }
 
-    public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId)
+    #endregion
+
+    #region Wishes
+
+    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Getting all wishes by HomeId: {homeId}");
+        var wishes = await wishRepository.GetAllWishesByHomeId(homeId);
+        logger.LogInformation(
+            $"Successfully getting all wishes by HomeId : {homeId}");
+        return wishes;
     }
 
     public Task EditWishCost(Guid wishId)
     {
         throw new NotImplementedException();
     }
+
+    #endregion
+
+    #region Achievements
 
     public Task<List<Assignment>> GetAllAchievementByHomeId(Guid homeId)
     {
@@ -105,6 +121,10 @@ public class ParentService(
         throw new NotImplementedException();
     }
 
+    #endregion
+
+    #region Penalties
+
     public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
     {
         throw new NotImplementedException();
@@ -118,4 +138,6 @@ public class ParentService(
             $"Successfully added a Penalty : {penaltyId}, by Parent {request.ParentId} to Child {request.ChildId}");
         return penaltyId;
     }
+
+    #endregion
 }

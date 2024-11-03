@@ -74,4 +74,27 @@ public static class EntityConversionExtension
             IsCompleted = s.CompletedDateUtc != null,
         };
     }
+
+    public static Wish ToWish(this WishEntity w)
+    {
+        return new Wish
+        {
+            Id = w.Id,
+            Name = w.Name,
+            Description = w.Description,
+            IconCode = w.IconCode,
+            PointsCost = w.PointsCost,
+            CreatedDateUtc = w.CreatedDateUtc,
+            UpdatedDateUtc = w.UpdatedDateUtc,
+            FullFilledDateUtc = w.FullFilledDateUtc,
+            Wisher = new Child()
+            {
+                Id = w.WisherId,
+            },
+            Genie = new Parent()
+            {
+                Id = w.GenieId,
+            },
+        };
+    }
 }

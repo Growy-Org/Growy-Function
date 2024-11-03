@@ -12,6 +12,9 @@ public class ParentCapabilityController(
     ILogger<ParentCapabilityController> logger,
     IParentService parentService)
 {
+
+    #region Wishes
+
     [Function("GetAllAssignmentsByHome")]
     public async Task<IActionResult> GetAllAssignmentsByHome(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/assignments")]
@@ -24,6 +27,53 @@ public class ParentCapabilityController(
         }
 
         var res = await parentService.GetAllAssignmentsByHomeId(homeId);
+        return new OkObjectResult(res);
+    } 
+
+    #endregion
+
+    
+    [Function("GetAllPenaltiesByHome")]
+    public async Task<IActionResult> GetAllPenaltiesByHome(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/penalties")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.GetAllPenaltiesByHomeId(homeId);
+        return new OkObjectResult(res);
+    }
+    
+    [Function("GetAllAchievementsByHome")]
+    public async Task<IActionResult> GetAllAchievementsByHome(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/achievements")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.GetAllAchievementByHomeId(homeId);
+        return new OkObjectResult(res);
+    }
+    [Function("GetAllWishesByHome")]
+    public async Task<IActionResult> GetAllWishesByHome(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/wishes")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.GetAllWishesByHomeId(homeId);
         return new OkObjectResult(res);
     }
     

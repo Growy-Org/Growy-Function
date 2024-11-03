@@ -63,9 +63,13 @@ public class ChildService(
         throw new NotImplementedException();
     }
 
-    public Task<List<Wish>> GetAllWishesByChildId(Guid childId)
+    public async Task<List<Wish>> GetAllWishesByChildId(Guid childId)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Getting all wishes by ChildId: {childId}");
+        var wishes = await wishRepository.GetAllWishesByChildId(childId);
+        logger.LogInformation(
+            $"Successfully getting all wishes by ChildId : {childId}");
+        return wishes;
     }
 
     public Task EditWish(Guid wishId)

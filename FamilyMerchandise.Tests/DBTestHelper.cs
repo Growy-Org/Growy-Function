@@ -119,7 +119,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
         await stepRepo.InsertStep(stepRequest2);
         await stepRepo.InsertStep(stepRequest3);
 
-        var wishRequest = new CreateWishRequest()
+        var wishRequest1 = new CreateWishRequest()
         {
             HomeId = homeId,
             ParentId = parentId,
@@ -128,8 +128,18 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             WishDescription = _faker.Lorem.Sentence(50),
             WishIconCode = _faker.Random.Int(0, 100),
         };
+        var wishRequest2 = new CreateWishRequest()
+        {
+            HomeId = homeId,
+            ParentId = parentId2,
+            ChildId = childId2,
+            WishName = _faker.Random.Word(),
+            WishDescription = _faker.Lorem.Sentence(50),
+            WishIconCode = _faker.Random.Int(0, 100),
+        };
 
-        await wishRepo.InsertWish(wishRequest);
+        await wishRepo.InsertWish(wishRequest1);
+        await wishRepo.InsertWish(wishRequest2);
 
         var achievementRequest = new CreateAchievementRequest()
         {
