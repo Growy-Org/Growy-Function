@@ -85,7 +85,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             HomeId = homeId,
             ParentId = parentId2,
             ChildId = childId2,
-            AssignmentName = "Assignment 2",
+            AssignmentName = "Assignment 1",
             AssignmentDescription = _faker.Lorem.Sentence(50),
             AssignmentIconCode = _faker.Random.Int(0, 100),
             DueDate = _faker.Date.Recent(50),

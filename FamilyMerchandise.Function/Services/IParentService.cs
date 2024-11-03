@@ -7,11 +7,9 @@ public interface IParentService
 {
     // Assignments
     public Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId);
-    public Task<Assignment> GetAssignment(Guid assignmentId);
     public Task<Guid> CreateAssignment(CreateAssignmentRequest request);
     public Task EditAssignment(Guid assignmentId, Assignment assignment);
     public Task CompleteAssignment(Guid assignmentId);
-    public Task<List<Step>> GetAllStepsByAssignmentId(Guid assignmentId);
     public Task<Guid> CreateStepToAssignment(CreateStepRequest request);
     public Task EditStep(Guid stepId);
 

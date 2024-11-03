@@ -13,6 +13,20 @@ public class ChildCapabilityController(
     IChildService childService)
 {
     
+    [Function("GetAllAssignmentsByChild")]
+    public async Task<IActionResult> GetAllAssignmentsByChild(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "child/{id}/assignments")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var childId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await childService.GetAllAssignmentsByChildId(childId);
+        return new OkObjectResult(res);
+    }
     [Function("CreateWish")]
     public async Task<IActionResult> CreateWish(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/wish")]

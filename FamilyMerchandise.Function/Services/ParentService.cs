@@ -38,11 +38,6 @@ public class ParentService(
         return assignments;
     }
 
-    public Task<Assignment> GetAssignment(Guid assignmentId)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<Guid> CreateAssignment(CreateAssignmentRequest request)
     {
         logger.LogInformation($"Adding a new Assignment to Home: {request.HomeId}");
@@ -58,11 +53,6 @@ public class ParentService(
     }
 
     public Task CompleteAssignment(Guid assignmentId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<List<Step>> GetAllStepsByAssignmentId(Guid assignmentId)
     {
         throw new NotImplementedException();
     }

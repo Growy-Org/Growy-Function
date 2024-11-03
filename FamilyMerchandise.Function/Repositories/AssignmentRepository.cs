@@ -18,6 +18,15 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         var assignmentEntities = await con.QueryAsync<AssignmentEntity>(query, new { HomeId = homeId });
         return assignmentEntities.Select(e => e.ToAssignment()).ToList();
     }
+    
+    public async Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"SELECT * FROM {AssignmentsTable} WHERE AssigneeId = @AssigneeId";
+        var assignmentEntities = await con.QueryAsync<AssignmentEntity>(query, new { AssigneeId = childId });
+        return assignmentEntities.Select(e => e.ToAssignment()).ToList();
+    }
 
     public async Task<Guid> InsertAssignment(CreateAssignmentRequest request)
     {

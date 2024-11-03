@@ -12,8 +12,8 @@ public class ParentCapabilityController(
     ILogger<ParentCapabilityController> logger,
     IParentService parentService)
 {
-    [Function("GetAllAssignments")]
-    public async Task<IActionResult> GetAllAssignments(
+    [Function("GetAllAssignmentsByHome")]
+    public async Task<IActionResult> GetAllAssignmentsByHome(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/assignments")]
         HttpRequest req, string id)
     {
@@ -26,7 +26,7 @@ public class ParentCapabilityController(
         var res = await parentService.GetAllAssignmentsByHomeId(homeId);
         return new OkObjectResult(res);
     }
-
+    
     [Function("CreateAssignment")]
     public async Task<IActionResult> CreateAssignmentToHome(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/assignment")]
