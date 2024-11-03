@@ -17,11 +17,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             @$"
-                SELECT 
-                    w.Id, w.HomeId, w.Name, w.Description, w.IconCode, w.PointsCost, 
-                    w.CreatedDateUtc, w.UpdatedDateUtc, w.FullFilledDateUtc,
-                    c.Id, c.HomeId, c.Name, c.DOB, c.Gender, c.IconCode, c.PointsEarned,
-                    p.Id, p.HomeId, p.Name, p.DOB, p.Role, p.IconCode
+                SELECT *
                 FROM {WishesTable} w
                 LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
                 LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
@@ -39,11 +35,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             @$"
-                SELECT 
-                    w.Id, w.HomeId, w.Name, w.Description, w.IconCode, w.PointsCost, 
-                    w.CreatedDateUtc, w.UpdatedDateUtc, w.FullFilledDateUtc,
-                    c.Id, c.HomeId, c.Name, c.DOB, c.Gender, c.IconCode, c.PointsEarned,
-                    p.Id, p.HomeId, p.Name, p.DOB, p.Role, p.IconCode
+                SELECT *
                 FROM {WishesTable} w
                 LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
                 LEFT JOIN {ParentTable} p ON w.GenieId = p.Id

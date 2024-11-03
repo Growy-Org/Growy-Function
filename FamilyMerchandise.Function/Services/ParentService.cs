@@ -7,8 +7,6 @@ using Microsoft.Extensions.Logging;
 namespace FamilyMerchandise.Function.Services;
 
 public class ParentService(
-    IParentRepository parentRepository,
-    IChildRepository childRepository,
     IAssignmentRepository assignmentRepository,
     IStepRepository stepRepository,
     IWishRepository wishRepository,
@@ -23,18 +21,12 @@ public class ParentService(
     {
         logger.LogInformation($"Getting all assignments by HomeId: {homeId}");
         var assignments = await assignmentRepository.GetAllAssignmentsByHomeId(homeId);
-        logger.LogInformation($"Getting Parents Info with HomeId: {homeId}");
-        var parents = await parentRepository.GetParentsByHomeId(homeId);
-        logger.LogInformation($"Getting Children Info with HomeId: {homeId}");
-        var children = await childRepository.GetChildrenByHomeId(homeId);
-        
+
         foreach (var assignment in assignments)
         {
             logger.LogInformation($"Getting Children Info with HomeId: {homeId}");
             var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
             assignment.SetSteps(steps);
-            assignment.SetAssignee(children);
-            assignment.SetAssigner(parents);
         }
 
         logger.LogInformation(
