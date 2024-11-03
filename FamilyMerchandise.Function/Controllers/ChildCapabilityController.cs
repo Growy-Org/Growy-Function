@@ -82,5 +82,20 @@ public class ChildCapabilityController(
 
     #region Penalties
 
+    [Function("GetAllPenaltiesByChild")]
+    public async Task<IActionResult> GetAlPenaltiesByChild(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "child/{id}/penalties")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var childId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await childService.GetAllPenaltiesByChildId(childId);
+        return new OkObjectResult(res);
+    }
+
     #endregion
 }

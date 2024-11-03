@@ -9,16 +9,53 @@ namespace FamilyMerchandise.Function.Repositories;
 public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyRepository
 {
     private const string PenaltyTable = "inventory.penalties";
+    private const string ChildrenTable = "inventory.children";
+    private const string ParentTable = "inventory.parents";
 
-    public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
+    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
     {
-        throw new NotImplementedException();
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                SELECT *
+                FROM {PenaltyTable} penalty
+                LEFT JOIN {ChildrenTable} c ON penalty.ViolatorId = c.Id
+                LEFT JOIN {ParentTable} p ON penalty.EnforcerId = p.Id
+                WHERE penalty.HomeId = @HomeId
+             """;
+
+        var penaltyEntities =
+            await con.QueryAsync(query, _mapEntitiesToPenaltyModel,
+                new { HomeId = homeId });
+        return penaltyEntities.ToList();
     }
 
-    public Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId)
+    public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId)
     {
-        throw new NotImplementedException();
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                SELECT *
+                FROM {PenaltyTable} penalty
+                LEFT JOIN {ChildrenTable} c ON penalty.ViolatorId = c.Id
+                LEFT JOIN {ParentTable} p ON penalty.EnforcerId = p.Id
+                WHERE penalty.ViolatorId = @ViolatorId
+             """;
+
+        var penaltyEntities =
+            await con.QueryAsync(query, _mapEntitiesToPenaltyModel,
+                new { ViolatorId = childId });
+        return penaltyEntities.ToList();
     }
+
+    private readonly Func<PenaltyEntity, ChildEntity, ParentEntity, Penalty> _mapEntitiesToPenaltyModel =
+        (pe, c, par) =>
+        {
+            var penalty = pe.ToPenalty();
+            penalty.Violator = c.ToChild();
+            penalty.Enforcer = par.ToParent();
+            return penalty;
+        };
 
     public async Task<Guid> InsertPenalty(CreatePenaltyRequest request)
     {

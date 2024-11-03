@@ -16,13 +16,13 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            @$"
+            $"""
                 SELECT *
                 FROM {WishesTable} w
                 LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
                 LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
                 WHERE w.HomeId = @HomeId
-            ";
+            """;
         
         var wishEntities =
             await con.QueryAsync(query, _mapEntitiesToWishModel,
@@ -34,13 +34,13 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            @$"
-                SELECT *
-                FROM {WishesTable} w
-                LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
-                LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
-                WHERE w.WisherId = @WisherId
-            ";
+            $"""
+                 SELECT *
+                 FROM {WishesTable} w
+                 LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
+                 LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
+                 WHERE w.WisherId = @WisherId
+             """;
         
         var wishEntities =
             await con.QueryAsync(query, _mapEntitiesToWishModel,

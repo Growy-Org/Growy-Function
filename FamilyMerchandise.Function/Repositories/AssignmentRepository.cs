@@ -16,13 +16,13 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            @$"
+            $"""
                 SELECT *
                 FROM {AssignmentsTable} a
                 LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
                 LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
                 WHERE a.HomeId = @HomeId
-            ";
+            """;
         var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { HomeId = homeId });
         return assignmentEntities.ToList();
     }
@@ -31,13 +31,13 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            @$"
+            $"""
                 SELECT *
                 FROM {AssignmentsTable} a
                 LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
                 LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
                 WHERE a.AssigneeId = @AssigneeId
-            ";
+            """;
         var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { AssigneeId = childId });
         return assignmentEntities.ToList();
     }

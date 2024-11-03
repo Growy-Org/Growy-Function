@@ -39,16 +39,6 @@ public class ChildService(
         return assignments;
     }
 
-    public Task<List<Step>> GetAllStepsByAssignmentId(Guid assignmentId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Assignment> GetAssignment(Guid assignmentId)
-    {
-        throw new NotImplementedException();
-    }
-
     #endregion
 
 
@@ -94,9 +84,13 @@ public class ChildService(
 
     #region Penalties
 
-    public Task<List<Penalty>> GetPenaltiesByChildId(Guid childId)
+    public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Getting all penalties by ChildId: {childId}");
+        var penalties = await penaltyRepository.GetAllPenaltiesByChildId(childId);
+        logger.LogInformation(
+            $"Successfully getting all penalties by ChildId : {childId}");
+        return penalties;
     }
 
     #endregion

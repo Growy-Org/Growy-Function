@@ -10,8 +10,6 @@ public interface IChildService
     
     // Assignments
     public Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId);
-    public Task<List<Step>> GetAllStepsByAssignmentId(Guid assignmentId);
-    public Task<Assignment> GetAssignment(Guid assignmentId);
     
     // Wishes
     public Task<List<Wish>> GetAllWishesByChildId(Guid childId);
@@ -22,5 +20,5 @@ public interface IChildService
     public Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId);
     
     // Penalties
-    public Task<List<Penalty>> GetPenaltiesByChildId(Guid childId);
+    public Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId);
 }

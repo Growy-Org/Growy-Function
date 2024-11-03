@@ -16,13 +16,13 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            @$"
-                SELECT *
-                FROM {AchievementsTable} a
-                LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
-                LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
-                WHERE a.HomeId = @HomeId
-            ";
+            $"""
+                 SELECT *
+                 FROM {AchievementsTable} a
+                 LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
+                 LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
+                 WHERE a.HomeId = @HomeId
+             """;
 
         var achievements =
             await con.QueryAsync(query, _mapEntitiesToAchievementModel,
@@ -34,13 +34,13 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            @$"
-                SELECT *
-                FROM {AchievementsTable} a
-                LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
-                LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
-                WHERE a.AchieverId = @AchieverId
-            ";
+            $"""
+                 SELECT *
+                 FROM {AchievementsTable} a
+                 LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
+                 LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
+                 WHERE a.AchieverId = @AchieverId
+             """;
 
         var achievements =
             await con.QueryAsync(query, _mapEntitiesToAchievementModel,
