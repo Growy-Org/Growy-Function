@@ -72,7 +72,8 @@ public static class ModelConversionExtension
     {
         return new HomeEntity()
         {
-            Name = h.Name
+            Name = h.Name,
+            Address = h.Address,
         };
     }
 
@@ -86,7 +87,7 @@ public static class ModelConversionExtension
             IconCode = r.AssignmentIconCode,
             Points = r.Points,
             RepeatAfter = r.RepeatAfter,
-            DueDate = r.DueDate,
+            DueDateUtc = r.DueDateUtc,
             AssigneeId = r.ChildId,
             AssignerId = r.ParentId
         };

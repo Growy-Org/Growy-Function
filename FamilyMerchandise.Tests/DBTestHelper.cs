@@ -26,7 +26,8 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
 
         var home = new Home()
         {
-            Name = _faker.Address.FullAddress(),
+            Address = _faker.Address.FullAddress(),
+            Name = $"{_faker.Random.Word()}'s Home"
         };
         var homeId = await homeRepo.InsertHome(home);
 
@@ -76,7 +77,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             AssignmentName = "Assignment 1",
             AssignmentIconCode = _faker.Random.Int(0, 100),
             AssignmentDescription = _faker.Lorem.Sentence(50),
-            DueDate = _faker.Date.Recent(50),
+            DueDateUtc = _faker.Date.Recent(50),
             Points = _faker.Random.Int(100, 999)
         };
 
@@ -88,7 +89,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             AssignmentName = "Assignment 1",
             AssignmentDescription = _faker.Lorem.Sentence(50),
             AssignmentIconCode = _faker.Random.Int(0, 100),
-            DueDate = _faker.Date.Recent(50),
+            DueDateUtc = _faker.Date.Recent(50),
             Points = _faker.Random.Int(100, 999)
         };
 

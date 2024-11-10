@@ -11,7 +11,7 @@ public record AssignmentEntity
     public int IconCode { get; init; }
     public int Points { get; init; }
     public TimeSpan? RepeatAfter { get; init; }
-    public DateTime? DueDate { get; init; }
+    public DateTime? DueDateUtc { get; init; }
     public DateTime CreatedDateUtc { get; init; }
     public DateTime UpdatedDateUtc { get; init; }
     public DateTime? CompletedDateUtc { get; init; }

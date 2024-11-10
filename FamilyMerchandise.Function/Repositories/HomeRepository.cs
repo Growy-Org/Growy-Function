@@ -23,7 +23,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         var homeEntity = home.ToHomeEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"INSERT INTO {HomesTable} (Name) VALUES (@Name) RETURNING Id";
-        return await con.ExecuteScalarAsync<Guid>(query, home);
+            $"INSERT INTO {HomesTable} (Name, Address) VALUES (@Name, @Address) RETURNING Id";
+        return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
     }
 }

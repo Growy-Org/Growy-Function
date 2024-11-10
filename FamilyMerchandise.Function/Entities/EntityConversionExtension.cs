@@ -4,12 +4,13 @@ namespace FamilyMerchandise.Function.Entities;
 
 public static class EntityConversionExtension
 {
-    public static Home ToHome(this HomeEntity e)
+    public static Home ToHome(this HomeEntity a)
     {
         return new Home
         {
-            Id = e.Id,
-            Name = e.Name,
+            Id = a.Id,
+            Name = a.Name,
+            Address = a.Address,
         };
     }
 
@@ -49,7 +50,7 @@ public static class EntityConversionExtension
             IconCode = a.IconCode,
             Points = a.Points,
             RepeatAfter = a.RepeatAfter,
-            DueDate = a.DueDate,
+            DueDateUtc = a.DueDateUtc,
             CreatedDateUtc = a.CreatedDateUtc,
             UpdatedDateUtc = a.UpdatedDateUtc,
             CompletedDateUtc = a.UpdatedDateUtc,
@@ -105,7 +106,7 @@ public static class EntityConversionExtension
             Name = p.Name,
             Reason = p.Reason,
             IconCode = p.IconCode,
-            PointsDeduced = p.PointsDeducted,
+            PointsDeducted = p.PointsDeducted,
             CreatedDateUtc = p.CreatedDateUtc,
             UpdatedDateUtc = p.UpdatedDateUtc,
         };

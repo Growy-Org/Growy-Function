@@ -56,7 +56,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         var assignmentEntity = request.ToAssignmentEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"INSERT INTO {AssignmentsTable} (Name, HomeId, IconCode, Points, Description, RepeatAfter, DueDate, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @IconCode, @Points, @Description, @RepeatAfter, @DueDate, @AssigneeId, @AssignerId) RETURNING Id";
+            $"INSERT INTO {AssignmentsTable} (Name, HomeId, IconCode, Points, Description, RepeatAfter, DueDateUtc, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @IconCode, @Points, @Description, @RepeatAfter, @DueDateUtc, @AssigneeId, @AssignerId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, assignmentEntity);
     }
 }

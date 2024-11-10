@@ -9,6 +9,6 @@ public record CreateAssignmentRequest
     public string AssignmentName { get; init; } = string.Empty;
     public string AssignmentDescription { get; init; } = string.Empty;
     public TimeSpan? RepeatAfter { get; init; }
-    public DateTime? DueDate { get; init; }
+    public DateTime? DueDateUtc { get; init; }
     public int Points { get; init; }
 }

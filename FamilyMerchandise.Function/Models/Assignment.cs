@@ -9,7 +9,7 @@ public record Assignment
     public List<Step> Steps { get; set; } = [];
     public int Points { get; set; }
     public TimeSpan? RepeatAfter { get; set; }
-    public DateTime? DueDate { get; set; }
+    public DateTime? DueDateUtc { get; set; }
     public Child Assignee { get; set; } = new();
     public Parent Assigner { get; set; } = new();
     public DateTime CreatedDateUtc { get; set; }
