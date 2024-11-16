@@ -11,7 +11,8 @@ public interface IParentService
     public Task EditAssignment(Guid assignmentId, Assignment assignment);
     public Task CompleteAssignment(Guid assignmentId);
     public Task<Guid> CreateStepToAssignment(CreateStepRequest request);
-    public Task EditStep(Guid stepId);
+    public Task<Guid> EditStep(EditStepRequest request);
+    public Task<Guid> EditStepCompleteStatus(Guid stepId, bool isComplete);
 
     // Wishes
     public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId);

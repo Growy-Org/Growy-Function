@@ -46,6 +46,47 @@ public class ParentCapabilityController(
         var res = await parentService.CreateStepToAssignment(stepRequest);
         return new OkObjectResult(res);
     }
+    
+    
+    [Function("EditStep")]
+    public async Task<IActionResult> EditStep(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "step")]
+        HttpRequest req, [FromBody] EditStepRequest request)
+    {
+        var res = await parentService.EditStep(request);
+        return new OkObjectResult(res);
+    }
+    
+    
+    [Function("CompleteStep")]
+    public async Task<IActionResult> CompleteStep(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "step/{id}/complete")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var stepId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.EditStepCompleteStatus(stepId, true);
+        return new OkObjectResult(res);
+    }
+
+    [Function("UnCompleteStep")]
+    public async Task<IActionResult> UnCompleteStep(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "step/{id}/incomplete")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var stepId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.EditStepCompleteStatus(stepId, false);
+        return new OkObjectResult(res);
+    }
 
     #endregion
 

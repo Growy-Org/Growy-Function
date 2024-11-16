@@ -1,8 +1,15 @@
 ## To Implement
-
-Be specific what's responsibility like homework,
+- Remove Wish
+- Remove Assignment, Step
+- Remove Home, Parent,Child
+- Remove Wish, Achievement, Penalty
+- Edit Step, assignment
+- Mark Step as complete
+- Mark Task as complete
 
 ## Future Feature
+- Icon & avatar
+
 
 ### Game Category Profile & Mini Game
 

@@ -102,7 +102,14 @@ public static class ModelConversionExtension
             Description = r.StepDescription,
         };
     }
-
+    public static StepEntity ToStepEntity(this EditStepRequest r)
+    {
+        return new StepEntity()
+        {
+            Id = r.StepId,
+            Description = r.StepDescription,
+        };
+    }
 
     public static WishEntity ToWishEntity(this CreateWishRequest r)
     {

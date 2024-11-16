@@ -59,13 +59,26 @@ public class ParentService(
         logger.LogInformation($"Adding a new Step to Assignment: {request.AssignmentId}");
         var stepId = await stepRepository.InsertStep(request);
         logger.LogInformation(
-            $"Successfully added a Atep : {stepId}, to Assignment {request.AssignmentId}");
+            $"Successfully added a Step : {stepId}, to Assignment {request.AssignmentId}");
         return stepId;
     }
 
-    public Task EditStep(Guid stepId)
+    public async Task<Guid> EditStep(EditStepRequest request)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Editing Step: {request.StepId}");
+        var stepId = await stepRepository.EditStepByStepId(request);
+        logger.LogInformation(
+            $"Successfully edited Step: {stepId}");
+        return stepId;
+    }
+
+    public async Task<Guid> EditStepCompleteStatus(Guid stepId, bool isComplete)
+    {
+        logger.LogInformation($"Setting Step :{stepId} to {(isComplete ? "Completed" : "In-Complete")}");
+        var id = await stepRepository.EditStepCompleteStatusByStepId(stepId, isComplete);
+        logger.LogInformation(
+            $"Successfully setting step {id} completed status");
+        return stepId;
     }
 
     #endregion
@@ -124,7 +137,8 @@ public class ParentService(
     public async Task<Guid> EditAchievementGrants(Guid achievementId, bool isAchievementGranted)
     {
         logger.LogInformation($"{(isAchievementGranted ? "Granting" : "Revoking")} achievement bonus");
-        var response = await achievementRepository.EditAchievementGrantByAchievementId(achievementId, isAchievementGranted);
+        var response =
+            await achievementRepository.EditAchievementGrantByAchievementId(achievementId, isAchievementGranted);
         logger.LogInformation(
             $"Successfully edit achievement grant with id: {response.Id}");
 

@@ -27,4 +27,23 @@ public class StepRepository(IConnectionFactory connectionFactory) : IStepReposit
             $"INSERT INTO {StepsTable} (Description, AssignmentId, StepOrder) VALUES (@Description, @AssignmentId, @StepOrder) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, stepEntity);
     }
+
+    public async Task<Guid> EditStepByStepId(EditStepRequest request)
+    {
+        var stepEntity = request.ToStepEntity();
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"UPDATE {StepsTable} SET Description = @Description WHERE Id = @Id RETURNING Id;";
+        return await con.ExecuteScalarAsync<Guid>(query, stepEntity);
+    }
+
+    public async Task<Guid> EditStepCompleteStatusByStepId(Guid stepId,
+        bool isComplete)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"UPDATE {StepsTable} SET CompletedDateUtc = @CompletedDateUtc WHERE Id = @Id RETURNING Id;";
+        return await con.ExecuteScalarAsync<Guid>(query,
+            new { Id = stepId, CompletedDateUtc = isComplete ? DateTime.UtcNow : (DateTime?)null });
+    }
 }
