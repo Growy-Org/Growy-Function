@@ -76,6 +76,17 @@ public class ChildCapabilityController(
         return new OkObjectResult(res);
     }
 
+    // can only edit points nothing else, UI controls the 
+    [Function("EditWishFromChild")]
+    public async Task<IActionResult> EditWishFromChild(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child/wish")]
+        HttpRequest req, [FromBody] EditWishRequest request)
+    {
+        // this is the same from backend POV for now as the children
+        // TODO: Add validation for the request
+        var res = await childService.EditWish(request);
+        return new OkObjectResult(res);
+    }
     #endregion
 
     #region Penalties

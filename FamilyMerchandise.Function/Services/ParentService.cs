@@ -83,7 +83,7 @@ public class ParentService(
 
     public async Task<Guid> EditWish(EditWishRequest request)
     {
-        logger.LogInformation($"Editing wish {request.WishId}");
+        logger.LogInformation($"Editing wish {request.WishId} for parent");
         var id = await wishRepository.EditWishByWishId(request);
         logger.LogInformation(
             $"Successfully wish edited {request.WishId}");

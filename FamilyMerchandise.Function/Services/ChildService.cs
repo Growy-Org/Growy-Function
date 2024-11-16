@@ -44,6 +44,8 @@ public class ChildService(
 
     #region Achievements
 
+
+
     public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId)
     {
         logger.LogInformation($"Getting all achievements by ChildId: {childId}");
@@ -75,9 +77,13 @@ public class ChildService(
         return wishId;
     }
 
-    public Task EditWish(Guid wishId)
+    public async Task<Guid> EditWish(EditWishRequest request)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Editing wish {request.WishId} for Child");
+        var id = await wishRepository.EditWishByWishId(request);
+        logger.LogInformation(
+            $"Successfully wish edited {request.WishId}");
+        return id;
     }
 
     #endregion

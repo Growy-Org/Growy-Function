@@ -26,6 +26,7 @@ Some management
 - Http version 
 - Request validation
 - Transactional Query in editing multiple table
+- Preventing Negative Points from a child
 
 ## Some analytics
 

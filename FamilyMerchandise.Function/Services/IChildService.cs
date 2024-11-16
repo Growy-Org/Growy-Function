@@ -14,7 +14,7 @@ public interface IChildService
     // Wishes
     public Task<List<Wish>> GetAllWishesByChildId(Guid childId);
     public Task<Guid> CreateWish(CreateWishRequest request);
-    public Task EditWish(Guid wishId);
+    public Task<Guid> EditWish(EditWishRequest request);
     
     // Achievements
     public Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId);

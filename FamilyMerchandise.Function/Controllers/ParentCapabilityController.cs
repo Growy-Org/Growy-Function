@@ -74,6 +74,17 @@ public class ParentCapabilityController(
         var res = await parentService.CreateAchievement(achievementRequest);
         return new OkObjectResult(res);
     }
+    
+    [Function("EditAchievement")]
+    public async Task<IActionResult> EditAchievement(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "achievement")]
+        HttpRequest req, [FromBody] EditPenaltyRequest request)
+    {
+        var res = await parentService.EditPenalty(request);
+        return new OkObjectResult(res);
+    }
+
+
 
     #endregion
 
@@ -94,11 +105,14 @@ public class ParentCapabilityController(
         return new OkObjectResult(res);
     }
 
-    [Function("EditWish")]
-    public async Task<IActionResult> EditWish(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "wish")]
+    // can only edit points nothing else, UI controls the 
+    [Function("EditWishFromParent")]
+    public async Task<IActionResult> EditWishFromParent(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent/wish")]
         HttpRequest req, [FromBody] EditWishRequest request)
     {
+        // this is the same from backend POV for now as the children
+        // TODO: Add validation for the request
         var res = await parentService.EditWish(request);
         return new OkObjectResult(res);
     }
@@ -139,6 +153,8 @@ public class ParentCapabilityController(
         var res = await parentService.EditPenalty(request);
         return new OkObjectResult(res);
     }
+    
+
 
     #endregion
 }
