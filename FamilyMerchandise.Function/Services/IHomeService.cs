@@ -17,4 +17,11 @@ public interface IHomeService
     // Parent
     public Task<Guid> AddParentToHome(Guid parentId, Parent parent);
     public Task<Guid> EditParent(EditParentRequest request);
+    
+    
+    // Others
+    public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId);
+    public Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId);
+    public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId);
+    public Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId);
 }

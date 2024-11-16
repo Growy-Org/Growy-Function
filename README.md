@@ -9,7 +9,7 @@
 - Icon & avatar
 - Repeat Assignment Scheduler
 - Remove home, child, parent are not allowed when there is linked resource
-
+- Home Analytics. (Get All Wishes, Achievement, etc..)
 
 
 ### Game Category Profile & Mini Game

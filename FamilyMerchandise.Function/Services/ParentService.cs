@@ -17,20 +17,20 @@ public class ParentService(
 {
     #region Assignments
 
-    public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId)
+    public async Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId)
     {
-        logger.LogInformation($"Getting all assignments by HomeId: {homeId}");
-        var assignments = await assignmentRepository.GetAllAssignmentsByHomeId(homeId);
+        logger.LogInformation($"Getting all assignments by Parent: {parentId}");
+        var assignments = await assignmentRepository.GetAllAssignmentsByParentId(parentId);
 
         foreach (var assignment in assignments)
         {
-            logger.LogInformation($"Getting Children Info with HomeId: {homeId}");
+            logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
             var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
             assignment.SetSteps(steps);
         }
 
         logger.LogInformation(
-            $"Successfully getting all assignments by HomeId : {homeId}");
+            $"Successfully getting all assignments by Parent : {parentId}");
         return assignments;
     }
 
@@ -97,12 +97,12 @@ public class ParentService(
 
     #region Wishes
 
-    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId)
+    public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId)
     {
-        logger.LogInformation($"Getting all wishes by HomeId: {homeId}");
-        var wishes = await wishRepository.GetAllWishesByHomeId(homeId);
+        logger.LogInformation($"Getting all wishes by Parent: {parentId}");
+        var wishes = await wishRepository.GetAllWishesByParentId(parentId);
         logger.LogInformation(
-            $"Successfully getting all wishes by HomeId : {homeId}");
+            $"Successfully getting all wishes by Parent : {parentId}");
         return wishes;
     }
 
@@ -115,16 +115,17 @@ public class ParentService(
         return id;
     }
 
+
     #endregion
 
     #region Achievements
 
-    public async Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId)
+    public async Task<List<Achievement>> GetAllAchievementByParentId(Guid parentId)
     {
-        logger.LogInformation($"Getting all achievements by HomeId: {homeId}");
-        var achievements = await achievementRepository.GetAllAchievementsByHomeId(homeId);
+        logger.LogInformation($"Getting all achievements by Parent: {parentId}");
+        var achievements = await achievementRepository.GetAllAchievementsByParentId(parentId);
         logger.LogInformation(
-            $"Successfully getting all achievements by HomeId : {homeId}");
+            $"Successfully getting all achievements by Parent : {parentId}");
         return achievements;
     }
 
@@ -166,12 +167,12 @@ public class ParentService(
 
     #region Penalties
 
-    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
+    public async Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId)
     {
-        logger.LogInformation($"Getting all penalties by HomeId: {homeId}");
-        var penalties = await penaltyRepository.GetAllPenaltiesByHomeId(homeId);
+        logger.LogInformation($"Getting all penalties by Parent: {parentId}");
+        var penalties = await penaltyRepository.GetAllPenaltiesByParentId(parentId);
         logger.LogInformation(
-            $"Successfully getting all penalties by HomeId : {homeId}");
+            $"Successfully getting all penalties by Parent : {parentId}");
         return penalties;
     }
 

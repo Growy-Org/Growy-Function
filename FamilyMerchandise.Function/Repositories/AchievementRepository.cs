@@ -29,6 +29,23 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
                 new { HomeId = homeId });
         return achievements.ToList();
     }
+    public async Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                 SELECT *
+                 FROM {AchievementsTable} a
+                 LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
+                 LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
+                 WHERE a.VisionaryId = @VisionaryId
+             """;
+
+        var achievements =
+            await con.QueryAsync(query, _mapEntitiesToAchievementModel,
+                new { VisionaryId = parentId });
+        return achievements.ToList();
+    }
 
     public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId)
     {

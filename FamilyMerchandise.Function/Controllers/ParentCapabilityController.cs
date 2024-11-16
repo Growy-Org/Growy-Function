@@ -14,18 +14,18 @@ public class ParentCapabilityController(
 {
     #region Assignments
 
-    [Function("GetAllAssignmentsByHome")]
-    public async Task<IActionResult> GetAllAssignmentsByHome(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/assignments")]
+    [Function("GetAllAssignmentsByParent")]
+    public async Task<IActionResult> GetAllAssignmentsByParent(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "parent/{id}/assignments")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var homeId))
+        if (!Guid.TryParse(id, out var parentId))
         {
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await parentService.GetAllAssignmentsByHomeId(homeId);
+        var res = await parentService.GetAllAssignmentsByParentId(parentId);
         return new OkObjectResult(res);
     }
 
@@ -132,18 +132,18 @@ public class ParentCapabilityController(
 
     #region Achivements
 
-    [Function("GetAllAchievementsByHome")]
-    public async Task<IActionResult> GetAllAchievementsByHome(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/achievements")]
+    [Function("GetAllAchievementsByParent")]
+    public async Task<IActionResult> GetAllAchievementsByParent(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "parent/{id}/achievements")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var homeId))
+        if (!Guid.TryParse(id, out var parentId))
         {
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await parentService.GetAllAchievementByHomeId(homeId);
+        var res = await parentService.GetAllAchievementByParentId(parentId);
         return new OkObjectResult(res);
     }
 
@@ -200,18 +200,18 @@ public class ParentCapabilityController(
 
     #region Wishes
 
-    [Function("GetAllWishesByHome")]
-    public async Task<IActionResult> GetAllWishesByHome(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/wishes")]
+    [Function("GetAllWishesByParent")]
+    public async Task<IActionResult> GetAllWishesByParent(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "parent/{id}/wishes")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var homeId))
+        if (!Guid.TryParse(id, out var parentId))
         {
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await parentService.GetAllWishesByHomeId(homeId);
+        var res = await parentService.GetAllWishesByParentId(parentId);
         return new OkObjectResult(res);
     }
 
@@ -231,9 +231,9 @@ public class ParentCapabilityController(
 
     #region Penalties
 
-    [Function("GetAllPenaltiesByHome")]
-    public async Task<IActionResult> GetAllPenaltiesByHome(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/penalties")]
+    [Function("GetAllPenaltiesByParent")]
+    public async Task<IActionResult> GetAllPenaltiesByParent(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "parent/{id}/penalties")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var homeId))
@@ -242,7 +242,7 @@ public class ParentCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await parentService.GetAllPenaltiesByHomeId(homeId);
+        var res = await parentService.GetAllPenaltiesByParentId(homeId);
         return new OkObjectResult(res);
     }
 

@@ -17,16 +17,34 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"""
-                SELECT *
-                FROM {WishesTable} w
-                LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
-                LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
-                WHERE w.HomeId = @HomeId
-            """;
-        
+                 SELECT *
+                 FROM {WishesTable} w
+                 LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
+                 LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
+                 WHERE w.HomeId = @HomeId
+             """;
+
         var wishEntities =
             await con.QueryAsync(query, _mapEntitiesToWishModel,
                 new { HomeId = homeId });
+        return wishEntities.ToList();
+    }
+
+    public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                 SELECT *
+                 FROM {WishesTable} w
+                 LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
+                 LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
+                 WHERE w.GenieId = @GenieId
+             """;
+
+        var wishEntities =
+            await con.QueryAsync(query, _mapEntitiesToWishModel,
+                new { GenieId = parentId });
         return wishEntities.ToList();
     }
 
@@ -41,13 +59,13 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
                  LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
                  WHERE w.WisherId = @WisherId
              """;
-        
+
         var wishEntities =
             await con.QueryAsync(query, _mapEntitiesToWishModel,
                 new { WisherId = childId });
         return wishEntities.ToList();
     }
-    
+
     private readonly Func<WishEntity, ChildEntity, ParentEntity, Wish> _mapEntitiesToWishModel = (w, c, p) =>
     {
         var wish = w.ToWish();
@@ -82,6 +100,6 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
                 WHERE Id = @Id
                 RETURNING Id;
              """;
-        return await con.ExecuteScalarAsync<Guid>(query,wishEntity);
+        return await con.ExecuteScalarAsync<Guid>(query, wishEntity);
     }
 }

@@ -9,6 +9,11 @@ public class HomeService(
     IHomeRepository homeRepository,
     IChildRepository childRepository,
     IParentRepository parentRepository,
+    IAssignmentRepository assignmentRepository,
+    IAchievementRepository achievementRepository,
+    IWishRepository wishRepository,
+    IPenaltyRepository penaltyRepository,
+    IStepRepository stepRepository,
     ILogger<HomeService> logger)
     : IHomeService
 {
@@ -72,5 +77,47 @@ public class HomeService(
         var childId = await childRepository.EditChildByChildId(request);
         logger.LogInformation($"Successfully edit child : {childId}");
         return childId;
+    }
+    
+    public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId)
+    {
+        logger.LogInformation($"Getting all assignments by Home: {homeId}");
+        var assignments = await assignmentRepository.GetAllAssignmentsByHomeId(homeId);
+
+        foreach (var assignment in assignments)
+        {
+            logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
+            var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
+            assignment.SetSteps(steps);
+        }
+
+        logger.LogInformation(
+            $"Successfully getting all assignments by Home : {homeId}");
+        return assignments;
+    }
+    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId)
+    {
+        logger.LogInformation($"Getting all wishes by Home: {homeId}");
+        var wishes = await wishRepository.GetAllWishesByHomeId(homeId);
+        logger.LogInformation(
+            $"Successfully getting all wishes by Home : {homeId}");
+        return wishes;
+    }
+    
+    public async Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId)
+    {
+        logger.LogInformation($"Getting all achievements by HomeId: {homeId}");
+        var achievements = await achievementRepository.GetAllAchievementsByHomeId(homeId);
+        logger.LogInformation(
+            $"Successfully getting all achievements by HomeId : {homeId}");
+        return achievements;
+    }
+    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
+    {
+        logger.LogInformation($"Getting all penalties by HomeId: {homeId}");
+        var penalties = await penaltyRepository.GetAllPenaltiesByHomeId(homeId);
+        logger.LogInformation(
+            $"Successfully getting all penalties by HomeId : {homeId}");
+        return penalties;
     }
 }

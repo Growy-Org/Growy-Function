@@ -30,6 +30,24 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         return penaltyEntities.ToList();
     }
 
+    public async Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                SELECT *
+                FROM {PenaltyTable} penalty
+                LEFT JOIN {ChildrenTable} c ON penalty.ViolatorId = c.Id
+                LEFT JOIN {ParentTable} p ON penalty.EnforcerId = p.Id
+                WHERE penalty.EnforcerId = @EnforcerId
+             """;
+
+        var penaltyEntities =
+            await con.QueryAsync(query, _mapEntitiesToPenaltyModel,
+                new { Enforcerid = parentId });
+        return penaltyEntities.ToList();
+    }
+
     public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();

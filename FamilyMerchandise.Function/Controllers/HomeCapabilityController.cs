@@ -98,4 +98,66 @@ public class HomeCapabilityController(
         var res = await homeService.EditParent(parent);
         return new OkObjectResult(res);
     }
+    
+    [Function("GetAllAssignmentsByHome")]
+    public async Task<IActionResult> GetAllAssignmentsByHome(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/assignments")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await homeService.GetAllAssignmentsByHomeId(homeId);
+        return new OkObjectResult(res);
+    }
+    
+    [Function("GetAllAchievementsByHome")]
+    public async Task<IActionResult> GetAllAchievementsByHome(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/achievements")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await homeService.GetAllAchievementByHomeId(homeId);
+        return new OkObjectResult(res);
+    }
+
+    
+    [Function("GetAllWishesByHome")]
+    public async Task<IActionResult> GetAllWishesByHome(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/wishes")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await homeService.GetAllWishesByHomeId(homeId);
+        return new OkObjectResult(res);
+    }
+    
+    [Function("GetAllPenaltiesByHome")]
+    public async Task<IActionResult> GetAllPenaltiesByHome(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/penalties")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await homeService.GetAllPenaltiesByHomeId(homeId);
+        return new OkObjectResult(res);
+    }
+
 }
