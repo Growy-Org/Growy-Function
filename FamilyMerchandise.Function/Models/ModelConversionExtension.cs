@@ -93,6 +93,22 @@ public static class ModelConversionExtension
         };
     }
 
+    public static AssignmentEntity ToAssignmentEntity(this EditAssignmentRequest r)
+    {
+        return new AssignmentEntity
+        {
+            Id = r.AssignmentId,
+            Name = r.AssignmentName,
+            Description = r.AssignmentDescription,
+            IconCode = r.AssignmentIconCode,
+            Points = r.Points,
+            RepeatAfter = r.RepeatAfter,
+            DueDateUtc = r.DueDateUtc,
+            AssigneeId = r.ChildId,
+            AssignerId = r.ParentId
+        };
+    }
+
     public static StepEntity ToStepEntity(this CreateStepRequest r)
     {
         return new StepEntity()
@@ -102,6 +118,7 @@ public static class ModelConversionExtension
             Description = r.StepDescription,
         };
     }
+
     public static StepEntity ToStepEntity(this EditStepRequest r)
     {
         return new StepEntity()
@@ -151,7 +168,7 @@ public static class ModelConversionExtension
             PointsGranted = r.AchievementPointsGranted
         };
     }
-    
+
     public static AchievementEntity ToAchievementEntity(this EditAchievementRequest r)
     {
         return new AchievementEntity()
@@ -179,6 +196,7 @@ public static class ModelConversionExtension
             PointsDeducted = r.PenaltyPointsDeducted
         };
     }
+
     public static PenaltyEntity ToPenaltyEntity(this EditPenaltyRequest r)
     {
         return new PenaltyEntity()

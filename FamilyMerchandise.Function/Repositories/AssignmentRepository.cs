@@ -17,12 +17,12 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"""
-                SELECT *
-                FROM {AssignmentsTable} a
-                LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
-                LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
-                WHERE a.HomeId = @HomeId
-            """;
+                 SELECT *
+                 FROM {AssignmentsTable} a
+                 LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
+                 LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
+                 WHERE a.HomeId = @HomeId
+             """;
         var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { HomeId = homeId });
         return assignmentEntities.ToList();
     }
@@ -32,13 +32,14 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"""
-                SELECT *
-                FROM {AssignmentsTable} a
-                LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
-                LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
-                WHERE a.AssigneeId = @AssigneeId
-            """;
-        var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { AssigneeId = childId });
+                 SELECT *
+                 FROM {AssignmentsTable} a
+                 LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
+                 LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
+                 WHERE a.AssigneeId = @AssigneeId
+             """;
+        var assignmentEntities =
+            await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { AssigneeId = childId });
         return assignmentEntities.ToList();
     }
 
@@ -58,5 +59,33 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         var query =
             $"INSERT INTO {AssignmentsTable} (Name, HomeId, IconCode, Points, Description, RepeatAfter, DueDateUtc, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @IconCode, @Points, @Description, @RepeatAfter, @DueDateUtc, @AssigneeId, @AssignerId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, assignmentEntity);
+    }
+
+    public async Task<Guid> EditAssignmentByAssignmentId(EditAssignmentRequest request)
+    {
+        var assignmentEntity = request.ToAssignmentEntity();
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                 UPDATE {AssignmentsTable} SET Name = @Name,
+                     Description = @Description,
+                     IconCode = @IconCode,
+                     Points = @Points,
+                     RepeatAfter = @RepeatAfter,
+                     DueDateUtc = @DueDateUtc,
+                     AssigneeId = @AssigneeId,
+                     AssignerId = @AssignerId
+                 WHERE Id = @Id RETURNING Id;
+             """;
+        return await con.ExecuteScalarAsync<Guid>(query, assignmentEntity);
+    }
+
+    public async Task<EditAssignmentEntityResponse> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"UPDATE {AssignmentsTable} SET CompletedDateUtc = @CompletedDateUtc WHERE Id = @Id RETURNING Id, AssigneeId AS ChildId, Points;";
+        return await con.QuerySingleAsync<EditAssignmentEntityResponse>(query,
+            new { Id = assignmentId, CompletedDateUtc = isCompleted ? DateTime.UtcNow : (DateTime?)null });
     }
 }

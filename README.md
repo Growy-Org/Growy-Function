@@ -3,12 +3,12 @@
 - Remove Assignment, Step
 - Remove Home, Parent,Child
 - Remove Wish, Achievement, Penalty
-- Edit Step, assignment
-- Mark Step as complete
-- Mark Task as complete
+- Edit Parent, Child Profile
 
 ## Future Feature
 - Icon & avatar
+- Repeat Assignment Scheduler
+- Remove home is not allowed
 
 
 ### Game Category Profile & Mini Game

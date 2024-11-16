@@ -8,11 +8,11 @@ public interface IParentService
     // Assignments
     public Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId);
     public Task<Guid> CreateAssignment(CreateAssignmentRequest request);
-    public Task EditAssignment(Guid assignmentId, Assignment assignment);
-    public Task CompleteAssignment(Guid assignmentId);
+    public Task<Guid> EditAssignment(EditAssignmentRequest request);
+    public Task<Guid> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted);
     public Task<Guid> CreateStepToAssignment(CreateStepRequest request);
     public Task<Guid> EditStep(EditStepRequest request);
-    public Task<Guid> EditStepCompleteStatus(Guid stepId, bool isComplete);
+    public Task<Guid> EditStepCompleteStatus(Guid stepId, bool isCompleted);
 
     // Wishes
     public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId);

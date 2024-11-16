@@ -37,6 +37,46 @@ public class ParentCapabilityController(
         var res = await parentService.CreateAssignment(assignmentRequest);
         return new OkObjectResult(res);
     }
+    
+        
+    [Function("EditAssignment")]
+    public async Task<IActionResult> EditAssignment(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "assignment")]
+        HttpRequest req, [FromBody] EditAssignmentRequest request)
+    {
+        var res = await parentService.EditAssignment(request);
+        return new OkObjectResult(res);
+    }
+    
+    [Function("CompleteAssignment")]
+    public async Task<IActionResult> CompleteAssignment(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "assignment/{id}/complete")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var assignmentId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.EditAssignmentCompleteStatus(assignmentId, true);
+        return new OkObjectResult(res);
+    }
+
+    [Function("UnCompleteAssignment")]
+    public async Task<IActionResult> UnCompleteAssignment(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "assignment/{id}/incomplete")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var assignmentId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.EditAssignmentCompleteStatus(assignmentId, false);
+        return new OkObjectResult(res);
+    }
 
     [Function("CreateStep")]
     public async Task<IActionResult> CreateStep(

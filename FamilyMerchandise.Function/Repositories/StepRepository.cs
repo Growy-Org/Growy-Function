@@ -38,12 +38,12 @@ public class StepRepository(IConnectionFactory connectionFactory) : IStepReposit
     }
 
     public async Task<Guid> EditStepCompleteStatusByStepId(Guid stepId,
-        bool isComplete)
+        bool isCompleted)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"UPDATE {StepsTable} SET CompletedDateUtc = @CompletedDateUtc WHERE Id = @Id RETURNING Id;";
         return await con.ExecuteScalarAsync<Guid>(query,
-            new { Id = stepId, CompletedDateUtc = isComplete ? DateTime.UtcNow : (DateTime?)null });
+            new { Id = stepId, CompletedDateUtc = isCompleted ? DateTime.UtcNow : (DateTime?)null });
     }
 }

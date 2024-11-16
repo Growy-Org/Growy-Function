@@ -1,6 +1,5 @@
 using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Models;
-using FamilyMerchandise.Function.Repositories;
 using FamilyMerchandise.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -44,14 +43,27 @@ public class ParentService(
         return assignmentId;
     }
 
-    public Task EditAssignment(Guid assignmentId, Assignment assignment)
+    public async Task<Guid> EditAssignment(EditAssignmentRequest request)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Editing a new Assignment to Home: {request.AssignmentId}");
+        var assignmentId = await assignmentRepository.EditAssignmentByAssignmentId(request);
+        logger.LogInformation(
+            $"Successfully edited an Assignment : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");
+        return assignmentId;
     }
 
-    public Task CompleteAssignment(Guid assignmentId)
+    public async Task<Guid> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Setting Assignment :{assignmentId} to {(isCompleted ? "Completed" : "In-Complete")}");
+        var response = await assignmentRepository.EditAssignmentCompleteStatus(assignmentId, isCompleted);
+        logger.LogInformation(
+            $"Successfully Setting Assignment : {response.Id} completed status");
+        var childId = await childRepository.EditPointsByChildId(response.ChildId,
+            isCompleted ? response.Points : -response.Points);
+
+        logger.LogInformation(
+            $"Successfully {(isCompleted ? "adding" : "removing")} {response.Points} Points {(isCompleted ? "to" : "from")} child profile with id: {childId}");
+        return assignmentId;
     }
 
     public async Task<Guid> CreateStepToAssignment(CreateStepRequest request)
@@ -72,10 +84,10 @@ public class ParentService(
         return stepId;
     }
 
-    public async Task<Guid> EditStepCompleteStatus(Guid stepId, bool isComplete)
+    public async Task<Guid> EditStepCompleteStatus(Guid stepId, bool isCompleted)
     {
-        logger.LogInformation($"Setting Step :{stepId} to {(isComplete ? "Completed" : "In-Complete")}");
-        var id = await stepRepository.EditStepCompleteStatusByStepId(stepId, isComplete);
+        logger.LogInformation($"Setting Step :{stepId} to {(isCompleted ? "Completed" : "In-Complete")}");
+        var id = await stepRepository.EditStepCompleteStatusByStepId(stepId, isCompleted);
         logger.LogInformation(
             $"Successfully setting step {id} completed status");
         return stepId;
@@ -146,7 +158,7 @@ public class ParentService(
             isAchievementGranted ? response.Points : -response.Points);
 
         logger.LogInformation(
-            $"Successfully {(isAchievementGranted ? "adding" : "removing")} {response.Points} {(isAchievementGranted ? "to" : "from")} child profile with id: {childId}");
+            $"Successfully {(isAchievementGranted ? "adding" : "removing")} {response.Points} Points {(isAchievementGranted ? "to" : "from")} child profile with id: {childId}");
         return response.Id;
     }
 
