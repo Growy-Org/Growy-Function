@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace FamilyMerchandise.Function.Services;
 
 public class ChildService(
+    IChildRepository childRepository,
     IAssignmentRepository assignmentRepository,
     IStepRepository stepRepository,
     IAchievementRepository achievementRepository,
@@ -84,6 +85,30 @@ public class ChildService(
         logger.LogInformation(
             $"Successfully wish edited {request.WishId}");
         return id;
+    }
+    
+    public async Task<Guid> SetWishFullFilled(Guid wishId, bool isFullFilled)
+    {
+        logger.LogInformation($"{(isFullFilled ? "Full Filling" : "Un Full Filling")} wish");
+        var response =
+            await wishRepository.EditWishFullFillStatusByWishId(wishId, isFullFilled);
+        logger.LogInformation(
+            $"Successfully edit full fill status with id: {response.Id}");
+
+        var childId = await childRepository.EditPointsByChildId(response.ChildId,
+            isFullFilled ? -response.Points : response.Points);
+
+        logger.LogInformation(
+            $"Successfully {(isFullFilled ? "reducing" : "adding")} {response.Points} Points {(isFullFilled ? "from" : "back")} child profile with id: {childId}");
+        return response.Id;
+    }
+
+    public async Task DeleteWish(Guid wishId)
+    {
+        logger.LogInformation($"Deleting wish {wishId}");
+        await wishRepository.DeleteWishByWishId(wishId);
+        logger.LogInformation(
+            $"Successfully deleted wish {wishId}");
     }
 
     #endregion

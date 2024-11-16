@@ -10,4 +10,6 @@ public interface IWishRepository
     public Task<List<Wish>> GetAllWishesByChildId(Guid childId);
     public Task<Guid> InsertWish(CreateWishRequest request);
     public Task<Guid> EditWishByWishId(EditWishRequest request);
+    public Task<EditWishEntityResponse> EditWishFullFillStatusByWishId(Guid wishId, bool isFullFilled);
+    public Task DeleteWishByWishId(Guid wishId);
 }

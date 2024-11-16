@@ -105,4 +105,11 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
              """;
         return await con.QuerySingleAsync<EditPenaltyEntityResponse>(query, penaltyEntity);
     }
+    
+    public async Task<DeletePenaltyEntityResponse> DeletePenaltyByPenaltyId(Guid penaltyId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query = $"DELETE FROM {PenaltyTable} where id = @Id RETURNING ViolatorId AS ChildId;";
+        return await con.QuerySingleAsync<DeletePenaltyEntityResponse>(query, new { Id = penaltyId });
+    }
 }

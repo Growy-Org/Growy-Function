@@ -87,6 +87,52 @@ public class ChildCapabilityController(
         var res = await childService.EditWish(request);
         return new OkObjectResult(res);
     }
+    
+    [Function("FullFillWish")]
+    public async Task<IActionResult> FullFillWish(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "wish/{id}/fullfill")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var wishId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await childService.SetWishFullFilled(wishId, true);
+        return new OkObjectResult(res);
+    }
+
+        
+    [Function("UnFullFillWish")]
+    public async Task<IActionResult> UnFullFillWish(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "wish/{id}/unfullfill")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var wishId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await childService.SetWishFullFilled(wishId, false);
+        return new OkObjectResult(res);
+    }
+    
+    [Function("DeleteWish")]
+    public async Task<IActionResult> DeleteWish(
+        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "wish/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var wishId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        await childService.DeleteWish(wishId);
+        return new OkResult();
+    }
     #endregion
 
     #region Penalties

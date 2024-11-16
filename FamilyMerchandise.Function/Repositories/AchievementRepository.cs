@@ -29,6 +29,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
                 new { HomeId = homeId });
         return achievements.ToList();
     }
+
     public async Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
@@ -84,7 +85,6 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
         return await con.ExecuteScalarAsync<Guid>(query, achievementEntity);
     }
 
-
     public async Task<Guid> EditAchievementByAchievementId(EditAchievementRequest request)
     {
         var achievementEntity = request.ToAchievementEntity();
@@ -112,5 +112,12 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
             $"UPDATE {AchievementsTable} SET AchievedDateUtc = @AchievedDateUtc WHERE Id = @Id RETURNING Id, AchieverId AS ChildId, PointsGranted AS Points;";
         return await con.QuerySingleAsync<EditAchievementEntityResponse>(query,
             new { Id = achievementId, AchievedDateUtc = isAchievementGranted ? DateTime.UtcNow : (DateTime?)null });
+    }
+
+    public async Task DeleteAchievementByAchievementId(Guid achievementId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query = $"DELETE FROM {AchievementsTable} where id = @Id;";
+        await con.ExecuteScalarAsync<Guid>(query, new { Id = achievementId });
     }
 }

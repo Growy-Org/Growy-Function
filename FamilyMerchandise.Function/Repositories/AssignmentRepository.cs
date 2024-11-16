@@ -103,4 +103,10 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         return await con.QuerySingleAsync<EditAssignmentEntityResponse>(query,
             new { Id = assignmentId, CompletedDateUtc = isCompleted ? DateTime.UtcNow : (DateTime?)null });
     }
+    public async Task DeleteAssignmentByAssignmentId(Guid assignmentId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query = $"DELETE FROM {AssignmentsTable} where id = @Id;";
+        await con.ExecuteScalarAsync<Guid>(query, new { Id = assignmentId });
+    }
 }

@@ -37,8 +37,7 @@ public class ParentCapabilityController(
         var res = await parentService.CreateAssignment(assignmentRequest);
         return new OkObjectResult(res);
     }
-    
-        
+
     [Function("EditAssignment")]
     public async Task<IActionResult> EditAssignment(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "assignment")]
@@ -47,7 +46,7 @@ public class ParentCapabilityController(
         var res = await parentService.EditAssignment(request);
         return new OkObjectResult(res);
     }
-    
+
     [Function("CompleteAssignment")]
     public async Task<IActionResult> CompleteAssignment(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "assignment/{id}/complete")]
@@ -78,6 +77,22 @@ public class ParentCapabilityController(
         return new OkObjectResult(res);
     }
 
+    [Function("DeleteAssignment")]
+    public async Task<IActionResult> DeleteAssignment(
+        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "assignment/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var assignmentId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        await parentService.DeleteAssignment(assignmentId);
+        return new OkResult();
+    }
+
+
     [Function("CreateStep")]
     public async Task<IActionResult> CreateStep(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/step")]
@@ -86,8 +101,8 @@ public class ParentCapabilityController(
         var res = await parentService.CreateStepToAssignment(stepRequest);
         return new OkObjectResult(res);
     }
-    
-    
+
+
     [Function("EditStep")]
     public async Task<IActionResult> EditStep(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "step")]
@@ -96,8 +111,8 @@ public class ParentCapabilityController(
         var res = await parentService.EditStep(request);
         return new OkObjectResult(res);
     }
-    
-    
+
+
     [Function("CompleteStep")]
     public async Task<IActionResult> CompleteStep(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "step/{id}/complete")]
@@ -126,6 +141,21 @@ public class ParentCapabilityController(
 
         var res = await parentService.EditStepCompleteStatus(stepId, false);
         return new OkObjectResult(res);
+    }
+
+    [Function("DeleteStep")]
+    public async Task<IActionResult> DeleteStep(
+        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "step/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var stepId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        await parentService.DeleteStep(stepId);
+        return new OkResult();
     }
 
     #endregion
@@ -196,6 +226,21 @@ public class ParentCapabilityController(
         return new OkObjectResult(res);
     }
 
+    [Function("DeleteAchievement")]
+    public async Task<IActionResult> DeleteAchievement(
+        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "achievement/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var achievementId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        await parentService.DeleteAchievement(achievementId);
+        return new OkResult();
+    }
+
     #endregion
 
     #region Wishes
@@ -264,5 +309,19 @@ public class ParentCapabilityController(
         return new OkObjectResult(res);
     }
 
+    [Function("DeletePenalty")]
+    public async Task<IActionResult> DeletePenalty(
+        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "penalty/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var achievementId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        await parentService.DeletePenalty(achievementId);
+        return new OkResult();
+    }
     #endregion
 }

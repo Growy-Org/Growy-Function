@@ -11,4 +11,5 @@ public interface IAssignmentRepository
     public Task<Guid> InsertAssignment(CreateAssignmentRequest request);
     public Task<Guid> EditAssignmentByAssignmentId(EditAssignmentRequest request);
     public Task<EditAssignmentEntityResponse> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted);
+    public Task DeleteAssignmentByAssignmentId(Guid assignmentId);
 }

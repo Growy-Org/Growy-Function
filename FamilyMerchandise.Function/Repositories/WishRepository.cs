@@ -102,4 +102,20 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
              """;
         return await con.ExecuteScalarAsync<Guid>(query, wishEntity);
     }
+
+    public async Task<EditWishEntityResponse> EditWishFullFillStatusByWishId(Guid wishId,
+        bool isFullFilled)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"UPDATE {WishesTable} SET FullFilledDateUtc = @FullFilledDateUtc WHERE Id = @Id RETURNING Id, WisherId AS ChildId, PointsCost AS Points;";
+        return await con.QuerySingleAsync<EditWishEntityResponse>(query,
+            new { Id = wishId, FullFilledDateUtc = isFullFilled ? DateTime.UtcNow : (DateTime?)null });
+    }
+    public async Task DeleteWishByWishId(Guid wishId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query = $"DELETE FROM {WishesTable} where id = @Id;";
+        await con.ExecuteScalarAsync<Guid>(query, new { Id = wishId });
+    }
 }

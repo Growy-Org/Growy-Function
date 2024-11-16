@@ -66,6 +66,14 @@ public class ParentService(
         return assignmentId;
     }
 
+    public async Task DeleteAssignment(Guid assignmentId)
+    {
+        logger.LogInformation($"Deleting assignment {assignmentId}");
+        await assignmentRepository.DeleteAssignmentByAssignmentId(assignmentId);
+        logger.LogInformation(
+            $"Successfully deleted assignment {assignmentId}");
+    }
+
     public async Task<Guid> CreateStepToAssignment(CreateStepRequest request)
     {
         logger.LogInformation($"Adding a new Step to Assignment: {request.AssignmentId}");
@@ -93,6 +101,14 @@ public class ParentService(
         return stepId;
     }
 
+    public async Task DeleteStep(Guid stepId)
+    {
+        logger.LogInformation($"Deleting step {stepId}");
+        await stepRepository.DeleteStepByStepId(stepId);
+        logger.LogInformation(
+            $"Successfully deleted step {stepId}");
+    }
+
     #endregion
 
     #region Wishes
@@ -114,7 +130,6 @@ public class ParentService(
             $"Successfully wish edited {request.WishId}");
         return id;
     }
-
 
     #endregion
 
@@ -161,6 +176,14 @@ public class ParentService(
         logger.LogInformation(
             $"Successfully {(isAchievementGranted ? "adding" : "removing")} {response.Points} Points {(isAchievementGranted ? "to" : "from")} child profile with id: {childId}");
         return response.Id;
+    }
+
+    public async Task DeleteAchievement(Guid achievementId)
+    {
+        logger.LogInformation($"Deleting achievement {achievementId}");
+        await achievementRepository.DeleteAchievementByAchievementId(achievementId);
+        logger.LogInformation(
+            $"Successfully deleted achievement {achievementId}");
     }
 
     #endregion
@@ -219,6 +242,18 @@ public class ParentService(
         }
 
         return response.Id;
+    }
+
+    public async Task DeletePenalty(Guid penaltyId)
+    {
+        logger.LogInformation($"Deleting penalty {penaltyId}");
+        var response = await penaltyRepository.DeletePenaltyByPenaltyId(penaltyId);
+        logger.LogInformation(
+            $"Successfully deleted penalty {response.Id}");
+
+        var childId = await childRepository.EditPointsByChildId(response.ChildId, response.Points);
+        logger.LogInformation(
+            $"Successfully add points back to child: {childId}");
     }
 
     #endregion

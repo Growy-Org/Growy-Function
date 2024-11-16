@@ -46,4 +46,11 @@ public class StepRepository(IConnectionFactory connectionFactory) : IStepReposit
         return await con.ExecuteScalarAsync<Guid>(query,
             new { Id = stepId, CompletedDateUtc = isCompleted ? DateTime.UtcNow : (DateTime?)null });
     }
+    
+    public async Task DeleteStepByStepId(Guid stepId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query = $"DELETE FROM {StepsTable} where id = @Id;";
+        await con.ExecuteScalarAsync<Guid>(query, new { Id = stepId });
+    }
 }

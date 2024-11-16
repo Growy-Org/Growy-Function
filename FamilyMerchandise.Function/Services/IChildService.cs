@@ -5,9 +5,6 @@ namespace FamilyMerchandise.Function.Services;
 
 public interface IChildService
 {
-    // Profile
-    public Task<Child> GetProfileByChildId(Guid childId);
-    
     // Assignments
     public Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId);
     
@@ -15,6 +12,8 @@ public interface IChildService
     public Task<List<Wish>> GetAllWishesByChildId(Guid childId);
     public Task<Guid> CreateWish(CreateWishRequest request);
     public Task<Guid> EditWish(EditWishRequest request);
+    public Task<Guid> SetWishFullFilled(Guid wishId, bool isFullFilled);
+    public Task DeleteWish(Guid wishId);
     
     // Achievements
     public Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId);
