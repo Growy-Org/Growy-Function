@@ -1,6 +1,7 @@
 using Dapper;
 using FamilyMerchandise.Function.Entities;
 using FamilyMerchandise.Function.Models;
+using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Repositories.Interfaces;
 
 namespace FamilyMerchandise.Function.Repositories;
@@ -24,6 +25,21 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"INSERT INTO {ParentsTable} (Name, HomeId, IconCode, DOB, Role) VALUES (@Name, @HomeId, @IconCode, @DOB, @Role) RETURNING Id";
+        return await con.ExecuteScalarAsync<Guid>(query, parentEntity);
+    }
+
+    public async Task<Guid> EditParentByParentId(EditParentRequest request)
+    {
+        var parentEntity = request.ToParentEntity();
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                 UPDATE {ParentsTable} SET Name = @Name, 
+                     DOB = @DOB,
+                     Role = @Role,
+                     IconCode = @IconCode
+                 WHERE Id = @Id RETURNING Id;
+             """;
         return await con.ExecuteScalarAsync<Guid>(query, parentEntity);
     }
 }

@@ -1,4 +1,5 @@
 using FamilyMerchandise.Function.Models;
+using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -24,7 +25,7 @@ public class HomeService(
         logger.LogInformation($"Successfully getting information for Home: {homeId}");
         return home;
     }
-    
+
     public async Task<Guid> CreateHome(Home home)
     {
         logger.LogInformation($"Adding a new Home: {home.Name}");
@@ -49,55 +50,27 @@ public class HomeService(
         return parentId;
     }
 
-    public void EditHome(Guid homeId)
+    public async Task<Guid> EditHome(EditHomeRequest request)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Editing Home: {request.HomeId}");
+        var homeId = await homeRepository.EditHomeByHomeId(request);
+        logger.LogInformation($"Successfully edit home : {homeId}");
+        return homeId;
     }
 
-    public void RemoveHome(Guid homeId)
+    public async Task<Guid> EditParent(EditParentRequest request)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Editing Parent: {request.ParentId}");
+        var parentId = await parentRepository.EditParentByParentId(request);
+        logger.LogInformation($"Successfully edit parent : {parentId}");
+        return parentId;
     }
 
-
-    public Child UpdateChildInfo(Guid childId, Child child)
+    public async Task<Guid> EditChild(EditChildRequest request)
     {
-        throw new NotImplementedException();
-    }
-
-    public Child RemoveChild(Guid childId)
-    {
-        throw new NotImplementedException();
-    }
-
-
-    public Child UpdateChildInfo()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Child RemoveAChild()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Parent AddParent()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Parent UpdateParentInfo(Guid parentId, Parent parent)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Parent RemoveParent(Guid parentId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Child UpdateParentInfo()
-    {
-        throw new NotImplementedException();
+        logger.LogInformation($"Editing Child: {request.ChildId}");
+        var childId = await childRepository.EditChildByChildId(request);
+        logger.LogInformation($"Successfully edit child : {childId}");
+        return childId;
     }
 }

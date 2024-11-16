@@ -50,9 +50,21 @@ public static class ModelConversionExtension
             Name = c.Name,
             IconCode = c.IconCode ?? 15, // Default Child Avatar
             DOB = c.DOB,
-            Gender = c.Gender,
+            Gender = c.Gender.ToString(),
             HomeId = homeId,
             PointsEarned = c.PointsEarned ?? 0,
+        };
+    }
+
+    public static ChildEntity ToChildEntity(this EditChildRequest r)
+    {
+        return new ChildEntity()
+        {
+            Id = r.ChildId,
+            Name = r.ChildName,
+            DOB = r.ChildDOB,
+            Gender = r.ChildGender.ToString(),
+            IconCode = r.ChildIconCode,
         };
     }
 
@@ -63,8 +75,20 @@ public static class ModelConversionExtension
             Name = p.Name,
             IconCode = p.IconCode ?? 5, // Default Child Avatar
             DOB = p.DOB,
-            Role = p.Role,
+            Role = p.Role.ToString(),
             HomeId = homeId,
+        };
+    }
+
+    public static ParentEntity ToParentEntity(this EditParentRequest r)
+    {
+        return new ParentEntity()
+        {
+            Id = r.ParentId,
+            Name = r.ParentName,
+            DOB = r.ParentDOB,
+            Role = r.ParentRole.ToString(),
+            IconCode = r.ParentIconCode,
         };
     }
 
@@ -74,6 +98,16 @@ public static class ModelConversionExtension
         {
             Name = h.Name,
             Address = h.Address,
+        };
+    }
+
+    public static HomeEntity ToHomeEntity(this EditHomeRequest r)
+    {
+        return new HomeEntity()
+        {
+            Id = r.HomeId,
+            Name = r.HomeName,
+            Address = r.HomeAddress,
         };
     }
 

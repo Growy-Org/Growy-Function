@@ -21,7 +21,7 @@ public static class EntityConversionExtension
         {
             Id = p.Id,
             Name = p.Name,
-            Role = p.Role,
+            Role = (ParentRole)Enum.Parse(typeof(ParentRole), p.Role),
             IconCode = p.IconCode,
             DOB = p.DOB,
         };
@@ -33,7 +33,7 @@ public static class EntityConversionExtension
         {
             Id = c.Id,
             Name = c.Name,
-            Gender = c.Gender,
+            Gender = (ChildGender)Enum.Parse(typeof(ChildGender), c.Gender),
             IconCode = c.IconCode,
             PointsEarned = c.PointsEarned,
             DOB = c.DOB,

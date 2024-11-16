@@ -8,7 +8,8 @@
 ## Future Feature
 - Icon & avatar
 - Repeat Assignment Scheduler
-- Remove home is not allowed
+- Remove home, child, parent are not allowed when there is linked resource
+
 
 
 ### Game Category Profile & Mini Game

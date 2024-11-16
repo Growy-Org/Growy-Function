@@ -10,10 +10,7 @@ public record ChildEntity
     public string Name { get; set; } = string.Empty;
     public int IconCode { get; set; }
     public DateTime DOB { get; set; }
-
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ChildGender Gender { get; init; }
-
+    public string Gender { get; init; }
     public int PointsEarned { get; set; }
     public DateTime CreatedDateUtc { get; set; }
     public DateTime UpdatedDateUtc { get; set; }

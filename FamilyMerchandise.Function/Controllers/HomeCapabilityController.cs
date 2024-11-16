@@ -1,4 +1,5 @@
 using FamilyMerchandise.Function.Models;
+using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -66,6 +67,35 @@ public class HomeCapabilityController(
         }
 
         var res = await homeService.AddParentToHome(homeId, parent);
+        return new OkObjectResult(res);
+    }
+    
+    [Function("EditHome")]
+    public async Task<IActionResult> EditHome(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "home")]
+        HttpRequest req,
+        string id, [FromBody] EditHomeRequest request)
+    {
+        var res = await homeService.EditHome(request);
+        return new OkObjectResult(res);
+    }
+    [Function("EditChild")]
+    public async Task<IActionResult> EditChild(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child")]
+        HttpRequest req,
+        string id, [FromBody] EditChildRequest request)
+    {
+        var res = await homeService.EditChild(request);
+        return new OkObjectResult(res);
+    }
+    
+    [Function("EditParent")]
+    public async Task<IActionResult> EditParent(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent")]
+        HttpRequest req,
+        string id, [FromBody] EditParentRequest parent)
+    {
+        var res = await homeService.EditParent(parent);
         return new OkObjectResult(res);
     }
 }
