@@ -26,4 +26,5 @@ public interface IParentService
     // Penalties
     public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId);
     public Task<Guid> CreatePenalty(CreatePenaltyRequest request);
+    public Task<Guid> EditPenalty(EditPenaltyRequest request);
 }

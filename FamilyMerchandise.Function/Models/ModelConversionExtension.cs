@@ -158,4 +158,17 @@ public static class ModelConversionExtension
             PointsDeducted = r.PenaltyPointsDeducted
         };
     }
+    public static PenaltyEntity ToPenaltyEntity(this EditPenaltyRequest r)
+    {
+        return new PenaltyEntity()
+        {
+            Id = r.PenaltyId,
+            EnforcerId = r.ParentId,
+            ViolatorId = r.ChildId,
+            Name = r.PenaltyName,
+            Reason = r.PenaltyReason,
+            IconCode = r.PenaltyIconCode,
+            PointsDeducted = r.PenaltyPointsDeducted
+        };
+    }
 }

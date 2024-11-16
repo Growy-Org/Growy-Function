@@ -93,11 +93,11 @@ public class ParentCapabilityController(
         var res = await parentService.GetAllWishesByHomeId(homeId);
         return new OkObjectResult(res);
     }
-    
+
     [Function("EditWish")]
     public async Task<IActionResult> EditWish(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "wish")]
-        HttpRequest req, [FromBody]EditWishRequest request)
+        HttpRequest req, [FromBody] EditWishRequest request)
     {
         var res = await parentService.EditWish(request);
         return new OkObjectResult(res);
@@ -128,6 +128,15 @@ public class ParentCapabilityController(
         HttpRequest req, [FromBody] CreatePenaltyRequest penaltyRequest)
     {
         var res = await parentService.CreatePenalty(penaltyRequest);
+        return new OkObjectResult(res);
+    }
+
+    [Function("EditPenalty")]
+    public async Task<IActionResult> EditPenalty(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "penalty")]
+        HttpRequest req, [FromBody] EditPenaltyRequest request)
+    {
+        var res = await parentService.EditPenalty(request);
         return new OkObjectResult(res);
     }
 

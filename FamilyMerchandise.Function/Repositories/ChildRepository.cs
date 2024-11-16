@@ -26,4 +26,12 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
             $"INSERT INTO {ChildrenTable} (Name, HomeId, IconCode, DOB, Gender, PointsEarned) VALUES (@Name, @HomeId, @IconCode, @DOB, @Gender, @PointsEarned) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, childEntity);
     }
+
+    public async Task<Guid> EditPointsByChildId(Guid childId, int deltaPoints)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"UPDATE {ChildrenTable} SET PointsEarned = PointsEarned + @PointsDelta WHERE Id = @Id RETURNING Id";
+        return await con.ExecuteScalarAsync<Guid>(query, new { Id = childId, PointsDelta = deltaPoints });
+    }
 }

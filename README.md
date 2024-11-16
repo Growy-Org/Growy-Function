@@ -25,6 +25,7 @@ Some management
 - Pagination (now retrunning all assignment and all steps, but for the beginnign should be fine)
 - Http version 
 - Request validation
+- Transactional Query in editing multiple table
 
 ## Some analytics
 

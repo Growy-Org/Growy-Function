@@ -65,4 +65,26 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
             $"INSERT INTO {PenaltyTable} (Name, HomeId, IconCode, PointsDeducted, Reason, ViolatorId, EnforcerId) VALUES (@Name, @HomeId, @IconCode, @PointsDeducted, @Reason, @ViolatorId, @EnforcerId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, penaltyEntity);
     }
+
+    public async Task<EditPenaltyEntityResponse> EditPenaltyByPenaltyId(EditPenaltyRequest request)
+    {
+        var penaltyEntity = request.ToPenaltyEntity();
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                WITH Old AS (SELECT PointsDeducted, ViolatorId FROM {PenaltyTable} WHERE Id = @Id)
+                UPDATE {PenaltyTable} 
+                SET Name = @Name,
+                 IconCode = @IconCode,
+                 Reason = @Reason,
+                 PointsDeducted = @PointsDeducted,
+                 EnforcerId = @EnforcerId,
+                 ViolatorId = @ViolatorId
+                WHERE Id = @Id
+                RETURNING Id, 
+                (SELECT PointsDeducted FROM Old) AS OldPointsDeducted,
+                (SELECT ViolatorId FROM Old) AS OldChildId;
+             """;
+        return await con.QuerySingleAsync<EditPenaltyEntityResponse>(query, penaltyEntity);
+    }
 }

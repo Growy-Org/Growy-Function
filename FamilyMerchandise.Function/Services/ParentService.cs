@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace FamilyMerchandise.Function.Services;
 
 public class ParentService(
+    IChildRepository childRepository,
     IAssignmentRepository assignmentRepository,
     IStepRepository stepRepository,
     IWishRepository wishRepository,
@@ -141,6 +142,41 @@ public class ParentService(
         logger.LogInformation(
             $"Successfully added a Penalty : {penaltyId}, by Parent {request.ParentId} to Child {request.ChildId}");
         return penaltyId;
+    }
+
+    public async Task<Guid> EditPenalty(EditPenaltyRequest request)
+    {
+        logger.LogInformation($"Editing wish {request.PenaltyId}");
+        var response = await penaltyRepository.EditPenaltyByPenaltyId(request);
+        // if two children are different, then just apply the change. Else, only make changes if points deducted has changed
+        if (request.ChildId != response.OldChildId)
+        {
+            logger.LogInformation(
+                $"Changes in two children's points detected, applying changes to child {request.ChildId} and reverting changes to {response.OldChildId}");
+            
+            // TODO: should make this a transactional request in the future.
+            // deduct points from new child.
+            var newChildId = await childRepository.EditPointsByChildId(request.ChildId, -request.PenaltyPointsDeducted);
+            logger.LogInformation(
+                $"Successfully apply point change to new child: {newChildId} deducted points: {request.PenaltyPointsDeducted}");
+            
+            // add back the points deducted
+            var oldChildId= await childRepository.EditPointsByChildId(response.OldChildId, response.OldPointsDeducted);
+            logger.LogInformation(
+                $"Successfully apply point change to old child: {oldChildId} adding back points: {response.OldPointsDeducted}");
+        }
+        else if (request.PenaltyPointsDeducted - response.OldPointsDeducted != 0)
+        {
+            logger.LogInformation(
+                $"Changes in one child's points detected, applying points change to child {request.ChildId}");
+            
+            // both old and new child id are the same, Formula: Final Child Points = Original + (OldPointsDeducted - NewPointsDeducted)
+            var childId = await childRepository.EditPointsByChildId(request.ChildId, response.OldPointsDeducted - request.PenaltyPointsDeducted);
+            logger.LogInformation(
+                $"Successfully apply point change to child: {childId}");
+        }
+
+        return response.Id;
     }
 
     #endregion
