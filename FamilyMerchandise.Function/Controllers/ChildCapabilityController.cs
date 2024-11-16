@@ -50,7 +50,6 @@ public class ChildCapabilityController(
 
     #endregion
 
-
     #region Wishes
 
     [Function("GetAllWishesByChild")]
@@ -78,7 +77,6 @@ public class ChildCapabilityController(
     }
 
     #endregion
-
 
     #region Penalties
 

@@ -1,7 +1,4 @@
-using Dapper;
-using FamilyMerchandise.Function.Entities;
 using Bogus;
-using Bogus.DataSets;
 using FamilyMerchandise.Function.Models;
 using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Repositories;

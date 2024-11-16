@@ -57,7 +57,6 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     };
 
 
-
     public async Task<Guid> InsertWish(CreateWishRequest request)
     {
         var wishEntity = request.ToWishEntity();
@@ -65,5 +64,24 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         var query =
             $"INSERT INTO {WishesTable} (Name, HomeId, IconCode, Description, GenieId, WisherId) VALUES (@Name, @HomeId, @IconCode, @Description, @GenieId, @WisherId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, wishEntity);
+    }
+
+    public async Task<Guid> EditWishByWishId(EditWishRequest request)
+    {
+        var wishEntity = request.ToWishEntity();
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                UPDATE {WishesTable} 
+                SET Name = @Name,
+                 IconCode = @IconCode,
+                 Description = @Description,
+                 PointsCost = @PointsCost,
+                 GenieId = @GenieId,
+                 WisherId = @WisherId
+                WHERE Id = @Id
+                RETURNING Id;
+             """;
+        return await con.ExecuteScalarAsync<Guid>(query,wishEntity);
     }
 }

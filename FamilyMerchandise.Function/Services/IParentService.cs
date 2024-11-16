@@ -15,7 +15,7 @@ public interface IParentService
 
     // Wishes
     public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId);
-    public Task EditWishCost(Guid wishId);
+    public Task<Guid> EditWish(EditWishRequest request);
 
     // Achievements
     public Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId);

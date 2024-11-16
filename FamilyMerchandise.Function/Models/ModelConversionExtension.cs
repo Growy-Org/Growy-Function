@@ -117,6 +117,20 @@ public static class ModelConversionExtension
         };
     }
 
+    public static WishEntity ToWishEntity(this EditWishRequest r)
+    {
+        return new WishEntity
+        {
+            Id = r.WishId,
+            GenieId = r.ParentId,
+            WisherId = r.ChildId,
+            Name = r.WishName,
+            Description = r.WishDescription,
+            IconCode = r.WishIconCode,
+            PointsCost = r.WishCost
+        };
+    }
+
     public static AchievementEntity ToAchievementEntity(this CreateAchievementRequest r)
     {
         return new AchievementEntity()

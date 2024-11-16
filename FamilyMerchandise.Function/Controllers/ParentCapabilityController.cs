@@ -93,6 +93,15 @@ public class ParentCapabilityController(
         var res = await parentService.GetAllWishesByHomeId(homeId);
         return new OkObjectResult(res);
     }
+    
+    [Function("EditWish")]
+    public async Task<IActionResult> EditWish(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "wish")]
+        HttpRequest req, [FromBody]EditWishRequest request)
+    {
+        var res = await parentService.EditWish(request);
+        return new OkObjectResult(res);
+    }
 
     #endregion
 

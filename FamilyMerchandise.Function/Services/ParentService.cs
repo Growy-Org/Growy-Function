@@ -80,9 +80,13 @@ public class ParentService(
         return wishes;
     }
 
-    public Task EditWishCost(Guid wishId)
+    public async Task<Guid> EditWish(EditWishRequest request)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Editing wish {request.WishId}");
+        var id = await wishRepository.EditWishByWishId(request);
+        logger.LogInformation(
+            $"Successfully wish edited {request.WishId}");
+        return id;
     }
 
     #endregion
