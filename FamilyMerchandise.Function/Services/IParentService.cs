@@ -20,8 +20,8 @@ public interface IParentService
     // Achievements
     public Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId);
     public Task<Guid> CreateAchievement(CreateAchievementRequest request);
-    public Task EditAchievement(Guid achievementId);
-    public Task GrantAchievementBonus(Guid achievementId);
+    public Task<Guid> EditAchievement(EditAchievementRequest request);
+    public Task<Guid> EditAchievementGrants(Guid achievementId, bool isAchievementGranted);
 
     // Penalties
     public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId);

@@ -74,17 +74,46 @@ public class ParentCapabilityController(
         var res = await parentService.CreateAchievement(achievementRequest);
         return new OkObjectResult(res);
     }
-    
+
     [Function("EditAchievement")]
     public async Task<IActionResult> EditAchievement(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "achievement")]
-        HttpRequest req, [FromBody] EditPenaltyRequest request)
+        HttpRequest req, [FromBody] EditAchievementRequest request)
     {
-        var res = await parentService.EditPenalty(request);
+        var res = await parentService.EditAchievement(request);
         return new OkObjectResult(res);
     }
 
 
+    [Function("GrantedAchievement")]
+    public async Task<IActionResult> GrantedAchievement(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "achievement/{id}/grant")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var achievementId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.EditAchievementGrants(achievementId, true);
+        return new OkObjectResult(res);
+    }
+
+    [Function("RevokeGrantedAchievement")]
+    public async Task<IActionResult> RevokeGrantedAchievement(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "achievement/{id}/revoke-grant")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var achievementId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.EditAchievementGrants(achievementId, false);
+        return new OkObjectResult(res);
+    }
 
     #endregion
 
@@ -153,8 +182,6 @@ public class ParentCapabilityController(
         var res = await parentService.EditPenalty(request);
         return new OkObjectResult(res);
     }
-    
-
 
     #endregion
 }

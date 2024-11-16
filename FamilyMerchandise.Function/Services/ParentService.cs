@@ -112,14 +112,28 @@ public class ParentService(
         return assignmentId;
     }
 
-    public Task EditAchievement(Guid achievementId)
+    public async Task<Guid> EditAchievement(EditAchievementRequest request)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"Editing achievement {request.AchievementId}");
+        var id = await achievementRepository.EditAchievementByAchievementId(request);
+        logger.LogInformation(
+            $"Successfully edit achievement with id: {id}");
+        return id;
     }
 
-    public Task GrantAchievementBonus(Guid achievementId)
+    public async Task<Guid> EditAchievementGrants(Guid achievementId, bool isAchievementGranted)
     {
-        throw new NotImplementedException();
+        logger.LogInformation($"{(isAchievementGranted ? "Granting" : "Revoking")} achievement bonus");
+        var response = await achievementRepository.EditAchievementGrantByAchievementId(achievementId, isAchievementGranted);
+        logger.LogInformation(
+            $"Successfully edit achievement grant with id: {response.Id}");
+
+        var childId = await childRepository.EditPointsByChildId(response.ChildId,
+            isAchievementGranted ? response.Points : -response.Points);
+
+        logger.LogInformation(
+            $"Successfully {(isAchievementGranted ? "adding" : "removing")} {response.Points} {(isAchievementGranted ? "to" : "from")} child profile with id: {childId}");
+        return response.Id;
     }
 
     #endregion
@@ -146,22 +160,22 @@ public class ParentService(
 
     public async Task<Guid> EditPenalty(EditPenaltyRequest request)
     {
-        logger.LogInformation($"Editing wish {request.PenaltyId}");
+        logger.LogInformation($"Editing penalty {request.PenaltyId}");
         var response = await penaltyRepository.EditPenaltyByPenaltyId(request);
         // if two children are different, then just apply the change. Else, only make changes if points deducted has changed
         if (request.ChildId != response.OldChildId)
         {
             logger.LogInformation(
                 $"Changes in two children's points detected, applying changes to child {request.ChildId} and reverting changes to {response.OldChildId}");
-            
+
             // TODO: should make this a transactional request in the future.
             // deduct points from new child.
             var newChildId = await childRepository.EditPointsByChildId(request.ChildId, -request.PenaltyPointsDeducted);
             logger.LogInformation(
                 $"Successfully apply point change to new child: {newChildId} deducted points: {request.PenaltyPointsDeducted}");
-            
+
             // add back the points deducted
-            var oldChildId= await childRepository.EditPointsByChildId(response.OldChildId, response.OldPointsDeducted);
+            var oldChildId = await childRepository.EditPointsByChildId(response.OldChildId, response.OldPointsDeducted);
             logger.LogInformation(
                 $"Successfully apply point change to old child: {oldChildId} adding back points: {response.OldPointsDeducted}");
         }
@@ -169,9 +183,10 @@ public class ParentService(
         {
             logger.LogInformation(
                 $"Changes in one child's points detected, applying points change to child {request.ChildId}");
-            
+
             // both old and new child id are the same, Formula: Final Child Points = Original + (OldPointsDeducted - NewPointsDeducted)
-            var childId = await childRepository.EditPointsByChildId(request.ChildId, response.OldPointsDeducted - request.PenaltyPointsDeducted);
+            var childId = await childRepository.EditPointsByChildId(request.ChildId,
+                response.OldPointsDeducted - request.PenaltyPointsDeducted);
             logger.LogInformation(
                 $"Successfully apply point change to child: {childId}");
         }

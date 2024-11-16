@@ -144,6 +144,20 @@ public static class ModelConversionExtension
             PointsGranted = r.AchievementPointsGranted
         };
     }
+    
+    public static AchievementEntity ToAchievementEntity(this EditAchievementRequest r)
+    {
+        return new AchievementEntity()
+        {
+            Id = r.AchievementId,
+            VisionaryId = r.ParentId,
+            AchieverId = r.ChildId,
+            Name = r.AchievementName,
+            Description = r.AchievementDescription,
+            IconCode = r.AchievementIconCode,
+            PointsGranted = r.AchievementPointsGranted,
+        };
+    }
 
     public static PenaltyEntity ToPenaltyEntity(this CreatePenaltyRequest r)
     {

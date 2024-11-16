@@ -66,4 +66,34 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
             $"INSERT INTO {AchievementsTable} (Name, HomeId, IconCode, PointsGranted, Description, VisionaryId, AchieverId) VALUES (@Name, @HomeId, @IconCode, @PointsGranted, @Description, @VisionaryId, @AchieverId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, achievementEntity);
     }
+
+
+    public async Task<Guid> EditAchievementByAchievementId(EditAchievementRequest request)
+    {
+        var achievementEntity = request.ToAchievementEntity();
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                UPDATE {AchievementsTable} 
+                SET Name = @Name,
+                 IconCode = @IconCode,
+                 Description = @Description,
+                 PointsGranted = @PointsGranted,
+                 VisionaryId = @VisionaryId,
+                 AchieverId = @AchieverId
+                WHERE Id = @Id
+                RETURNING Id;
+             """;
+        return await con.ExecuteScalarAsync<Guid>(query, achievementEntity);
+    }
+
+    public async Task<EditAchievementEntityResponse> EditAchievementGrantByAchievementId(Guid achievementId,
+        bool isAchievementGranted)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"UPDATE {AchievementsTable} SET AchievedDateUtc = @AchievedDateUtc WHERE Id = @Id RETURNING Id, AchieverId AS ChildId, PointsGranted AS Points;";
+        return await con.QuerySingleAsync<EditAchievementEntityResponse>(query,
+            new { Id = achievementId, AchievedDateUtc = isAchievementGranted ? DateTime.UtcNow : (DateTime?)null });
+    }
 }
