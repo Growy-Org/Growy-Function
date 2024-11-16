@@ -39,7 +39,7 @@ public class HomeCapabilityController(
     }
 
     [Function("AddChildToHome")]
-    public async Task<IActionResult> AddChild(
+    public async Task<IActionResult> AddChildToHome(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/{id}/child")]
         HttpRequest req,
         string id, [FromBody] Child child)
@@ -55,7 +55,7 @@ public class HomeCapabilityController(
     }
 
     [Function("AddParentToHome")]
-    public async Task<IActionResult> AddParent(
+    public async Task<IActionResult> AddParentToHome(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/{id}/parent")]
         HttpRequest req,
         string id, [FromBody] Parent parent)
