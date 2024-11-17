@@ -9,4 +9,5 @@ public interface IChildRepository
     public Task<Guid> InsertChild(Guid homeId, Child child);
     public Task<Guid> EditPointsByChildId(Guid childId, int deltaPoints);
     public Task<Guid> EditChildByChildId(EditChildRequest request);
+    public Task DeleteChildByChildId(Guid childId);
 }

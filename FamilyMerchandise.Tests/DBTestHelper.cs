@@ -9,24 +9,57 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
 {
     private readonly Faker _faker = new();
 
-    [Fact]
-    public async Task InsertInitialData()
-    {
-        var homeRepo = new HomeRepository(fixture.ConnectionFactory);
-        var childRepo = new ChildRepository(fixture.ConnectionFactory);
-        var parentRepo = new ParentRepository(fixture.ConnectionFactory);
-        var assignmentRepo = new AssignmentRepository(fixture.ConnectionFactory);
-        var stepRepo = new StepRepository(fixture.ConnectionFactory);
-        var wishRepo = new WishRepository(fixture.ConnectionFactory);
-        var achievementRepo = new AchievementRepository(fixture.ConnectionFactory);
-        var penaltyRepo = new PenaltyRepository(fixture.ConnectionFactory);
+    private readonly HomeRepository _homeRepo = new(fixture.ConnectionFactory);
+    private readonly ChildRepository _childRepo = new(fixture.ConnectionFactory);
+    private readonly ParentRepository _parentRepo = new(fixture.ConnectionFactory);
+    private readonly AssignmentRepository _assignmentRepo = new(fixture.ConnectionFactory);
+    private readonly StepRepository _stepRepo = new(fixture.ConnectionFactory);
+    private readonly WishRepository _wishRepo = new(fixture.ConnectionFactory);
+    private readonly AchievementRepository _achievementRepo = new(fixture.ConnectionFactory);
+    private readonly PenaltyRepository _penaltyRepo = new(fixture.ConnectionFactory);
 
+    [Fact]
+    public async Task CustomInsert()
+    {
         var home = new Home()
         {
             Address = _faker.Address.FullAddress(),
             Name = $"{_faker.Random.Word()}'s Home"
         };
-        var homeId = await homeRepo.InsertHome(home);
+        var homeId = await _homeRepo.InsertHome(home);
+        
+        var child = new Child()
+        {
+            Name = _faker.Name.FullName(),
+            IconCode = _faker.Random.Int(0, 100),
+            DOB = _faker.Date.Past(18),
+            Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.GIRL),
+            PointsEarned = _faker.Random.Int(0, 9999),
+        };
+        var child2 = new Child()
+        {
+            Name = _faker.Name.FullName(),
+            IconCode = _faker.Random.Int(0, 100),
+            DOB = _faker.Date.Past(18),
+            Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.BOY),
+            PointsEarned = _faker.Random.Int(0, 9999),
+        };
+
+        var childId = await _childRepo.InsertChild(homeId, child);
+        var childId2 = await _childRepo.InsertChild(homeId, child2);
+
+
+    }
+
+    [Fact]
+    public async Task InsertInitialData()
+    {
+        var home = new Home()
+        {
+            Address = _faker.Address.FullAddress(),
+            Name = $"{_faker.Random.Word()}'s Home"
+        };
+        var homeId = await _homeRepo.InsertHome(home);
 
         var child = new Child()
         {
@@ -45,8 +78,8 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             PointsEarned = _faker.Random.Int(0, 9999),
         };
 
-        var childId = await childRepo.InsertChild(homeId, child);
-        var childId2 = await childRepo.InsertChild(homeId, child2);
+        var childId = await _childRepo.InsertChild(homeId, child);
+        var childId2 = await _childRepo.InsertChild(homeId, child2);
 
         var parent = new Parent
         {
@@ -63,8 +96,8 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             Role = _faker.PickRandom(ParentRole.FATHER, ParentRole.FATHER),
         };
 
-        var parentId = await parentRepo.InsertParent(homeId, parent);
-        var parentId2 = await parentRepo.InsertParent(homeId, parent2);
+        var parentId = await _parentRepo.InsertParent(homeId, parent);
+        var parentId2 = await _parentRepo.InsertParent(homeId, parent2);
 
         var assignmentRequest1 = new CreateAssignmentRequest
         {
@@ -90,8 +123,8 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             Points = _faker.Random.Int(100, 999)
         };
 
-        var assignmentId1 = await assignmentRepo.InsertAssignment(assignmentRequest1);
-        var assignmentId2 = await assignmentRepo.InsertAssignment(assignmentRequest2);
+        var assignmentId1 = await _assignmentRepo.InsertAssignment(assignmentRequest1);
+        var assignmentId2 = await _assignmentRepo.InsertAssignment(assignmentRequest2);
 
         var stepRequest1 = new CreateStepRequest
         {
@@ -113,9 +146,9 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             StepOrder = 0,
             StepDescription = _faker.Lorem.Sentence(20),
         };
-        await stepRepo.InsertStep(stepRequest1);
-        await stepRepo.InsertStep(stepRequest2);
-        await stepRepo.InsertStep(stepRequest3);
+        await _stepRepo.InsertStep(stepRequest1);
+        await _stepRepo.InsertStep(stepRequest2);
+        await _stepRepo.InsertStep(stepRequest3);
 
         var wishRequest1 = new CreateWishRequest()
         {
@@ -136,8 +169,8 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             WishIconCode = _faker.Random.Int(0, 100),
         };
 
-        await wishRepo.InsertWish(wishRequest1);
-        await wishRepo.InsertWish(wishRequest2);
+        await _wishRepo.InsertWish(wishRequest1);
+        await _wishRepo.InsertWish(wishRequest2);
 
         var achievementRequest1 = new CreateAchievementRequest()
         {
@@ -160,8 +193,8 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             AchievementPointsGranted = _faker.Random.Int(100, 9999),
         };
 
-        await achievementRepo.InsertAchievement(achievementRequest1);
-        await achievementRepo.InsertAchievement(achievementRequest2);
+        await _achievementRepo.InsertAchievement(achievementRequest1);
+        await _achievementRepo.InsertAchievement(achievementRequest2);
 
         var penaltyRequest = new CreatePenaltyRequest()
         {
@@ -174,6 +207,6 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             PenaltyPointsDeducted = _faker.Random.Int(100, 500),
         };
 
-        await penaltyRepo.InsertPenalty(penaltyRequest);
+        await _penaltyRepo.InsertPenalty(penaltyRequest);
     }
 }

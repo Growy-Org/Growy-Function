@@ -1,3 +1,5 @@
+using System.Data.Common;
+using FamilyMerchandise.Function.Exceptions;
 using FamilyMerchandise.Function.Models;
 using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Repositories.Interfaces;
@@ -17,6 +19,8 @@ public class HomeService(
     ILogger<HomeService> logger)
     : IHomeService
 {
+    #region Home
+
     public async Task<Home> GetHomeInfoById(Guid homeId)
     {
         logger.LogInformation($"Getting Home by Id: {homeId}");
@@ -39,6 +43,37 @@ public class HomeService(
         return homeId;
     }
 
+    public async Task<Guid> EditHome(EditHomeRequest request)
+    {
+        logger.LogInformation($"Editing Home: {request.HomeId}");
+        var homeId = await homeRepository.EditHomeByHomeId(request);
+        logger.LogInformation($"Successfully edit home : {homeId}");
+        return homeId;
+    }
+
+    public async Task DeleteHome(Guid homeId)
+    {
+        logger.LogInformation($"Deleting Home: {homeId}");
+        try
+        {
+            await homeRepository.DeleteHomeByHomeId(homeId);
+        }
+        catch (DbException e)
+        {
+            if (e.SqlState == "23503")
+            {
+                logger.LogWarning($"Failed to delete home: {homeId}", e.Message);
+                throw new DeletionFailureException();
+            }
+        }
+
+        logger.LogInformation($"Successfully delete Home : {homeId}");
+    }
+
+    #endregion
+
+    #region Children
+
     public async Task<Guid> AddChildToHome(Guid homeId, Child child)
     {
         logger.LogInformation($"Adding a new Child to Home: {homeId}");
@@ -47,20 +82,43 @@ public class HomeService(
         return childId;
     }
 
+    public async Task<Guid> EditChild(EditChildRequest request)
+    {
+        logger.LogInformation($"Editing Child: {request.ChildId}");
+        var childId = await childRepository.EditChildByChildId(request);
+        logger.LogInformation($"Successfully edit child : {childId}");
+        return childId;
+    }
+
+    public async Task DeleteChild(Guid childId)
+    {
+        logger.LogInformation($"Deleting Child: {childId}");
+        try
+        {
+            await childRepository.DeleteChildByChildId(childId);
+        }
+        catch (DbException e)
+        {
+            if (e.SqlState == "23503")
+            {
+                logger.LogWarning($"Failed to delete Child: {childId}", e.Message);
+                throw new DeletionFailureException();
+            }
+        }
+
+        logger.LogInformation($"Successfully delete Child : {childId}");
+    }
+
+    #endregion
+
+    #region Parents
+
     public async Task<Guid> AddParentToHome(Guid homeId, Parent parent)
     {
         logger.LogInformation($"Adding a new Parent to Home: {homeId}");
         var parentId = await parentRepository.InsertParent(homeId, parent);
         logger.LogInformation($"Successfully added a parent : {parentId} to Home: {homeId}");
         return parentId;
-    }
-
-    public async Task<Guid> EditHome(EditHomeRequest request)
-    {
-        logger.LogInformation($"Editing Home: {request.HomeId}");
-        var homeId = await homeRepository.EditHomeByHomeId(request);
-        logger.LogInformation($"Successfully edit home : {homeId}");
-        return homeId;
     }
 
     public async Task<Guid> EditParent(EditParentRequest request)
@@ -71,14 +129,29 @@ public class HomeService(
         return parentId;
     }
 
-    public async Task<Guid> EditChild(EditChildRequest request)
+    public async Task DeleteParent(Guid parentId)
     {
-        logger.LogInformation($"Editing Child: {request.ChildId}");
-        var childId = await childRepository.EditChildByChildId(request);
-        logger.LogInformation($"Successfully edit child : {childId}");
-        return childId;
+        logger.LogInformation($"Deleting Parent: {parentId}");
+        try
+        {
+            await parentRepository.DeleteParentByParentId(parentId);
+        }
+        catch (DbException e)
+        {
+            if (e.SqlState == "23503")
+            {
+                logger.LogWarning($"Failed to delete Parent: {parentId}", e.Message);
+                throw new DeletionFailureException();
+            }
+        }
+
+        logger.LogInformation($"Successfully delete Parent : {parentId}");
     }
-    
+
+    #endregion
+
+    #region Assignments
+
     public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId)
     {
         logger.LogInformation($"Getting all assignments by Home: {homeId}");
@@ -95,6 +168,11 @@ public class HomeService(
             $"Successfully getting all assignments by Home : {homeId}");
         return assignments;
     }
+
+    #endregion
+
+    #region Wishes
+
     public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId)
     {
         logger.LogInformation($"Getting all wishes by Home: {homeId}");
@@ -103,7 +181,11 @@ public class HomeService(
             $"Successfully getting all wishes by Home : {homeId}");
         return wishes;
     }
-    
+
+    #endregion
+
+    #region Achievements
+
     public async Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId)
     {
         logger.LogInformation($"Getting all achievements by HomeId: {homeId}");
@@ -112,6 +194,11 @@ public class HomeService(
             $"Successfully getting all achievements by HomeId : {homeId}");
         return achievements;
     }
+
+    #endregion
+
+    #region Penalties
+
     public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
     {
         logger.LogInformation($"Getting all penalties by HomeId: {homeId}");
@@ -120,4 +207,6 @@ public class HomeService(
             $"Successfully getting all penalties by HomeId : {homeId}");
         return penalties;
     }
+
+    #endregion
 }

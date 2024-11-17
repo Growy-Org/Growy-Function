@@ -37,5 +37,12 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
     }
 
+    public async Task DeleteHomeByHomeId(Guid homeId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"DELETE FROM {HomesTable} WHERE Id = @Id RETURNING Id;";
+        await con.ExecuteScalarAsync<Guid>(query, new {Id = homeId});
+    }
 
 }

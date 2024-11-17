@@ -9,16 +9,18 @@ public interface IHomeService
     public Task<Home> GetHomeInfoById(Guid homeId);
     public Task<Guid> CreateHome(Home home);
     public Task<Guid> EditHome(EditHomeRequest request);
+    public Task DeleteHome(Guid homeId);
 
     // Children
     public Task<Guid> AddChildToHome(Guid childId, Child child);
     public Task<Guid> EditChild(EditChildRequest request);
+    public Task DeleteChild(Guid childId);
 
     // Parent
     public Task<Guid> AddParentToHome(Guid parentId, Parent parent);
     public Task<Guid> EditParent(EditParentRequest request);
-    
-    
+    public Task DeleteParent(Guid parentId);
+
     // Others
     public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId);
     public Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId);
