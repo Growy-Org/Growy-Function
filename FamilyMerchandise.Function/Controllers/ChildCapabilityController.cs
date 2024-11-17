@@ -103,7 +103,6 @@ public class ChildCapabilityController(
         return new OkObjectResult(res);
     }
 
-        
     [Function("UnFullFillWish")]
     public async Task<IActionResult> UnFullFillWish(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "wish/{id}/unfullfill")]

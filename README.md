@@ -1,9 +1,7 @@
 ## To Implement
-- Remove Wish
-- Remove Assignment, Step
-- Remove Home, Parent,Child
-- Remove Wish, Achievement, Penalty
-Remove is only allowed if they are uncompleted and not linked to any table
+- Validation on Parent and Child Edit wish so that it only apply to certain field
+- Authorisation so that only current home Id info can be accessed by the tenant 
+- Authentication
 
 ## Future Feature
 - Icon & avatar
