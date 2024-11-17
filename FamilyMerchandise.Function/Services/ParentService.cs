@@ -202,10 +202,13 @@ public class ParentService(
     public async Task<Guid> CreatePenalty(CreatePenaltyRequest request)
     {
         logger.LogInformation($"Adding a new Penalty to Home: {request.HomeId}");
-        var penaltyId = await penaltyRepository.InsertPenalty(request);
+        var response = await penaltyRepository.InsertPenalty(request);
+        var childId = await childRepository.EditPointsByChildId(response.ChildId, -response.Points);
         logger.LogInformation(
-            $"Successfully added a Penalty : {penaltyId}, by Parent {request.ParentId} to Child {request.ChildId}");
-        return penaltyId;
+            $"Successfully reduce points from Child: {childId}");
+        logger.LogInformation(
+            $"Successfully added a Penalty : {response.Id}, Points deducted : {response.Points}, by Parent {request.ParentId} to Child {childId}");
+        return response.Id;
     }
 
     public async Task<Guid> EditPenalty(EditPenaltyRequest request)
@@ -249,11 +252,11 @@ public class ParentService(
         logger.LogInformation($"Deleting penalty {penaltyId}");
         var response = await penaltyRepository.DeletePenaltyByPenaltyId(penaltyId);
         logger.LogInformation(
-            $"Successfully deleted penalty {response.Id}");
+            $"Successfully deleted Penalty {response.Id}");
 
         var childId = await childRepository.EditPointsByChildId(response.ChildId, response.Points);
         logger.LogInformation(
-            $"Successfully add points back to child: {childId}");
+            $"Successfully add {response.Points} points back to Child: {childId}");
     }
 
     #endregion

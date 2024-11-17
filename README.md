@@ -29,7 +29,7 @@ Some management
 ## Tech
 
 - Authentication
-- Authorisation
+- Authorisation to only modify resource from the same tenant (home)
 - Pagination (now retrunning all assignment and all steps, but for the beginnign should be fine)
 - Http version 
 - Request validation

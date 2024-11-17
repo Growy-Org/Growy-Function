@@ -75,13 +75,13 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
             return penalty;
         };
 
-    public async Task<Guid> InsertPenalty(CreatePenaltyRequest request)
+    public async Task<CreatePenaltyEntityResponse> InsertPenalty(CreatePenaltyRequest request)
     {
         var penaltyEntity = request.ToPenaltyEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"INSERT INTO {PenaltyTable} (Name, HomeId, IconCode, PointsDeducted, Reason, ViolatorId, EnforcerId) VALUES (@Name, @HomeId, @IconCode, @PointsDeducted, @Reason, @ViolatorId, @EnforcerId) RETURNING Id";
-        return await con.ExecuteScalarAsync<Guid>(query, penaltyEntity);
+            $"INSERT INTO {PenaltyTable} (Name, HomeId, IconCode, PointsDeducted, Reason, ViolatorId, EnforcerId) VALUES (@Name, @HomeId, @IconCode, @PointsDeducted, @Reason, @ViolatorId, @EnforcerId) RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id";
+        return await con.QuerySingleAsync<CreatePenaltyEntityResponse>(query, penaltyEntity);
     }
 
     public async Task<EditPenaltyEntityResponse> EditPenaltyByPenaltyId(EditPenaltyRequest request)
@@ -105,11 +105,12 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
              """;
         return await con.QuerySingleAsync<EditPenaltyEntityResponse>(query, penaltyEntity);
     }
-    
+
     public async Task<DeletePenaltyEntityResponse> DeletePenaltyByPenaltyId(Guid penaltyId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
-        var query = $"DELETE FROM {PenaltyTable} where id = @Id RETURNING ViolatorId AS ChildId;";
+        var query =
+            $"DELETE FROM {PenaltyTable} where id = @Id RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id;";
         return await con.QuerySingleAsync<DeletePenaltyEntityResponse>(query, new { Id = penaltyId });
     }
 }
