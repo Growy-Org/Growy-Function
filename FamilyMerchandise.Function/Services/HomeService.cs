@@ -35,10 +35,10 @@ public class HomeService(
         return home;
     }
 
-    public async Task<Guid> CreateHome(Home home)
+    public async Task<Guid> CreateHome(CreateHomeRequest request)
     {
-        logger.LogInformation($"Adding a new Home: {home.Name}");
-        var homeId = await homeRepository.InsertHome(home);
+        logger.LogInformation($"Adding a new Home: {request.HomeName}");
+        var homeId = await homeRepository.InsertHome(request);
         logger.LogInformation($"Successfully added a home: {homeId}");
         return homeId;
     }

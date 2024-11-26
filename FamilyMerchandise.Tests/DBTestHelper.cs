@@ -21,13 +21,14 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
     [Fact]
     public async Task CustomInsert()
     {
-        var home = new Home()
+        var homeRequest = new CreateHomeRequest()
         {
-            Address = _faker.Address.FullAddress(),
-            Name = $"{_faker.Random.Word()}'s Home"
+            HomeAddress = _faker.Address.FullAddress(),
+            HomeName = $"{_faker.Random.Word()}'s Home",
+            HomeOwnerEmail = _faker.Internet.Email(_faker.Name.FirstName(), _faker.Name.LastName())
         };
-        var homeId = await _homeRepo.InsertHome(home);
-        
+        var homeId = await _homeRepo.InsertHome(homeRequest);
+
         var child = new Child()
         {
             Name = _faker.Name.FullName(),
@@ -47,19 +48,18 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
 
         var childId = await _childRepo.InsertChild(homeId, child);
         var childId2 = await _childRepo.InsertChild(homeId, child2);
-
-
     }
 
     [Fact]
     public async Task InsertInitialData()
     {
-        var home = new Home()
+        var homeRequest = new CreateHomeRequest()
         {
-            Address = _faker.Address.FullAddress(),
-            Name = $"{_faker.Random.Word()}'s Home"
+            HomeAddress = _faker.Address.FullAddress(),
+            HomeName = $"{_faker.Random.Word()}'s Home",
+            HomeOwnerEmail = _faker.Internet.Email(_faker.Name.FirstName(), _faker.Name.LastName())
         };
-        var homeId = await _homeRepo.InsertHome(home);
+        var homeId = await _homeRepo.InsertHome(homeRequest);
 
         var child = new Child()
         {

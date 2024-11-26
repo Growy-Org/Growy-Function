@@ -92,12 +92,13 @@ public static class ModelConversionExtension
         };
     }
 
-    public static HomeEntity ToHomeEntity(this Home h)
+    public static HomeEntity ToHomeEntity(this CreateHomeRequest r)
     {
         return new HomeEntity()
         {
-            Name = h.Name,
-            Address = h.Address,
+            Name = r.HomeName,
+            Address = r.HomeAddress,
+            OwnerEmail = r.HomeOwnerEmail
         };
     }
 

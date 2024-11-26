@@ -35,9 +35,9 @@ public class HomeCapabilityController(
     [Function("AddHome")]
     public async Task<IActionResult> AddHome(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home")]
-        HttpRequest req, [FromBody] Home home)
+        HttpRequest req, [FromBody] CreateHomeRequest homeRequest)
     {
-        var res = await homeService.CreateHome(home);
+        var res = await homeService.CreateHome(homeRequest);
         return new OkObjectResult(res);
     }
 

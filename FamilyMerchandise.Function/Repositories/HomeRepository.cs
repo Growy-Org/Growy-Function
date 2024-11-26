@@ -19,12 +19,12 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         return homeEntity.ToHome();
     }
 
-    public async Task<Guid> InsertHome(Home home)
+    public async Task<Guid> InsertHome(CreateHomeRequest request)
     {
-        var homeEntity = home.ToHomeEntity();
+        var homeEntity = request.ToHomeEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"INSERT INTO {HomesTable} (Name, Address) VALUES (@Name, @Address) RETURNING Id";
+            $"INSERT INTO {HomesTable} (Name, Address, OwnerEmail) VALUES (@Name, @Address, @OwnerEmail) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
     }
 
