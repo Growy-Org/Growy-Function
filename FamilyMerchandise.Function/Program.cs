@@ -12,13 +12,16 @@ var host = new HostBuilder()
     .ConfigureServices((context, services) =>
     {
         services.Configure<ConnectionStrings>(context.Configuration.GetSection(ConnectionStrings.KEY));
+        
         // Services
+        services.AddSingleton<IAppUserService, AppUserService>();
         services.AddSingleton<IHomeService, HomeService>();
         services.AddSingleton<IParentService, ParentService>();
         services.AddSingleton<IChildService, ChildService>();
 
         // Repositories 
         services.AddSingleton<IConnectionFactory, ConnectionFactory>();
+        services.AddSingleton<IAppUserRepository, AppUserRepository>();
         services.AddSingleton<IHomeRepository, HomeRepository>();
         services.AddSingleton<IChildRepository, ChildRepository>();
         services.AddSingleton<IWishRepository, WishRepository>();

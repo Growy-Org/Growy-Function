@@ -24,7 +24,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         var homeEntity = request.ToHomeEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"INSERT INTO {HomesTable} (Name, Address, OwnerEmail) VALUES (@Name, @Address, @OwnerEmail) RETURNING Id";
+            $"INSERT INTO {HomesTable} (Name, Address, AppUserId) VALUES (@Name, @Address, @AppUserId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
     }
 
@@ -42,7 +42,6 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"DELETE FROM {HomesTable} WHERE Id = @Id RETURNING Id;";
-        await con.ExecuteScalarAsync<Guid>(query, new {Id = homeId});
+        await con.ExecuteScalarAsync<Guid>(query, new { Id = homeId });
     }
-
 }

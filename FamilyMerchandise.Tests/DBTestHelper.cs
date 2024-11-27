@@ -9,6 +9,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
 {
     private readonly Faker _faker = new();
 
+    private readonly AppUserRepository _appUserRepo = new(fixture.ConnectionFactory);
     private readonly HomeRepository _homeRepo = new(fixture.ConnectionFactory);
     private readonly ChildRepository _childRepo = new(fixture.ConnectionFactory);
     private readonly ParentRepository _parentRepo = new(fixture.ConnectionFactory);
@@ -21,11 +22,21 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
     [Fact]
     public async Task CustomInsert()
     {
+        var idpUserId = Guid.NewGuid();
+        var appUser = new AppUser()
+        {
+            Id = idpUserId,
+            Email = _faker.Internet.Email(_faker.Name.FirstName(), _faker.Name.LastName()),
+            IdpId = idpUserId.ToString(),
+            IdentityProvider = "AzureB2C"
+        };
+
+        await _appUserRepo.RegisterUser(appUser);
         var homeRequest = new CreateHomeRequest()
         {
             HomeAddress = _faker.Address.FullAddress(),
             HomeName = $"{_faker.Random.Word()}'s Home",
-            HomeOwnerEmail = _faker.Internet.Email(_faker.Name.FirstName(), _faker.Name.LastName())
+            AppUserId = idpUserId
         };
         var homeId = await _homeRepo.InsertHome(homeRequest);
 
@@ -53,11 +64,22 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
     [Fact]
     public async Task InsertInitialData()
     {
+        var idpUserId = Guid.NewGuid();
+        var appUser = new AppUser()
+        {
+            Id = idpUserId,
+            Email = _faker.Internet.Email(_faker.Name.FirstName(), _faker.Name.LastName()),
+            IdpId = idpUserId.ToString(),
+            IdentityProvider = "AzureB2C"
+        };
+
+        await _appUserRepo.RegisterUser(appUser);
+
         var homeRequest = new CreateHomeRequest()
         {
             HomeAddress = _faker.Address.FullAddress(),
             HomeName = $"{_faker.Random.Word()}'s Home",
-            HomeOwnerEmail = _faker.Internet.Email(_faker.Name.FirstName(), _faker.Name.LastName())
+            AppUserId = idpUserId
         };
         var homeId = await _homeRepo.InsertHome(homeRequest);
 

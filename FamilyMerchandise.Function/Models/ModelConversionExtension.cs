@@ -1,6 +1,5 @@
 using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Entities;
-using FamilyMerchandise.Function.Models;
 
 namespace FamilyMerchandise.Function.Models;
 
@@ -16,15 +15,15 @@ public static class ModelConversionExtension
         h.Children.AddRange(children);
     }
 
-    public static void SetAssignee(this Assignment h, List<Child> children)
+    public static AppUserEntity ToAppUserEntity(this AppUser u)
     {
-        children.ForEach(c =>
+        return new AppUserEntity()
         {
-            if (h.Assignee.Id == c.Id)
-            {
-                h.Assignee = c;
-            }
-        });
+            Id = u.Id,
+            Email = u.Email,
+            IdentityProvider = u.IdentityProvider,
+            IdpId = u.IdpId
+        };
     }
 
     public static void SetSteps(this Assignment h, List<Step> steps)
@@ -98,7 +97,7 @@ public static class ModelConversionExtension
         {
             Name = r.HomeName,
             Address = r.HomeAddress,
-            OwnerEmail = r.HomeOwnerEmail
+            AppUserId = r.AppUserId
         };
     }
 
