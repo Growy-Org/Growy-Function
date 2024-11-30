@@ -4,5 +4,5 @@ namespace FamilyMerchandise.Function.Repositories.Interfaces;
 
 public interface IAppUserRepository
 {
-    public Task<Guid> RegisterUser(AppUser user);
+    public Task<Guid> InsertIfNotExist(AppUser user);
 }

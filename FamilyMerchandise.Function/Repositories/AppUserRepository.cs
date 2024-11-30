@@ -10,12 +10,12 @@ public class AppUserRepository(IConnectionFactory connectionFactory) : IAppUserR
 {
     private const string AppUsersTable = "appusers";
 
-    public async Task<Guid> RegisterUser(AppUser user)
+    public async Task<Guid> InsertIfNotExist(AppUser user)
     {
         var appUserEntity = user.ToAppUserEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"INSERT INTO {AppUsersTable} (Id, Email, IdentityProvider, IdpId) VALUES (@Id, @Email, @IdentityProvider, @IdpId) RETURNING Id";
+            $"INSERT INTO {AppUsersTable} (Id, Email, IdentityProvider, IdpId) VALUES (@Id, @Email, @IdentityProvider, @IdpId) ON CONFLICT (IdpId) DO UPDATE SET IdpId = @IdpId RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, appUserEntity);
     }
 }

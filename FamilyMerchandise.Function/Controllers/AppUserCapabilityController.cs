@@ -18,17 +18,21 @@ public class AppUserCapabilityController(
 
     [Function("RegisterAppUser")]
     public async Task<IActionResult> RegisterAppUser(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "app-user")]
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "app-user")]
         HttpRequest req,
-        [FromBody] AppUser appUser)
+        [FromBody] CreateAppUserRequest appUserRequest)
     {
-        
         // Currently MS Azure B2C is used
-        appUser.IdentityProvider = AuthIdp;
-        // Id == Object ID @ b2c
         // Identity provider id == Object ID
-        appUser.IdpId = appUser.Id.ToString();
-        var res = await appUserService.RegisterUser(appUser);
+        // Id == Object ID @ b2c
+        // Id should only be meaningful to the system internally
+        var res = await appUserService.RegisterUser(new AppUser()
+        {
+            Id = Guid.Parse(appUserRequest.IdpId),
+            IdentityProvider = AuthIdp,
+            IdpId = appUserRequest.IdpId,
+            Email = appUserRequest.Email,
+        });
         return new OkObjectResult(res);
     }
 }

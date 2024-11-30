@@ -31,7 +31,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             IdentityProvider = "AzureB2C"
         };
 
-        await _appUserRepo.RegisterUser(appUser);
+        await _appUserRepo.InsertIfNotExist(appUser);
         var homeRequest = new CreateHomeRequest()
         {
             HomeAddress = _faker.Address.FullAddress(),
@@ -73,7 +73,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
             IdentityProvider = "AzureB2C"
         };
 
-        await _appUserRepo.RegisterUser(appUser);
+        await _appUserRepo.InsertIfNotExist(appUser);
 
         var homeRequest = new CreateHomeRequest()
         {
