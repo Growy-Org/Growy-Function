@@ -9,6 +9,7 @@
 - Remove home, child, parent are not allowed when there is linked resource
 - Home Analytics. (Get All Wishes, Achievement, etc..)
 - Optimisation & pagination (getting just one object not all of them on ui update etc)
+- Make Error throw
 
 ### Game Category Profile & Mini Game
 
