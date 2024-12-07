@@ -9,4 +9,5 @@ public interface IHomeRepository
     public Task<Guid> InsertHome(CreateHomeRequest home);
     public Task<Guid> EditHomeByHomeId(EditHomeRequest request);
     public Task DeleteHomeByHomeId(Guid homeId);
+    public Task<Guid> GetHomeIdByAppUserId(Guid appUserId);
 }

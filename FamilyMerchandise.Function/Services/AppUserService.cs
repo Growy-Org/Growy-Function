@@ -6,6 +6,7 @@ namespace FamilyMerchandise.Function.Services;
 
 public class AppUserService(
     IAppUserRepository appUserRepository,
+    IHomeRepository homeRepository,
     ILogger<HomeService> logger)
     : IAppUserService
 {
@@ -15,5 +16,13 @@ public class AppUserService(
         var userId = await appUserRepository.InsertIfNotExist(user);
         logger.LogInformation($"Successfully registered user with Id: {userId}");
         return userId;
+    }
+
+    public async Task<Guid> GetHomeIdByAppUserId(Guid userId)
+    {
+        logger.LogInformation("Getting home ids by app user Id");
+        var homeId = await homeRepository.GetHomeIdByAppUserId(userId);
+        logger.LogInformation($"Successfully get home : {homeId} by app user Id: {userId}");
+        return homeId;
     }
 }

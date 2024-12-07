@@ -44,4 +44,12 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
             $"DELETE FROM {HomesTable} WHERE Id = @Id RETURNING Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = homeId });
     }
+
+    public async Task<Guid> GetHomeIdByAppUserId(Guid appUserId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"SELECT Id FROM {HomesTable} WHERE AppUserId = @AppUserId";
+        return await con.QuerySingleAsync<Guid>(query, new { AppUserId = appUserId });
+    }
 }
