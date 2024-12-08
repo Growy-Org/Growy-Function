@@ -45,11 +45,11 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         await con.ExecuteScalarAsync<Guid>(query, new { Id = homeId });
     }
 
-    public async Task<Guid> GetHomeIdByAppUserId(Guid appUserId)
+    public async Task<Guid?> GetHomeIdByAppUserId(Guid appUserId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"SELECT Id FROM {HomesTable} WHERE AppUserId = @AppUserId";
-        return await con.QuerySingleAsync<Guid>(query, new { AppUserId = appUserId });
+        return await con.QuerySingleOrDefaultAsync<Guid?>(query, new { AppUserId = appUserId });
     }
 }
