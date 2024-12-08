@@ -12,7 +12,7 @@ var host = new HostBuilder()
     .ConfigureServices((context, services) =>
     {
         services.Configure<ConnectionStrings>(context.Configuration.GetSection(ConnectionStrings.KEY));
-        
+
         // Services
         services.AddSingleton<IAppUserService, AppUserService>();
         services.AddSingleton<IHomeService, HomeService>();

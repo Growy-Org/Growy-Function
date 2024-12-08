@@ -35,7 +35,7 @@ public class AppUserCapabilityController(
         });
         return new OkObjectResult(res);
     }
-    
+
     [Function("GetHomeIdByAppUserId")]
     public async Task<IActionResult> GetHomeIdByAppUserId(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "app-user/{id}/home")]
@@ -49,6 +49,10 @@ public class AppUserCapabilityController(
         }
 
         var res = await appUserService.GetHomeIdByAppUserId(appUserId);
+        if (res == null)
+        {
+            return new NotFoundResult();
+        }
         return new OkObjectResult(res);
     }
 }
