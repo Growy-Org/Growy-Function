@@ -152,6 +152,20 @@ public class HomeService(
 
     #region Assignments
 
+    public async Task<Assignment> GetAssignmentById(Guid assignmentId)
+    {
+        logger.LogInformation($"Getting assignment by Id: {assignmentId}");
+        var assignment= await assignmentRepository.GetAssignmentById(assignmentId);
+
+        logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
+        var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
+        assignment.SetSteps(steps);
+
+        logger.LogInformation(
+            $"Successfully getting all assignments by Home : {assignment.Id}");
+        return assignment;
+    }
+    
     public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId)
     {
         logger.LogInformation($"Getting all assignments by Home: {homeId}");

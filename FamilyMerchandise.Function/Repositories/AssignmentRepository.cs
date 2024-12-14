@@ -12,6 +12,20 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
     public const string ChildrenTable = "inventory.children";
     public const string ParentTable = "inventory.parents";
 
+    public async Task<Assignment> GetAssignmentById(Guid assignmentId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                 SELECT *
+                 FROM {AssignmentsTable} a
+                 LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
+                 LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
+                 WHERE a.Id = @Id
+             """;
+        var assignments = await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { Id = assignmentId });
+        return assignments.Single();
+    }
     public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();

@@ -198,6 +198,22 @@ public class HomeCapabilityController(
         var res = await homeService.GetAllAssignmentsByHomeId(homeId);
         return new OkObjectResult(res);
     }
+    
+    //  in the future, authorisation should prevent accessing ot other's home's assignment
+    [Function("GetAssignmentById")]
+    public async Task<IActionResult> GetAssignmentById(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "assignment/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var assignmentId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await homeService.GetAssignmentById(assignmentId);
+        return new OkObjectResult(res);
+    }
 
     #endregion
 
