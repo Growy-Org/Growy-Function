@@ -4,6 +4,18 @@ namespace FamilyMerchandise.Function.Entities;
 
 public static class EntityConversionExtension
 {
+    public static AppUser ToAppUser(this AppUserEntity a)
+    {
+        return new AppUser()
+        {
+            Id = a.Id,
+            IdentityProvider = a.IdentityProvider,
+            Email = a.Email,
+            Sku = (AppSku)Enum.Parse(typeof(AppSku), a.Sku),
+            IdpId = a.IdpId
+        };
+    }
+
     public static Home ToHome(this HomeEntity a)
     {
         return new Home
