@@ -29,13 +29,14 @@ Some management
 
 - Authentication
 - Authorisation to only modify resource from the same tenant (home)
-- Pagination (now retrunning all assignment and all steps, but for the beginnign should be fine)
+- Pagination (now returning all assignment)
 - Http version 
 - Request validation
 - Transactional Query in editing multiple table
 - Preventing Negative Points from a child
 - Testing and Unittest
-
+- Handle different sql exception via middle ware 
+  - Duplicate Step Order
 ## Some analytics
 
 What matters to kids these days at different age?

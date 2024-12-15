@@ -13,8 +13,9 @@ public class StepRepository(IConnectionFactory connectionFactory) : IStepReposit
     public async Task<List<Step>> GetAllStepsByAssignmentId(Guid assignmentId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        // Sort steps in ascending order
         var query =
-            $"SELECT * FROM {StepsTable} WHERE AssignmentId = @AssignmentId";
+            $"SELECT * FROM {StepsTable} WHERE AssignmentId = @AssignmentId ORDER BY StepOrder";
         var stepEntities = await con.QueryAsync<StepEntity>(query, new { AssignmentId = assignmentId });
         return stepEntities.Select(e => e.ToStep()).ToList();
     }

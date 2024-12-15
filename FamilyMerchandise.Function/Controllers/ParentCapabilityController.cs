@@ -95,7 +95,7 @@ public class ParentCapabilityController(
 
     [Function("CreateStep")]
     public async Task<IActionResult> CreateStep(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/step")]
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "step")]
         HttpRequest req, [FromBody] CreateStepRequest stepRequest)
     {
         var res = await parentService.CreateStepToAssignment(stepRequest);
