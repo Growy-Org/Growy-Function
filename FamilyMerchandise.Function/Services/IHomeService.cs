@@ -26,5 +26,5 @@ public interface IHomeService
     public Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId);
     public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId);
     public Task<Assignment> GetAssignmentById(Guid assignmentId);
-    public Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId);
+    public Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize);
 }

@@ -26,7 +26,8 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         var assignments = await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { Id = assignmentId });
         return assignments.Single();
     }
-    public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId)
+
+    public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -36,11 +37,14 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
                  LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
                  LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
                  WHERE a.HomeId = @HomeId
+                 ORDER BY a.CreatedDateUtc ASC
+                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize} 
              """;
-        var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { HomeId = homeId });
+        var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel,
+            new { HomeId = homeId });
         return assignmentEntities.ToList();
     }
-    
+
     public async Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
@@ -52,7 +56,8 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
                  LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
                  WHERE a.AssignerId = @AssignerId
              """;
-        var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { AssignerId = parentId });
+        var assignmentEntities =
+            await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { AssignerId = parentId });
         return assignmentEntities.ToList();
     }
 
@@ -117,6 +122,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         return await con.QuerySingleAsync<EditAssignmentEntityResponse>(query,
             new { Id = assignmentId, CompletedDateUtc = isCompleted ? DateTime.UtcNow : (DateTime?)null });
     }
+
     public async Task DeleteAssignmentByAssignmentId(Guid assignmentId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();

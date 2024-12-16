@@ -68,7 +68,8 @@ public class HomeCapabilityController(
         }
         catch (DeletionFailureException _)
         {
-            return new ConflictObjectResult($"Failed to delete Home with ID {homeId}, make sure all linked resources are deleted first");
+            return new ConflictObjectResult(
+                $"Failed to delete Home with ID {homeId}, make sure all linked resources are deleted first");
         }
 
         return new OkResult();
@@ -121,7 +122,8 @@ public class HomeCapabilityController(
         }
         catch (DeletionFailureException _)
         {
-            return new ConflictObjectResult($"Failed to delete Child with ID {childId}, make sure all linked resources are deleted first");
+            return new ConflictObjectResult(
+                $"Failed to delete Child with ID {childId}, make sure all linked resources are deleted first");
         }
 
         return new OkResult();
@@ -168,13 +170,15 @@ public class HomeCapabilityController(
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
+
         try
         {
             await homeService.DeleteParent(parentId);
         }
         catch (DeletionFailureException _)
         {
-            return new ConflictObjectResult($"Failed to delete Parent with ID {parentId}, make sure all linked resources are deleted first");
+            return new ConflictObjectResult(
+                $"Failed to delete Parent with ID {parentId}, make sure all linked resources are deleted first");
         }
 
         return new OkResult();
@@ -187,7 +191,7 @@ public class HomeCapabilityController(
     [Function("GetAllAssignmentsByHome")]
     public async Task<IActionResult> GetAllAssignmentsByHome(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/assignments")]
-        HttpRequest req, string id)
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
@@ -195,10 +199,12 @@ public class HomeCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await homeService.GetAllAssignmentsByHomeId(homeId);
+        var res = await homeService.GetAllAssignmentsByHomeId(homeId,
+            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
-    
+
     //  in the future, authorisation should prevent accessing ot other's home's assignment
     [Function("GetAssignmentById")]
     public async Task<IActionResult> GetAssignmentById(
