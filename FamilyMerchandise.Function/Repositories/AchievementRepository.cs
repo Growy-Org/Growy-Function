@@ -12,7 +12,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     public const string ChildrenTable = "inventory.children";
     public const string ParentTable = "inventory.parents";
 
-    public async Task<List<Achievement>> GetAllAchievementsByHomeId(Guid homeId)
+    public async Task<List<Achievement>> GetAllAchievementsByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -22,6 +22,8 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
                  LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
                  LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
                  WHERE a.HomeId = @HomeId
+                 ORDER BY a.CreatedDateUtc ASC
+                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var achievements =
@@ -30,7 +32,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
         return achievements.ToList();
     }
 
-    public async Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId)
+    public async Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -40,6 +42,8 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
                  LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
                  LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
                  WHERE a.VisionaryId = @VisionaryId
+                 ORDER BY a.CreatedDateUtc ASC
+                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var achievements =
@@ -48,7 +52,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
         return achievements.ToList();
     }
 
-    public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId)
+    public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -58,6 +62,8 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
                  LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
                  LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
                  WHERE a.AchieverId = @AchieverId
+                 ORDER BY a.CreatedDateUtc ASC
+                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var achievements =

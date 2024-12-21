@@ -17,10 +17,10 @@ public class ParentService(
 {
     #region Assignments
 
-    public async Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId)
+    public async Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all assignments by Parent: {parentId}");
-        var assignments = await assignmentRepository.GetAllAssignmentsByParentId(parentId);
+        var assignments = await assignmentRepository.GetAllAssignmentsByParentId(parentId, pageNumber, pageSize);
 
         foreach (var assignment in assignments)
         {
@@ -113,10 +113,10 @@ public class ParentService(
 
     #region Wishes
 
-    public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId)
+    public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all wishes by Parent: {parentId}");
-        var wishes = await wishRepository.GetAllWishesByParentId(parentId);
+        var wishes = await wishRepository.GetAllWishesByParentId(parentId, pageNumber, pageSize);
         logger.LogInformation(
             $"Successfully getting all wishes by Parent : {parentId}");
         return wishes;
@@ -135,10 +135,10 @@ public class ParentService(
 
     #region Achievements
 
-    public async Task<List<Achievement>> GetAllAchievementByParentId(Guid parentId)
+    public async Task<List<Achievement>> GetAllAchievementByParentId(Guid parentId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all achievements by Parent: {parentId}");
-        var achievements = await achievementRepository.GetAllAchievementsByParentId(parentId);
+        var achievements = await achievementRepository.GetAllAchievementsByParentId(parentId, pageNumber, pageSize);
         logger.LogInformation(
             $"Successfully getting all achievements by Parent : {parentId}");
         return achievements;
@@ -190,10 +190,10 @@ public class ParentService(
 
     #region Penalties
 
-    public async Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId)
+    public async Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all penalties by Parent: {parentId}");
-        var penalties = await penaltyRepository.GetAllPenaltiesByParentId(parentId);
+        var penalties = await penaltyRepository.GetAllPenaltiesByParentId(parentId, pageNumber, pageSize);
         logger.LogInformation(
             $"Successfully getting all penalties by Parent : {parentId}");
         return penalties;

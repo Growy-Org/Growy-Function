@@ -22,9 +22,9 @@ public interface IHomeService
     public Task DeleteParent(Guid parentId);
 
     // Others
-    public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId);
-    public Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId);
-    public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId);
+    public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId, int pageNumber, int pageSize);
+    public Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId, int pageNumber, int pageSize);
+    public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize);
     public Task<Assignment> GetAssignmentById(Guid assignmentId);
     public Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize);
 }

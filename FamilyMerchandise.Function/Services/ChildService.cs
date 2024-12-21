@@ -1,6 +1,5 @@
 using FamilyMerchandise.Function.Models.Dtos;
 using FamilyMerchandise.Function.Models;
-using FamilyMerchandise.Function.Repositories;
 using FamilyMerchandise.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -23,10 +22,10 @@ public class ChildService(
 
     #region Assignments
 
-    public async Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId)
+    public async Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all assignments by ChildId: {childId}");
-        var assignments = await assignmentRepository.GetAllAssignmentsByChildId(childId);
+        var assignments = await assignmentRepository.GetAllAssignmentsByChildId(childId, pageNumber, pageSize);
 
         foreach (var assignment in assignments)
         {
@@ -45,12 +44,10 @@ public class ChildService(
 
     #region Achievements
 
-
-
-    public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId)
+    public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all achievements by ChildId: {childId}");
-        var achievements = await achievementRepository.GetAllAchievementsByChildId(childId);
+        var achievements = await achievementRepository.GetAllAchievementsByChildId(childId, pageNumber, pageSize);
         logger.LogInformation(
             $"Successfully getting all achievements by ChildId : {childId}");
         return achievements;
@@ -60,10 +57,10 @@ public class ChildService(
 
     #region Wishes
 
-    public async Task<List<Wish>> GetAllWishesByChildId(Guid childId)
+    public async Task<List<Wish>> GetAllWishesByChildId(Guid childId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all wishes by ChildId: {childId}");
-        var wishes = await wishRepository.GetAllWishesByChildId(childId);
+        var wishes = await wishRepository.GetAllWishesByChildId(childId, pageNumber, pageSize);
         logger.LogInformation(
             $"Successfully getting all wishes by ChildId : {childId}");
         return wishes;
@@ -86,7 +83,7 @@ public class ChildService(
             $"Successfully wish edited {request.WishId}");
         return id;
     }
-    
+
     public async Task<Guid> SetWishFullFilled(Guid wishId, bool isFullFilled)
     {
         logger.LogInformation($"{(isFullFilled ? "Full Filling" : "Un Full Filling")} wish");
@@ -115,10 +112,10 @@ public class ChildService(
 
     #region Penalties
 
-    public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId)
+    public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all penalties by ChildId: {childId}");
-        var penalties = await penaltyRepository.GetAllPenaltiesByChildId(childId);
+        var penalties = await penaltyRepository.GetAllPenaltiesByChildId(childId, pageNumber, pageSize);
         logger.LogInformation(
             $"Successfully getting all penalties by ChildId : {childId}");
         return penalties;

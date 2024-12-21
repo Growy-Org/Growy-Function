@@ -8,7 +8,6 @@
 - Repeat Assignment Scheduler
 - Remove home, child, parent are not allowed when there is linked resource
 - Home Analytics. (Get All Wishes, Achievement, etc..)
-- Optimisation & pagination (getting just one object not all of them on ui update etc)
 - Make Error throw
 
 ### Game Category Profile & Mini Game
@@ -37,6 +36,7 @@ Some management
 - Testing and Unittest
 - Handle different sql exception via middle ware 
   - Duplicate Step Order
+  - DB not responding etc
 ## Some analytics
 
 What matters to kids these days at different age?

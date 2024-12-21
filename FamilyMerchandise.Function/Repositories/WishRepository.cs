@@ -12,7 +12,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     public const string ChildrenTable = "inventory.children";
     public const string ParentTable = "inventory.parents";
 
-    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId)
+    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -22,6 +22,8 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
                  LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
                  LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
                  WHERE w.HomeId = @HomeId
+                 ORDER BY w.CreatedDateUtc ASC
+                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var wishEntities =
@@ -30,7 +32,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         return wishEntities.ToList();
     }
 
-    public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId)
+    public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -40,6 +42,8 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
                  LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
                  LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
                  WHERE w.GenieId = @GenieId
+                 ORDER BY w.CreatedDateUtc ASC
+                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var wishEntities =
@@ -48,7 +52,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         return wishEntities.ToList();
     }
 
-    public async Task<List<Wish>> GetAllWishesByChildId(Guid childId)
+    public async Task<List<Wish>> GetAllWishesByChildId(Guid childId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -58,6 +62,8 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
                  LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
                  LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
                  WHERE w.WisherId = @WisherId
+                 ORDER BY w.CreatedDateUtc ASC
+                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var wishEntities =

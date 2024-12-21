@@ -17,7 +17,7 @@ public class ChildCapabilityController(
     [Function("GetAllAssignmentsByChild")]
     public async Task<IActionResult> GetAllAssignmentsByChild(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "child/{id}/assignments")]
-        HttpRequest req, string id)
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var childId))
         {
@@ -25,7 +25,9 @@ public class ChildCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await childService.GetAllAssignmentsByChildId(childId);
+        var res = await childService.GetAllAssignmentsByChildId(childId,
+            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
 
@@ -36,7 +38,7 @@ public class ChildCapabilityController(
     [Function("GetAllAchievementsByChild")]
     public async Task<IActionResult> GetAllAchievementsByHome(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "child/{id}/achievements")]
-        HttpRequest req, string id)
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var childId))
         {
@@ -44,7 +46,9 @@ public class ChildCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await childService.GetAllAchievementsByChildId(childId);
+        var res = await childService.GetAllAchievementsByChildId(childId,
+            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
 
@@ -55,7 +59,7 @@ public class ChildCapabilityController(
     [Function("GetAllWishesByChild")]
     public async Task<IActionResult> GetAllWishesByChild(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "child/{id}/wishes")]
-        HttpRequest req, string id)
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var childId))
         {
@@ -63,7 +67,9 @@ public class ChildCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await childService.GetAllWishesByChildId(childId);
+        var res = await childService.GetAllWishesByChildId(childId,
+            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
 
@@ -139,7 +145,7 @@ public class ChildCapabilityController(
     [Function("GetAllPenaltiesByChild")]
     public async Task<IActionResult> GetAlPenaltiesByChild(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "child/{id}/penalties")]
-        HttpRequest req, string id)
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var childId))
         {
@@ -147,7 +153,9 @@ public class ChildCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await childService.GetAllPenaltiesByChildId(childId);
+        var res = await childService.GetAllPenaltiesByChildId(childId,
+            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
 

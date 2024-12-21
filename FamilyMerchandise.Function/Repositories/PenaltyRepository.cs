@@ -12,7 +12,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
     private const string ChildrenTable = "inventory.children";
     private const string ParentTable = "inventory.parents";
 
-    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
+    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -22,6 +22,8 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
                 LEFT JOIN {ChildrenTable} c ON penalty.ViolatorId = c.Id
                 LEFT JOIN {ParentTable} p ON penalty.EnforcerId = p.Id
                 WHERE penalty.HomeId = @HomeId
+                ORDER BY p.CreatedDateUtc ASC
+                LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var penaltyEntities =
@@ -30,7 +32,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         return penaltyEntities.ToList();
     }
 
-    public async Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId)
+    public async Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -40,6 +42,8 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
                 LEFT JOIN {ChildrenTable} c ON penalty.ViolatorId = c.Id
                 LEFT JOIN {ParentTable} p ON penalty.EnforcerId = p.Id
                 WHERE penalty.EnforcerId = @EnforcerId
+                ORDER BY p.CreatedDateUtc ASC
+                LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var penaltyEntities =
@@ -48,7 +52,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         return penaltyEntities.ToList();
     }
 
-    public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId)
+    public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
@@ -58,6 +62,8 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
                 LEFT JOIN {ChildrenTable} c ON penalty.ViolatorId = c.Id
                 LEFT JOIN {ParentTable} p ON penalty.EnforcerId = p.Id
                 WHERE penalty.ViolatorId = @ViolatorId
+                ORDER BY p.CreatedDateUtc ASC
+                LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var penaltyEntities =

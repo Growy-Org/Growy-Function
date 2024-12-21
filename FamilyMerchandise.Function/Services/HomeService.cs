@@ -187,10 +187,10 @@ public class HomeService(
 
     #region Wishes
 
-    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId)
+    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all wishes by Home: {homeId}");
-        var wishes = await wishRepository.GetAllWishesByHomeId(homeId);
+        var wishes = await wishRepository.GetAllWishesByHomeId(homeId, pageNumber, pageSize);
         logger.LogInformation(
             $"Successfully getting all wishes by Home : {homeId}");
         return wishes;
@@ -200,10 +200,10 @@ public class HomeService(
 
     #region Achievements
 
-    public async Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId)
+    public async Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all achievements by HomeId: {homeId}");
-        var achievements = await achievementRepository.GetAllAchievementsByHomeId(homeId);
+        var achievements = await achievementRepository.GetAllAchievementsByHomeId(homeId, pageNumber, pageSize);
         logger.LogInformation(
             $"Successfully getting all achievements by HomeId : {homeId}");
         return achievements;
@@ -213,10 +213,10 @@ public class HomeService(
 
     #region Penalties
 
-    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId)
+    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all penalties by HomeId: {homeId}");
-        var penalties = await penaltyRepository.GetAllPenaltiesByHomeId(homeId);
+        var penalties = await penaltyRepository.GetAllPenaltiesByHomeId(homeId, pageNumber, pageSize);
         logger.LogInformation(
             $"Successfully getting all penalties by HomeId : {homeId}");
         return penalties;

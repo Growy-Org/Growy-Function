@@ -228,7 +228,7 @@ public class HomeCapabilityController(
     [Function("GetAllAchievementsByHome")]
     public async Task<IActionResult> GetAllAchievementsByHome(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/achievements")]
-        HttpRequest req, string id)
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
@@ -236,7 +236,9 @@ public class HomeCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await homeService.GetAllAchievementByHomeId(homeId);
+        var res = await homeService.GetAllAchievementByHomeId(homeId,
+            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
 
@@ -247,7 +249,7 @@ public class HomeCapabilityController(
     [Function("GetAllWishesByHome")]
     public async Task<IActionResult> GetAllWishesByHome(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/wishes")]
-        HttpRequest req, string id)
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
@@ -255,7 +257,9 @@ public class HomeCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await homeService.GetAllWishesByHomeId(homeId);
+        var res = await homeService.GetAllWishesByHomeId(homeId,
+            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
 
@@ -266,7 +270,7 @@ public class HomeCapabilityController(
     [Function("GetAllPenaltiesByHome")]
     public async Task<IActionResult> GetAllPenaltiesByHome(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/penalties")]
-        HttpRequest req, string id)
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
@@ -274,7 +278,9 @@ public class HomeCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await homeService.GetAllPenaltiesByHomeId(homeId);
+        var res = await homeService.GetAllPenaltiesByHomeId(homeId,
+            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
 

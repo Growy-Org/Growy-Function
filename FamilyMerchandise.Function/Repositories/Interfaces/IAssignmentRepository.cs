@@ -7,8 +7,8 @@ public interface IAssignmentRepository
 {
     public Task<Assignment> GetAssignmentById(Guid assignmentId);
     public Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize);
-    public Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId);
-    public Task<List<Assignment>> GetAllAssignmentsByChildId(Guid homeId);
+    public Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId, int pageNumber, int pageSize);
+    public Task<List<Assignment>> GetAllAssignmentsByChildId(Guid homeId, int pageNumber, int pageSize);
     public Task<Guid> InsertAssignment(CreateAssignmentRequest request);
     public Task<Guid> EditAssignmentByAssignmentId(EditAssignmentRequest request);
     public Task<EditAssignmentEntityResponse> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted);
