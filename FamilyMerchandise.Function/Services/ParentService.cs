@@ -45,7 +45,7 @@ public class ParentService(
 
     public async Task<Guid> EditAssignment(EditAssignmentRequest request)
     {
-        logger.LogInformation($"Editing a new Assignment to Home: {request.AssignmentId}");
+        logger.LogInformation($"Editing assignment: {request.AssignmentId}");
         var assignmentId = await assignmentRepository.EditAssignmentByAssignmentId(request);
         logger.LogInformation(
             $"Successfully edited an Assignment : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");

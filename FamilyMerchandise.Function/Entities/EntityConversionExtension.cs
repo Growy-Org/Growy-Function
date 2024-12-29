@@ -65,7 +65,7 @@ public static class EntityConversionExtension
             DueDateUtc = a.DueDateUtc,
             CreatedDateUtc = a.CreatedDateUtc,
             UpdatedDateUtc = a.UpdatedDateUtc,
-            CompletedDateUtc = a.UpdatedDateUtc,
+            CompletedDateUtc = a.CompletedDateUtc,
         };
     }
 
