@@ -265,6 +265,17 @@ public class ParentCapabilityController(
             pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
+    
+    [Function("CreateWishFromParent")]
+    public async Task<IActionResult> CreateWishFromParent(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "parent/wish")]
+        HttpRequest req, [FromBody] CreateWishRequest wishRequest)
+    {
+        // this is the same from backend POV for now as the children, Parent's create wish allow including cost
+        // TODO: Add validation for the request
+        var res = await parentService.CreateWish(wishRequest);
+        return new OkObjectResult(res);
+    }
 
     // can only edit points nothing else, UI controls the 
     [Function("EditWishFromParent")]
@@ -278,6 +289,51 @@ public class ParentCapabilityController(
         return new OkObjectResult(res);
     }
 
+    [Function("FullFillWishFromParent")]
+    public async Task<IActionResult> FullFillWishFromParent(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent/wish/{id}/fullfill")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var wishId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.SetWishFullFilled(wishId, true);
+        return new OkObjectResult(res);
+    }
+
+    [Function("UnFullFillWishFromParent")]
+    public async Task<IActionResult> UnFullFillWishFromParent(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent/wish/{id}/unfullfill")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var wishId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await parentService.SetWishFullFilled(wishId, false);
+        return new OkObjectResult(res);
+    }
+    
+    [Function("DeleteWishFromParent")]
+    public async Task<IActionResult> DeleteWishFromParent(
+        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "parent/wish/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var wishId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        await parentService.DeleteWish(wishId);
+        return new OkResult();
+    }
+    
     #endregion
 
     #region Penalties

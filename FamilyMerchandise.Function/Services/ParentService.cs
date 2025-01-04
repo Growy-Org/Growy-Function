@@ -122,15 +122,47 @@ public class ParentService(
         return wishes;
     }
 
+    public async Task<Guid> CreateWish(CreateWishRequest request)
+    {
+        logger.LogInformation($"Adding a new Wish to Home: {request.HomeId} by Parent");
+        var wishId = await wishRepository.InsertWish(request);
+        logger.LogInformation(
+            $"Successfully added a wish : {wishId}, by Parent {request.ParentId} to Child {request.ChildId}");
+        return wishId;
+    }
+    
     public async Task<Guid> EditWish(EditWishRequest request)
     {
-        logger.LogInformation($"Editing wish {request.WishId} for parent");
+        logger.LogInformation($"Editing wish {request.WishId} by Parent");
         var id = await wishRepository.EditWishByWishId(request);
         logger.LogInformation(
-            $"Successfully wish edited {request.WishId}");
+            $"Successfully wish edited {request.WishId} by Parent");
         return id;
     }
 
+    public async Task<Guid> SetWishFullFilled(Guid wishId, bool isFullFilled)
+    {
+        logger.LogInformation($"{(isFullFilled ? "Full Filling" : "Un Full Filling")} wish by Parent");
+        var response =
+            await wishRepository.EditWishFullFillStatusByWishId(wishId, isFullFilled);
+        logger.LogInformation(
+            $"Successfully edit full fill status with id: {response.Id} by Parent");
+
+        var childId = await childRepository.EditPointsByChildId(response.ChildId,
+            isFullFilled ? -response.Points : response.Points);
+
+        logger.LogInformation(
+            $"Successfully {(isFullFilled ? "reducing" : "adding")} {response.Points} Points {(isFullFilled ? "from" : "back")} child profile with id: {childId} by Parent");
+        return response.Id;
+    }
+
+    public async Task DeleteWish(Guid wishId)
+    {
+        logger.LogInformation($"Deleting wish {wishId} by Parent");
+        await wishRepository.DeleteWishByWishId(wishId);
+        logger.LogInformation(
+            $"Successfully deleted wish {wishId} by Parent");
+    }
     #endregion
 
     #region Achievements

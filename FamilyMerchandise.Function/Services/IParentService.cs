@@ -18,7 +18,10 @@ public interface IParentService
 
     // Wishes
     public Task<List<Wish>> GetAllWishesByParentId(Guid parentId, int pageNumber, int pageSize);
+    public Task<Guid> CreateWish(CreateWishRequest request);
     public Task<Guid> EditWish(EditWishRequest request);
+    public Task<Guid> SetWishFullFilled(Guid wishId, bool isFullFilled);
+    public Task DeleteWish(Guid wishId);
 
     // Achievements
     public Task<List<Achievement>> GetAllAchievementByParentId(Guid parentId, int pageNumber, int pageSize);

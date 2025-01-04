@@ -41,7 +41,6 @@ public class ChildService(
 
     #endregion
 
-
     #region Achievements
 
     public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId, int pageNumber, int pageSize)
@@ -68,7 +67,7 @@ public class ChildService(
 
     public async Task<Guid> CreateWish(CreateWishRequest request)
     {
-        logger.LogInformation($"Adding a new Assignment to Home: {request.HomeId}");
+        logger.LogInformation($"Adding a new wish to Home: {request.HomeId}  by Child");
         var wishId = await wishRepository.InsertWish(request);
         logger.LogInformation(
             $"Successfully added a wish : {wishId}, by Child {request.ChildId} to Parent {request.ParentId}");
@@ -80,32 +79,32 @@ public class ChildService(
         logger.LogInformation($"Editing wish {request.WishId} for Child");
         var id = await wishRepository.EditWishByWishId(request);
         logger.LogInformation(
-            $"Successfully wish edited {request.WishId}");
+            $"Successfully wish edited {request.WishId} by Child");
         return id;
     }
 
     public async Task<Guid> SetWishFullFilled(Guid wishId, bool isFullFilled)
     {
-        logger.LogInformation($"{(isFullFilled ? "Full Filling" : "Un Full Filling")} wish");
+        logger.LogInformation($"{(isFullFilled ? "Full Filling" : "Un Full Filling")} wish by Child");
         var response =
             await wishRepository.EditWishFullFillStatusByWishId(wishId, isFullFilled);
         logger.LogInformation(
-            $"Successfully edit full fill status with id: {response.Id}");
+            $"Successfully edit full fill status with id: {response.Id} by Child");
 
         var childId = await childRepository.EditPointsByChildId(response.ChildId,
             isFullFilled ? -response.Points : response.Points);
 
         logger.LogInformation(
-            $"Successfully {(isFullFilled ? "reducing" : "adding")} {response.Points} Points {(isFullFilled ? "from" : "back")} child profile with id: {childId}");
+            $"Successfully {(isFullFilled ? "reducing" : "adding")} {response.Points} Points {(isFullFilled ? "from" : "back")} child profile with id: {childId} by Child");
         return response.Id;
     }
 
     public async Task DeleteWish(Guid wishId)
     {
-        logger.LogInformation($"Deleting wish {wishId}");
+        logger.LogInformation($"Deleting wish {wishId} by Child");
         await wishRepository.DeleteWishByWishId(wishId);
         logger.LogInformation(
-            $"Successfully deleted wish {wishId}");
+            $"Successfully deleted wish {wishId} by Child");
     }
 
     #endregion

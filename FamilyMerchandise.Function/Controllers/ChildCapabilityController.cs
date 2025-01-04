@@ -73,9 +73,9 @@ public class ChildCapabilityController(
         return new OkObjectResult(res);
     }
 
-    [Function("CreateWish")]
-    public async Task<IActionResult> CreateWish(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/wish")]
+    [Function("CreateWishFromChild")]
+    public async Task<IActionResult> CreateWishFromChild(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "child/wish")]
         HttpRequest req, [FromBody] CreateWishRequest wishRequest)
     {
         var res = await childService.CreateWish(wishRequest);
@@ -94,9 +94,9 @@ public class ChildCapabilityController(
         return new OkObjectResult(res);
     }
     
-    [Function("FullFillWish")]
-    public async Task<IActionResult> FullFillWish(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "wish/{id}/fullfill")]
+    [Function("FullFillWishFromChild")]
+    public async Task<IActionResult> FullFillWishFromChild(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child/wish/{id}/fullfill")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var wishId))
@@ -109,9 +109,9 @@ public class ChildCapabilityController(
         return new OkObjectResult(res);
     }
 
-    [Function("UnFullFillWish")]
-    public async Task<IActionResult> UnFullFillWish(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "wish/{id}/unfullfill")]
+    [Function("UnFullFillWishFromChild")]
+    public async Task<IActionResult> UnFullFillWishFromChild(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child/wish/{id}/unfullfill")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var wishId))
@@ -124,9 +124,9 @@ public class ChildCapabilityController(
         return new OkObjectResult(res);
     }
     
-    [Function("DeleteWish")]
-    public async Task<IActionResult> DeleteWish(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "wish/{id}")]
+    [Function("DeleteWishFromChild")]
+    public async Task<IActionResult> DeleteWishFromChild(
+        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "child/wish/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var wishId))
@@ -138,6 +138,7 @@ public class ChildCapabilityController(
         await childService.DeleteWish(wishId);
         return new OkResult();
     }
+    
     #endregion
 
     #region Penalties
