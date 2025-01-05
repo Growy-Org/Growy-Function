@@ -378,13 +378,13 @@ public class ParentCapabilityController(
         [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "penalty/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var achievementId))
+        if (!Guid.TryParse(id, out var penaltyId))
         {
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        await parentService.DeletePenalty(achievementId);
+        await parentService.DeletePenalty(penaltyId);
         return new OkResult();
     }
     #endregion

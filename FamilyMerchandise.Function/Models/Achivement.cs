@@ -9,7 +9,7 @@ public record Achievement
     public int PointsGranted { get; init; }
     public DateTime CreatedDateUtc { get; init; }
     public DateTime UpdatedDateUtc { get; init; }
-    public DateTime? AchievementDateUtc { get; init; }
+    public DateTime? AchievedDateUtc { get; init; }
     public Child Achiever { get; set; } = new();
     public Parent Visionary { get; set; } = new();
 }

@@ -106,7 +106,7 @@ public static class EntityConversionExtension
             PointsGranted = a.PointsGranted,
             CreatedDateUtc = a.CreatedDateUtc,
             UpdatedDateUtc = a.UpdatedDateUtc,
-            AchievementDateUtc = a.AchievedDateUtc,
+            AchievedDateUtc = a.AchievedDateUtc,
         };
     }
 
