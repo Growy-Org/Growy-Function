@@ -162,7 +162,7 @@ public class HomeService(
         assignment.SetSteps(steps);
 
         logger.LogInformation(
-            $"Successfully getting all assignments by Home : {assignment.Id}");
+            $"Successfully getting assignment by Id: {assignment.Id}");
         return assignment;
     }
 
@@ -196,6 +196,16 @@ public class HomeService(
         return wishes;
     }
 
+    public async Task<Wish> GetWishById(Guid wishId)
+    {
+        logger.LogInformation($"Getting wish by Id: {wishId}");
+        var wish = await wishRepository.GetWishById(wishId);
+
+        logger.LogInformation(
+            $"Successfully getting wish by Id: {wish.Id}");
+        return wish;
+    }
+
     #endregion
 
     #region Achievements
@@ -209,6 +219,16 @@ public class HomeService(
         return achievements;
     }
 
+    public async Task<Achievement> GetAchievementById(Guid achievementId)
+    {
+        logger.LogInformation($"Getting achievement by Id: {achievementId}");
+        var achievement = await achievementRepository.GetAchievementById(achievementId);
+
+        logger.LogInformation(
+            $"Successfully getting achievement by Id: {achievement.Id}");
+        return achievement;
+    }
+
     #endregion
 
     #region Penalties
@@ -220,6 +240,16 @@ public class HomeService(
         logger.LogInformation(
             $"Successfully getting all penalties by HomeId : {homeId}");
         return penalties;
+    }
+
+    public async Task<Penalty> GetPenaltyById(Guid penaltyId)
+    {
+        logger.LogInformation($"Getting penalty by Id: {penaltyId}");
+        var penalty = await penaltyRepository.GetPenaltyById(penaltyId);
+
+        logger.LogInformation(
+            $"Successfully getting penalty by Id: {penalty.Id}");
+        return penalty;
     }
 
     #endregion

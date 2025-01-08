@@ -9,5 +9,5 @@ public record EditChildRequest
     public int ChildIconCode { get; init; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ChildGender ChildGender { get; init; }
-    public DateTime ChildDOB { get; init; }
+    public DateTime ChildDoB { get; init; }
 }

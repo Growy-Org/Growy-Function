@@ -62,7 +62,7 @@ public static class ModelConversionExtension
         {
             Id = r.ChildId,
             Name = r.ChildName,
-            DOB = r.ChildDOB,
+            DOB = r.ChildDoB,
             Gender = r.ChildGender.ToString(),
             IconCode = r.ChildIconCode,
         };
@@ -86,7 +86,7 @@ public static class ModelConversionExtension
         {
             Id = r.ParentId,
             Name = r.ParentName,
-            DOB = r.ParentDOB,
+            DOB = r.ParentDoB,
             Role = r.ParentRole.ToString(),
             IconCode = r.ParentIconCode,
         };

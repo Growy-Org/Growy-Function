@@ -12,6 +12,21 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     public const string ChildrenTable = "inventory.children";
     public const string ParentTable = "inventory.parents";
 
+    public async Task<Achievement> GetAchievementById(Guid achievementId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                 SELECT *
+                 FROM {AchievementsTable} a
+                 LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
+                 LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
+                 WHERE a.Id = @Id
+             """;
+        var achievements = await con.QueryAsync(query, _mapEntitiesToAchievementModel, new { Id = achievementId });
+        return achievements.Single();
+    }
+
     public async Task<List<Achievement>> GetAllAchievementsByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
@@ -72,15 +87,6 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
         return achievements.ToList();
     }
 
-    private readonly Func<AchievementEntity, ChildEntity, ParentEntity, Achievement> _mapEntitiesToAchievementModel =
-        (a, c, p) =>
-        {
-            var achievement = a.ToAchievement();
-            achievement.Achiever = c.ToChild();
-            achievement.Visionary = p.ToParent();
-            return achievement;
-        };
-
 
     public async Task<Guid> InsertAchievement(CreateAchievementRequest request)
     {
@@ -126,4 +132,13 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
         var query = $"DELETE FROM {AchievementsTable} where id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = achievementId });
     }
+
+    private readonly Func<AchievementEntity, ChildEntity, ParentEntity, Achievement> _mapEntitiesToAchievementModel =
+        (a, c, p) =>
+        {
+            var achievement = a.ToAchievement();
+            achievement.Achiever = c.ToChild();
+            achievement.Visionary = p.ToParent();
+            return achievement;
+        };
 }

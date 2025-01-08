@@ -12,6 +12,21 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     public const string ChildrenTable = "inventory.children";
     public const string ParentTable = "inventory.parents";
 
+    public async Task<Wish> GetWishById(Guid wishId)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var query =
+            $"""
+                 SELECT *
+                 FROM {WishesTable} a
+                 LEFT JOIN {ChildrenTable} c ON a.WisherId = c.Id
+                 LEFT JOIN {ParentTable} p ON a.GenieId = p.Id
+                 WHERE a.Id = @Id
+             """;
+        var wishes = await con.QueryAsync(query, _mapEntitiesToWishModel, new { Id = wishId });
+        return wishes.Single();
+    }
+
     public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
@@ -72,15 +87,6 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         return wishEntities.ToList();
     }
 
-    private readonly Func<WishEntity, ChildEntity, ParentEntity, Wish> _mapEntitiesToWishModel = (w, c, p) =>
-    {
-        var wish = w.ToWish();
-        wish.Wisher = c.ToChild();
-        wish.Genie = p.ToParent();
-        return wish;
-    };
-
-
     public async Task<Guid> InsertWish(CreateWishRequest request)
     {
         var wishEntity = request.ToWishEntity();
@@ -118,10 +124,19 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         return await con.QuerySingleAsync<EditWishEntityResponse>(query,
             new { Id = wishId, FullFilledDateUtc = isFullFilled ? DateTime.UtcNow : (DateTime?)null });
     }
+
     public async Task DeleteWishByWishId(Guid wishId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query = $"DELETE FROM {WishesTable} where id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = wishId });
     }
+
+    private readonly Func<WishEntity, ChildEntity, ParentEntity, Wish> _mapEntitiesToWishModel = (w, c, p) =>
+    {
+        var wish = w.ToWish();
+        wish.Wisher = c.ToChild();
+        wish.Genie = p.ToParent();
+        return wish;
+    };
 }

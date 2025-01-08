@@ -10,5 +10,5 @@ public record EditParentRequest
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ParentRole ParentRole { get; init; }
-    public DateTime ParentDOB { get; init; }
+    public DateTime ParentDoB { get; init; }
 }

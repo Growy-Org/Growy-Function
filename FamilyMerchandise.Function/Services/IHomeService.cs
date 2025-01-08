@@ -23,8 +23,11 @@ public interface IHomeService
 
     // Others
     public Task<List<Wish>> GetAllWishesByHomeId(Guid homeId, int pageNumber, int pageSize);
+    public Task<Wish> GetWishById(Guid wishId);
     public Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId, int pageNumber, int pageSize);
+    public Task<Achievement> GetAchievementById(Guid achievementId);
     public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize);
+    public Task<Penalty> GetPenaltyById(Guid penaltyId);
     public Task<Assignment> GetAssignmentById(Guid assignmentId);
     public Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize);
 }

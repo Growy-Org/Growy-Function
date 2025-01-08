@@ -44,8 +44,7 @@ public class HomeCapabilityController(
     [Function("EditHome")]
     public async Task<IActionResult> EditHome(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "home")]
-        HttpRequest req,
-        string id, [FromBody] EditHomeRequest request)
+        HttpRequest req, [FromBody] EditHomeRequest request)
     {
         var res = await homeService.EditHome(request);
         return new OkObjectResult(res);
@@ -98,8 +97,7 @@ public class HomeCapabilityController(
     [Function("EditChild")]
     public async Task<IActionResult> EditChild(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child")]
-        HttpRequest req,
-        string id, [FromBody] EditChildRequest request)
+        HttpRequest req, [FromBody] EditChildRequest request)
     {
         var res = await homeService.EditChild(request);
         return new OkObjectResult(res);
@@ -152,8 +150,7 @@ public class HomeCapabilityController(
     [Function("EditParent")]
     public async Task<IActionResult> EditParent(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent")]
-        HttpRequest req,
-        string id, [FromBody] EditParentRequest parent)
+        HttpRequest req, [FromBody] EditParentRequest parent)
     {
         var res = await homeService.EditParent(parent);
         return new OkObjectResult(res);
@@ -242,6 +239,21 @@ public class HomeCapabilityController(
         return new OkObjectResult(res);
     }
 
+    [Function("GetAchievementById")]
+    public async Task<IActionResult> GetAchievementById(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "achievement/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var achievementId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await homeService.GetAchievementById(achievementId);
+        return new OkObjectResult(res);
+    }
+
     #endregion
 
     #region Wishes
@@ -263,6 +275,21 @@ public class HomeCapabilityController(
         return new OkObjectResult(res);
     }
 
+    [Function("GetWishById")]
+    public async Task<IActionResult> GetWishById(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "wish/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var wishId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await homeService.GetWishById(wishId);
+        return new OkObjectResult(res);
+    }
+
     #endregion
 
     #region Penalties
@@ -281,6 +308,21 @@ public class HomeCapabilityController(
         var res = await homeService.GetAllPenaltiesByHomeId(homeId,
             pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
             pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+        return new OkObjectResult(res);
+    }
+
+    [Function("GetPenaltyById")]
+    public async Task<IActionResult> GetPenaltyById(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "penalty/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var penaltyId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var res = await homeService.GetPenaltyById(penaltyId);
         return new OkObjectResult(res);
     }
 
