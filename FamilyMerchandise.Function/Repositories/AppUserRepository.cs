@@ -24,6 +24,7 @@ public class AppUserRepository(IConnectionFactory connectionFactory) : IAppUserR
         var appUserEntity = user.ToAppUserEntity();
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         // This will be called multiple time, we could just check if Idp id exist, because Idp Id should be Unique. Id is internal to this app only
+        // TODO: Maybe Email will change in the future
         var query =
             $"INSERT INTO {AppUsersTable} (Id, Email, IdentityProvider, IdpId, Sku) VALUES (@Id, @Email, @IdentityProvider, @IdpId, @Sku) ON CONFLICT (IdpId) DO UPDATE SET IdpId = @IdpId RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, appUserEntity);

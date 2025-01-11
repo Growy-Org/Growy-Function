@@ -284,7 +284,6 @@ public class ParentCapabilityController(
         HttpRequest req, [FromBody] EditWishRequest request)
     {
         // this is the same from backend POV for now as the children
-        // TODO: Add validation for the request
         var res = await parentService.EditWish(request);
         return new OkObjectResult(res);
     }
