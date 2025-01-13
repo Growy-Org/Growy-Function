@@ -19,5 +19,4 @@ public enum ParentAnalyticViewType
 {
     AllParentsToAllChildren,
     AllParentsToOneChild,
-    OneParentToOneChild,
 }

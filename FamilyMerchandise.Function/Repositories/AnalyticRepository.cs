@@ -17,12 +17,16 @@ public class AnalyticRepository(IConnectionFactory connectionFactory) : IAnalyti
     public async Task<ParentAnalyticProfile> GetAllParentsToAllChildAnalytic(Guid homeId, int year)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
-        var totalNumberOfAssignments = await GetTotalNumbersByHomeId(con, AssignmentsTable, homeId, year);
-        var totalNumberOfPenalties = await GetTotalNumbersByHomeId(con, PenaltyTable, homeId, year);
+        var totalNumberOfAssignments =
+            await GetTotalNumberById(con, AssignmentsTable, homeId, nameof(AssignmentEntity.HomeId), year);
+        var totalNumberOfPenalties =
+            await GetTotalNumberById(con, PenaltyTable, homeId, nameof(PenaltyEntity.HomeId), year);
         var totalNumberOfAchievementsGranted =
-            await GetTotalNumbersByHomeId(con, AchievementsTable, homeId, year, "AchievedDateUtc");
+            await GetTotalNumberById(con, AchievementsTable, homeId, nameof(AchievementEntity.HomeId), year,
+                nameof(AchievementEntity.AchievedDateUtc));
         var totalNumberOfWishesFulfilled =
-            await GetTotalNumbersByHomeId(con, WishesTable, homeId, year, "FullFilledDateUtc");
+            await GetTotalNumberById(con, WishesTable, homeId, nameof(WishEntity.HomeId), year,
+                nameof(WishEntity.FullFilledDateUtc));
         return new ParentAnalyticProfile
         {
             ViewType = ParentAnalyticViewType.AllParentsToAllChildren,
@@ -34,18 +38,45 @@ public class AnalyticRepository(IConnectionFactory connectionFactory) : IAnalyti
         };
     }
 
-    private async Task<int> GetTotalNumbersByHomeId(IDbConnection con, string tableName, Guid homeId, int year)
+    public async Task<ParentAnalyticProfile> GetAllParentsToOneChildAnalytic(Guid childId, int year)
     {
-        var query =
-            $"SELECT COUNT(*) FROM {tableName} WHERE HomeId = @Id AND EXTRACT(YEAR FROM CreatedDateUtc) = @Year";
-        return await con.QuerySingleAsync<int>(query, new { Id = homeId, Year = year });
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        var totalNumberOfAssignments =
+            await GetTotalNumberById(con, AssignmentsTable, childId, nameof(AssignmentEntity.AssigneeId), year);
+        var totalNumberOfPenalties =
+            await GetTotalNumberById(con, PenaltyTable, childId, nameof(PenaltyEntity.ViolatorId), year);
+        var totalNumberOfAchievementsGranted =
+            await GetTotalNumberById(con, AchievementsTable, childId, nameof(AchievementEntity.AchieverId), year,
+                nameof(AchievementEntity.AchievedDateUtc));
+        var totalNumberOfWishesFulfilled =
+            await GetTotalNumberById(con, WishesTable, childId, nameof(WishEntity.WisherId), year,
+                nameof(WishEntity.FullFilledDateUtc));
+
+        return new ParentAnalyticProfile
+        {
+            ViewType = ParentAnalyticViewType.AllParentsToOneChild,
+            Year = year,
+            AssignmentsAssigned = totalNumberOfAssignments,
+            AchievementsGranted = totalNumberOfAchievementsGranted,
+            WishesFulfilled = totalNumberOfWishesFulfilled,
+            PenaltiesSignedOff = totalNumberOfPenalties,
+        };
     }
 
-    private async Task<int> GetTotalNumbersByHomeId(IDbConnection con, string tableName, Guid homeId, int year,
+    private async Task<int> GetTotalNumberById(IDbConnection con, string tableName, Guid id, string idColumnName,
+        int year)
+    {
+        var query =
+            $"SELECT COUNT(*) FROM {tableName} WHERE {idColumnName} = @Id AND EXTRACT(YEAR FROM CreatedDateUtc) = @Year";
+        return await con.QuerySingleAsync<int>(query, new { Id = id, Year = year });
+    }
+
+    private async Task<int> GetTotalNumberById(IDbConnection con, string tableName, Guid id, string idColumnName,
+        int year,
         string nonNullableColumnName)
     {
         var query =
-            $"SELECT COUNT(*) FROM {tableName} WHERE HomeId = @Id AND EXTRACT(YEAR FROM CreatedDateUtc) = @Year AND {nonNullableColumnName} IS NOT NULL";
-        return await con.QuerySingleAsync<int>(query, new { Id = homeId, Year = year });
+            $"SELECT COUNT(*) FROM {tableName} WHERE {idColumnName} = @Id AND EXTRACT(YEAR FROM CreatedDateUtc) = @Year AND {nonNullableColumnName} IS NOT NULL";
+        return await con.QuerySingleAsync<int>(query, new { Id = id, Year = year });
     }
 }
