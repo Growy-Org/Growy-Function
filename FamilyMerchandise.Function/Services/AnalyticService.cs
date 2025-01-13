@@ -14,7 +14,7 @@ public class AnalyticService(
         int? year)
     {
         var result = new AnalyticProfileResult<ParentAnalyticProfile>
-            { Status = RequestStatus.Success, Message = "Success!" };
+        { Status = RequestStatus.Success, Message = "Success!" };
 
         // TODO : validator should be on it's own 
         switch (viewType)

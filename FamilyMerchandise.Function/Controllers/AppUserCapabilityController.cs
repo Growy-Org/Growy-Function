@@ -31,7 +31,7 @@ public class AppUserCapabilityController(
         var res = await appUserService.GetAppUserById(appUserId);
         return new OkObjectResult(res);
     }
-    
+
     [Function("RegisterAppUser")]
     public async Task<IActionResult> RegisterAppUser(
         [HttpTrigger(AuthorizationLevel.Function, "put", Route = "app-user")]

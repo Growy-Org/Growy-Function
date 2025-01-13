@@ -50,12 +50,12 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
              """;
         return await con.ExecuteScalarAsync<Guid>(query, childEntity);
     }
-    
+
     public async Task DeleteChildByChildId(Guid childId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"DELETE FROM {ChildrenTable} WHERE Id = @Id RETURNING Id;";
-        await con.ExecuteScalarAsync<Guid>(query, new {Id = childId});
+        await con.ExecuteScalarAsync<Guid>(query, new { Id = childId });
     }
 }

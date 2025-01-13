@@ -26,7 +26,7 @@ public class AnalyticRepository(IConnectionFactory connectionFactory) : IAnalyti
                 nameof(AchievementEntity.AchievedDateUtc));
         var totalNumberOfWishesFulfilled =
             await GetTotalNumberById(con, WishesTable, homeId, nameof(WishEntity.HomeId), year,
-                nameof(WishEntity.FullFilledDateUtc));
+                nameof(WishEntity.FulFilledDateUtc));
         return new ParentAnalyticProfile
         {
             ViewType = ParentAnalyticViewType.AllParentsToAllChildren,
@@ -50,7 +50,7 @@ public class AnalyticRepository(IConnectionFactory connectionFactory) : IAnalyti
                 nameof(AchievementEntity.AchievedDateUtc));
         var totalNumberOfWishesFulfilled =
             await GetTotalNumberById(con, WishesTable, childId, nameof(WishEntity.WisherId), year,
-                nameof(WishEntity.FullFilledDateUtc));
+                nameof(WishEntity.FulFilledDateUtc));
 
         return new ParentAnalyticProfile
         {

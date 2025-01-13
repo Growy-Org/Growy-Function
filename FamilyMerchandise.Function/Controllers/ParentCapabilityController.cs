@@ -288,9 +288,9 @@ public class ParentCapabilityController(
         return new OkObjectResult(res);
     }
 
-    [Function("FullFillWishFromParent")]
-    public async Task<IActionResult> FullFillWishFromParent(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent/wish/{id}/fullfill")]
+    [Function("FulFillWishFromParent")]
+    public async Task<IActionResult> FulFillWishFromParent(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent/wish/{id}/fulfill")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var wishId))
@@ -299,13 +299,13 @@ public class ParentCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await parentService.SetWishFullFilled(wishId, true);
+        var res = await parentService.SetWishFulFilled(wishId, true);
         return new OkObjectResult(res);
     }
 
-    [Function("UnFullFillWishFromParent")]
-    public async Task<IActionResult> UnFullFillWishFromParent(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent/wish/{id}/unfullfill")]
+    [Function("UnFulFillWishFromParent")]
+    public async Task<IActionResult> UnFulFillWishFromParent(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent/wish/{id}/unfulfill")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var wishId))
@@ -314,7 +314,7 @@ public class ParentCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await parentService.SetWishFullFilled(wishId, false);
+        var res = await parentService.SetWishFulFilled(wishId, false);
         return new OkObjectResult(res);
     }
 

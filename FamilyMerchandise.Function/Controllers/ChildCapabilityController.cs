@@ -93,10 +93,10 @@ public class ChildCapabilityController(
         var res = await childService.EditWish(request);
         return new OkObjectResult(res);
     }
-    
-    [Function("FullFillWishFromChild")]
-    public async Task<IActionResult> FullFillWishFromChild(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child/wish/{id}/fullfill")]
+
+    [Function("FulFillWishFromChild")]
+    public async Task<IActionResult> FulFillWishFromChild(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child/wish/{id}/fulfill")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var wishId))
@@ -105,13 +105,13 @@ public class ChildCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await childService.SetWishFullFilled(wishId, true);
+        var res = await childService.SetWishFulFilled(wishId, true);
         return new OkObjectResult(res);
     }
 
-    [Function("UnFullFillWishFromChild")]
-    public async Task<IActionResult> UnFullFillWishFromChild(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child/wish/{id}/unfullfill")]
+    [Function("UnFulFillWishFromChild")]
+    public async Task<IActionResult> UnFulFillWishFromChild(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child/wish/{id}/unfulfill")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var wishId))
@@ -120,10 +120,10 @@ public class ChildCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await childService.SetWishFullFilled(wishId, false);
+        var res = await childService.SetWishFulFilled(wishId, false);
         return new OkObjectResult(res);
     }
-    
+
     [Function("DeleteWishFromChild")]
     public async Task<IActionResult> DeleteWishFromChild(
         [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "child/wish/{id}")]
@@ -138,7 +138,7 @@ public class ChildCapabilityController(
         await childService.DeleteWish(wishId);
         return new OkResult();
     }
-    
+
     #endregion
 
     #region Penalties

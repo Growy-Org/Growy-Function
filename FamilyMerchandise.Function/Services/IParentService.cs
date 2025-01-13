@@ -20,7 +20,7 @@ public interface IParentService
     public Task<List<Wish>> GetAllWishesByParentId(Guid parentId, int pageNumber, int pageSize);
     public Task<Guid> CreateWish(CreateWishRequest request);
     public Task<Guid> EditWish(EditWishRequest request);
-    public Task<Guid> SetWishFullFilled(Guid wishId, bool isFullFilled);
+    public Task<Guid> SetWishFulFilled(Guid wishId, bool isFulFilled);
     public Task DeleteWish(Guid wishId);
 
     // Achievements

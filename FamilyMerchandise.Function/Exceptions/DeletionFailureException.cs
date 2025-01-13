@@ -1,6 +1,6 @@
 namespace FamilyMerchandise.Function.Exceptions;
 
-public class DeletionFailureException: Exception 
+public class DeletionFailureException : Exception
 {
     public string? TableName { get; }
     public string? ForeignKeyName { get; }
@@ -28,5 +28,5 @@ public class DeletionFailureException: Exception
     {
         TableName = tableName;
         ForeignKeyName = foreignKeyName;
-    }   
+    }
 }

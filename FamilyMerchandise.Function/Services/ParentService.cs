@@ -140,19 +140,19 @@ public class ParentService(
         return id;
     }
 
-    public async Task<Guid> SetWishFullFilled(Guid wishId, bool isFullFilled)
+    public async Task<Guid> SetWishFulFilled(Guid wishId, bool isFulFilled)
     {
-        logger.LogInformation($"{(isFullFilled ? "Full Filling" : "Un Full Filling")} wish by Parent");
+        logger.LogInformation($"{(isFulFilled ? "Full Filling" : "Un Full Filling")} wish by Parent");
         var response =
-            await wishRepository.EditWishFullFillStatusByWishId(wishId, isFullFilled);
+            await wishRepository.EditWishFulFillStatusByWishId(wishId, isFulFilled);
         logger.LogInformation(
             $"Successfully edit full fill status with id: {response.Id} by Parent");
 
         var childId = await childRepository.EditPointsByChildId(response.ChildId,
-            isFullFilled ? -response.Points : response.Points);
+            isFulFilled ? -response.Points : response.Points);
 
         logger.LogInformation(
-            $"Successfully {(isFullFilled ? "reducing" : "adding")} {response.Points} Points {(isFullFilled ? "from" : "back")} child profile with id: {childId} by Parent");
+            $"Successfully {(isFulFilled ? "reducing" : "adding")} {response.Points} Points {(isFulFilled ? "from" : "back")} child profile with id: {childId} by Parent");
         return response.Id;
     }
 

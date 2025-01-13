@@ -91,7 +91,7 @@ public static class EntityConversionExtension
             PointsCost = w.PointsCost,
             CreatedDateUtc = w.CreatedDateUtc,
             UpdatedDateUtc = w.UpdatedDateUtc,
-            FullFilledDateUtc = w.FullFilledDateUtc,
+            FulFilledDateUtc = w.FulFilledDateUtc,
         };
     }
 

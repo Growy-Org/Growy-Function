@@ -15,7 +15,7 @@ public class AppUserService(
         logger.LogInformation($"Getting a app user by Id {appUserId}");
         var appUser = await appUserRepository.GetAppUserById(appUserId);
         logger.LogInformation($"Successfully get user with Id: {appUserId}");
-        return appUser; 
+        return appUser;
     }
 
     public async Task<Guid> RegisterUser(AppUser user)

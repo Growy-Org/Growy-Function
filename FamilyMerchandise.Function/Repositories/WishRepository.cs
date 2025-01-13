@@ -115,14 +115,14 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         return await con.ExecuteScalarAsync<Guid>(query, wishEntity);
     }
 
-    public async Task<EditWishEntityResponse> EditWishFullFillStatusByWishId(Guid wishId,
-        bool isFullFilled)
+    public async Task<EditWishEntityResponse> EditWishFulFillStatusByWishId(Guid wishId,
+        bool isFulFilled)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
-            $"UPDATE {WishesTable} SET FullFilledDateUtc = @FullFilledDateUtc WHERE Id = @Id RETURNING Id, WisherId AS ChildId, PointsCost AS Points;";
+            $"UPDATE {WishesTable} SET FulFilledDateUtc = @FulFilledDateUtc WHERE Id = @Id RETURNING Id, WisherId AS ChildId, PointsCost AS Points;";
         return await con.QuerySingleAsync<EditWishEntityResponse>(query,
-            new { Id = wishId, FullFilledDateUtc = isFullFilled ? DateTime.UtcNow : (DateTime?)null });
+            new { Id = wishId, FulFilledDateUtc = isFulFilled ? DateTime.UtcNow : (DateTime?)null });
     }
 
     public async Task DeleteWishByWishId(Guid wishId)

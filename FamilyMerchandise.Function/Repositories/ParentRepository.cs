@@ -42,12 +42,12 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
              """;
         return await con.ExecuteScalarAsync<Guid>(query, parentEntity);
     }
-    
+
     public async Task DeleteParentByParentId(Guid parentId)
     {
         using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
         var query =
             $"DELETE FROM {ParentsTable} WHERE Id = @Id RETURNING Id;";
-        await con.ExecuteScalarAsync<Guid>(query, new {Id = parentId});
+        await con.ExecuteScalarAsync<Guid>(query, new { Id = parentId });
     }
 }

@@ -12,5 +12,5 @@ public record WishEntity
     public int? PointsCost { get; set; }
     public DateTime CreatedDateUtc { get; set; }
     public DateTime UpdatedDateUtc { get; set; }
-    public DateTime? FullFilledDateUtc { get; set; }
+    public DateTime? FulFilledDateUtc { get; set; }
 }
