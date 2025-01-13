@@ -63,6 +63,58 @@ public class AnalyticRepository(IConnectionFactory connectionFactory) : IAnalyti
         };
     }
 
+    public async Task<ChildAnalyticProfile> GetChildAnalyticByChildId(Guid childId, int year)
+    {
+        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+
+        var (pointsReduced,totalNumberOfPenalties)  =
+            await GetSumNumberById(con, PenaltyTable, nameof(PenaltyEntity.PointsDeducted), childId,
+                nameof(PenaltyEntity.ViolatorId), year);
+        
+        var (pointsEarned,totalNumberOfAssignmentsCompleted) =
+            await GetSumNumberById(con, AssignmentsTable, nameof(AssignmentEntity.Points), childId,
+                nameof(AssignmentEntity.AssigneeId), year, nameof(AssignmentEntity.CompletedDateUtc));
+        
+        var  (pointsGranted, totalNumberOfAchievementsAchieved) =
+            await GetSumNumberById(con, AchievementsTable, nameof(AchievementEntity.PointsGranted), childId,
+                nameof(AchievementEntity.AchieverId), year, nameof(AchievementEntity.AchievedDateUtc));
+        
+        var (pointsSpent , totalNumberOfWishesRealised)=
+            await GetSumNumberById(con, WishesTable, nameof(WishEntity.PointsCost), childId,
+                nameof(WishEntity.WisherId), year, nameof(WishEntity.FulFilledDateUtc));
+
+        return new ChildAnalyticProfile
+        {
+            ViewType = ChildAnalyticViewType.ByChild,
+            Year = year,
+            PenaltyReceived = totalNumberOfPenalties,
+            AssignmentsCompleted = totalNumberOfAssignmentsCompleted,
+            AchievementsAchieved = totalNumberOfAchievementsAchieved,
+            WishesRealised = totalNumberOfWishesRealised,
+            PointsSpent = pointsSpent,
+            PointsGained = pointsEarned + pointsGranted,
+            PointsReduced = pointsReduced
+        };
+    }
+
+    private async Task<(int,int)> GetSumNumberById(IDbConnection con, string tableName, string aggregatedColumnName, Guid id,
+        string idColumnName,
+        int year)
+    {
+        var query =
+            $"SELECT SUM({aggregatedColumnName}), COUNT(*) FROM {tableName} WHERE {idColumnName} = @Id AND EXTRACT(YEAR FROM CreatedDateUtc) = @Year";
+        return await con.QuerySingleAsync<(int,int)>(query, new { Id = id, Year = year });
+    }
+    
+    private async Task<(int,int)> GetSumNumberById(IDbConnection con, string tableName, string aggregatedColumnName, Guid id,
+        string idColumnName,
+        int year,  string nonNullableColumnName)
+    {
+        var query =
+            $"SELECT SUM({aggregatedColumnName}), COUNT(*) FROM {tableName} WHERE {idColumnName} = @Id AND EXTRACT(YEAR FROM CreatedDateUtc) = @Year AND {nonNullableColumnName} IS NOT NULL";
+        return await con.QuerySingleAsync<(int,int)>(query, new { Id = id, Year = year });
+    }
+
     private async Task<int> GetTotalNumberById(IDbConnection con, string tableName, Guid id, string idColumnName,
         int year)
     {
