@@ -130,7 +130,7 @@ public class ParentService(
             $"Successfully added a wish : {wishId}, by Parent {request.ParentId} to Child {request.ChildId}");
         return wishId;
     }
-    
+
     public async Task<Guid> EditWish(EditWishRequest request)
     {
         logger.LogInformation($"Editing wish {request.WishId} by Parent");
@@ -163,6 +163,7 @@ public class ParentService(
         logger.LogInformation(
             $"Successfully deleted wish {wishId} by Parent");
     }
+
     #endregion
 
     #region Achievements

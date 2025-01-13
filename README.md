@@ -37,6 +37,8 @@ Some management
 - Handle different sql exception via middle ware 
   - Duplicate Step Order
   - DB not responding etc
+- Async Analytic
+- change Fulfill typo
 ## Some analytics
 
 What matters to kids these days at different age?

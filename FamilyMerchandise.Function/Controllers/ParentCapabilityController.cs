@@ -265,7 +265,7 @@ public class ParentCapabilityController(
             pageSize ?? Constants.DEFAULT_PAGE_SIZE);
         return new OkObjectResult(res);
     }
-    
+
     [Function("CreateWishFromParent")]
     public async Task<IActionResult> CreateWishFromParent(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "parent/wish")]
@@ -317,7 +317,7 @@ public class ParentCapabilityController(
         var res = await parentService.SetWishFullFilled(wishId, false);
         return new OkObjectResult(res);
     }
-    
+
     [Function("DeleteWishFromParent")]
     public async Task<IActionResult> DeleteWishFromParent(
         [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "parent/wish/{id}")]
@@ -332,7 +332,7 @@ public class ParentCapabilityController(
         await parentService.DeleteWish(wishId);
         return new OkResult();
     }
-    
+
     #endregion
 
     #region Penalties
@@ -386,5 +386,6 @@ public class ParentCapabilityController(
         await parentService.DeletePenalty(penaltyId);
         return new OkResult();
     }
+
     #endregion
 }

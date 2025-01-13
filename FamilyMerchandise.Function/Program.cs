@@ -18,6 +18,7 @@ var host = new HostBuilder()
         services.AddSingleton<IHomeService, HomeService>();
         services.AddSingleton<IParentService, ParentService>();
         services.AddSingleton<IChildService, ChildService>();
+        services.AddSingleton<IAnalyticService, AnalyticService>();
 
         // Repositories 
         services.AddSingleton<IConnectionFactory, ConnectionFactory>();
@@ -30,6 +31,7 @@ var host = new HostBuilder()
         services.AddSingleton<IAchievementRepository, AchievementRepository>();
         services.AddSingleton<IPenaltyRepository, PenaltyRepository>();
         services.AddSingleton<IStepRepository, StepRepository>();
+        services.AddSingleton<IAnalyticRepository, AnalyticRepository>();
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
     })
