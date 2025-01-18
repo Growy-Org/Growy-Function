@@ -14,7 +14,7 @@ public class AnalyticService(
         int? year)
     {
         var result = new AnalyticProfileResult<ParentAnalyticProfile>
-        { Status = RequestStatus.Success, Message = "Success!" };
+            { Status = RequestStatus.Success, Message = "Success!" };
 
         // TODO : validator should be on it's own 
         switch (viewType)
@@ -48,6 +48,7 @@ public class AnalyticService(
                         await analyticRepository.GetAllParentsToOneChildAnalytic(childIdGuid,
                             year ?? DateTime.Now.Year);
                 }
+
                 break;
             default:
                 result.Status = RequestStatus.Failure;
@@ -58,10 +59,11 @@ public class AnalyticService(
         return result;
     }
 
-    public async Task<AnalyticProfileResult<ChildAnalyticProfile>> GetLiveChildAnalyticProfile(ChildAnalyticViewType viewType, string? childId, int? year)
+    public async Task<AnalyticProfileResult<ChildAnalyticProfile>> GetLiveChildAnalyticProfile(
+        ChildAnalyticViewType viewType, string? childId, int? year)
     {
-                var result = new AnalyticProfileResult<ChildAnalyticProfile>
-        { Status = RequestStatus.Success, Message = "Success!" };
+        var result = new AnalyticProfileResult<ChildAnalyticProfile>
+            { Status = RequestStatus.Success, Message = "Success!" };
 
         // TODO : validator should be on it's own 
         switch (viewType)
@@ -76,8 +78,10 @@ public class AnalyticService(
                 }
                 else
                 {
-                    result.Result = await analyticRepository.GetChildAnalyticByChildId(childIdGuid, year ?? DateTime.Now.Year);
+                    result.Result =
+                        await analyticRepository.GetChildAnalyticByChildId(childIdGuid, year ?? DateTime.Now.Year);
                 }
+
                 break;
 
             default:
@@ -87,6 +91,5 @@ public class AnalyticService(
         }
 
         return result;
-        
     }
 }

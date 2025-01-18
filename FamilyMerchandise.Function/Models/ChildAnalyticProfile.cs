@@ -6,7 +6,6 @@ public record ChildAnalyticProfile
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ChildAnalyticViewType ViewType { get; set; }
-
     public int Year { get; init; }
     public int AssignmentsCompleted { get; set; }
     public int AchievementsAchieved { get; set; }
