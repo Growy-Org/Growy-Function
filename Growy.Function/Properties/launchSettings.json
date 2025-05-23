@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "FamilyMerchandise_Function": {
+    "Growy_Function": {
       "commandName": "Project",
       "commandLineArgs": "--port 7020",
       "launchBrowser": false

@@ -1,3 +1,8 @@
+## How to run
+
+cd Growy.Function
+func start
+
 ## To Implement
 - Validation on Parent and Child Edit wish so that it only apply to certain field
 - Authorisation so that only current home Id info can be accessed by the tenant 
@@ -46,7 +51,7 @@ What makes parent proud ? Most commonly achievement set by different parent at d
 
 ## DB setup in another project
 
-Family Merchandise DB
+Growy DB
 In the future, image can be published and pull down for integration test
 
 ## Mission
