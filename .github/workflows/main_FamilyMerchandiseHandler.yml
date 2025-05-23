@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy dotnet core project to Azure Function App - FamilyMerchandiseHandler
+name: Build and deploy dotnet core project to Azure Function App - GrowyFunction
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./FamilyMerchandise.Function" # set this to the path to your web app project, defaults to the repository root
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./Growy.Function" # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: "8.0.x" # set this to the dotnet version to use
 
 jobs:
@@ -46,6 +46,6 @@ jobs:
         uses: Azure/functions-action@v1
         id: fa
         with:
-          app-name: "FamilyMerchandiseHandler"
+          app-name: "GrowyFunction"
           slot-name: "Production"
           package: "${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output"
