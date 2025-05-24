@@ -4,7 +4,7 @@ using Growy.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace FamilyMerchandise.Tests;
+namespace GrowyFunction.Tests;
 
 public class FunctionTestFixture : IDisposable
 {

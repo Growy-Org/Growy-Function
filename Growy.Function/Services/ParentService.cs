@@ -12,6 +12,7 @@ public class ParentService(
     IWishRepository wishRepository,
     IAchievementRepository achievementRepository,
     IPenaltyRepository penaltyRepository,
+    IAssessmentRepository assessmentRepository,
     ILogger<ParentService> logger)
     : IParentService
 {
@@ -294,19 +295,20 @@ public class ParentService(
 
     #endregion
 
-
     #region Assessments
 
     public async Task<Guid> SubmitDevelopmentQuotientReport(SubmitDevelopmentReportRequest request)
     {
-        logger.LogInformation($"Submitting Development Quotient Report for Child Id {request.CandidateId}");
-        var child = await childRepository.GetChildById(request.CandidateId);
-        var ageInMonth = child.DOB - DateTime.Now;
-        logger.LogInformation($"Child {child.Name} is of month: {ageInMonth}");
+        logger.LogInformation(
+            $"Submitting Development Quotient Report for Child Id {request.CandidateId} by {request.ExaminerId}");
 
-        // calculate the restult save it, just aggregate all the points divide by 5 and devide by the month
+
+        logger.LogInformation(
+            $"Month: {request.CandidateMonth}, Total Score : {request.TotalScore}, Result : {request.DqResult}");
+
+        // calculate the result save it, just aggregate all the points divide by 5 and devide by the month
         // points array are  0.5,0.5,0.5,1.5,3,3, etc.. has to have 261 items, and if not then validation should fail
-        return child.Id;
+        return await assessmentRepository.CreateReport(request);
     }
 
     #endregion

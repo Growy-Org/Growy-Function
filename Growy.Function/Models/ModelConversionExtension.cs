@@ -245,4 +245,18 @@ public static class ModelConversionExtension
             PointsDeducted = r.PenaltyPointsDeducted
         };
     }
+
+    public static DevelopmentQuotientResultEntity ToDqAssessmentEntity(this SubmitDevelopmentReportRequest r)
+    {
+        return new DevelopmentQuotientResultEntity
+        {
+            HomeId = r.HomeId,
+            CandidateId = r.CandidateId,
+            ExaminerId = r.ExaminerId,
+            Answer = r.Answers,
+            TotalScore = r.TotalScore,
+            DqResult = r.DqResult,
+            CandidateMonth = r.CandidateMonth,
+        };
+    }
 }

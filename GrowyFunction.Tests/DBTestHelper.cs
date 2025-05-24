@@ -3,9 +3,9 @@ using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Repositories;
 
-namespace FamilyMerchandise.Tests;
+namespace GrowyFunction.Tests;
 
-public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixture<FunctionTestFixture>
+public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionTestFixture>
 {
     private readonly Faker _faker = new();
 
@@ -18,6 +18,7 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
     private readonly WishRepository _wishRepo = new(fixture.ConnectionFactory);
     private readonly AchievementRepository _achievementRepo = new(fixture.ConnectionFactory);
     private readonly PenaltyRepository _penaltyRepo = new(fixture.ConnectionFactory);
+    private readonly AssessmentRepository _assessmentRepository = new(fixture.ConnectionFactory);
 
     [Fact]
     public async Task CustomInsert()
@@ -230,5 +231,18 @@ public class FamilyMerchandiseDbHelper(FunctionTestFixture fixture) : IClassFixt
         };
 
         await _penaltyRepo.InsertPenalty(penaltyRequest);
+
+        var dqReport = new SubmitDevelopmentReportRequest
+        {
+            HomeId = homeId,
+            ExaminerId = parentId,
+            CandidateId = childId,
+            Answers = [1, 2, 34, 6],
+            TotalScore = 230,
+            DqResult = 100.2f,
+            CandidateMonth = 5.2f
+        };
+        
+        await _assessmentRepository.CreateReport(dqReport);
     }
 }

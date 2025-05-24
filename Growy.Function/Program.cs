@@ -32,6 +32,7 @@ var host = new HostBuilder()
         services.AddSingleton<IPenaltyRepository, PenaltyRepository>();
         services.AddSingleton<IStepRepository, StepRepository>();
         services.AddSingleton<IAnalyticRepository, AnalyticRepository>();
+        services.AddSingleton<IAssessmentRepository, AssessmentRepository>();
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
     })
