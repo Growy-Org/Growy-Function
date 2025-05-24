@@ -12,7 +12,7 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
 
     public async Task<Child> GetChildById(Guid childId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"SELECT * FROM {ChildrenTable} WHERE ChildId = @ChildId";
         var entity = await con.QuerySingleAsync<ChildEntity>(query, new { ChildId = childId });
@@ -21,7 +21,7 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
 
     public async Task<List<Child>> GetChildrenByHomeId(Guid homeId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"SELECT * FROM {ChildrenTable} WHERE HomeId = @HomeId";
         var childEntities = await con.QueryAsync<ChildEntity>(query, new { HomeId = homeId });
@@ -31,7 +31,7 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
     public async Task<Guid> InsertChild(Guid homeId, Child child)
     {
         var childEntity = child.ToChildEntity(homeId);
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {ChildrenTable} (Name, HomeId, IconCode, DOB, Gender, PointsEarned) VALUES (@Name, @HomeId, @IconCode, @DOB, @Gender, @PointsEarned) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, childEntity);
@@ -39,7 +39,7 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
 
     public async Task<Guid> EditPointsByChildId(Guid childId, int deltaPoints)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {ChildrenTable} SET PointsEarned = PointsEarned + @PointsDelta WHERE Id = @Id RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, new { Id = childId, PointsDelta = deltaPoints });
@@ -48,7 +48,7 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
     public async Task<Guid> EditChildByChildId(EditChildRequest request)
     {
         var childEntity = request.ToChildEntity();
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  UPDATE {ChildrenTable} SET Name = @Name, 
@@ -62,7 +62,7 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
 
     public async Task DeleteChildByChildId(Guid childId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"DELETE FROM {ChildrenTable} WHERE Id = @Id RETURNING Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = childId });

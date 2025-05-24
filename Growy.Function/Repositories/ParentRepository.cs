@@ -12,7 +12,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
 
     public async Task<List<Parent>> GetParentsByHomeId(Guid homeId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"SELECT * FROM {ParentsTable} WHERE HomeId = @HomeId";
         var parentEntities = await con.QueryAsync<ParentEntity>(query, new { HomeId = homeId });
@@ -22,7 +22,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
     public async Task<Guid> InsertParent(Guid homeId, Parent parent)
     {
         var parentEntity = parent.ToParentEntity(homeId);
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {ParentsTable} (Name, HomeId, IconCode, DOB, Role) VALUES (@Name, @HomeId, @IconCode, @DOB, @Role) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, parentEntity);
@@ -31,7 +31,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
     public async Task<Guid> EditParentByParentId(EditParentRequest request)
     {
         var parentEntity = request.ToParentEntity();
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  UPDATE {ParentsTable} SET Name = @Name, 
@@ -45,7 +45,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
 
     public async Task DeleteParentByParentId(Guid parentId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"DELETE FROM {ParentsTable} WHERE Id = @Id RETURNING Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = parentId });

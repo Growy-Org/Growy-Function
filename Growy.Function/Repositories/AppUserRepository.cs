@@ -12,7 +12,7 @@ public class AppUserRepository(IConnectionFactory connectionFactory) : IAppUserR
 
     public async Task<AppUser> GetAppUserById(Guid appUserId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"SELECT * FROM {AppUsersTable} WHERE Id = @Id";
         var appUser = await con.QuerySingleAsync<AppUserEntity>(query, new { Id = appUserId });
@@ -22,7 +22,7 @@ public class AppUserRepository(IConnectionFactory connectionFactory) : IAppUserR
     public async Task<Guid> InsertIfNotExist(AppUser user)
     {
         var appUserEntity = user.ToAppUserEntity();
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         // This will be called multiple time, we could just check if Idp id exist, because Idp Id should be Unique. Id is internal to this app only
         // TODO: Maybe Email will change in the future
         var query =

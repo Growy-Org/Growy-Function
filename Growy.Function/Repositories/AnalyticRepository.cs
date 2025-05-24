@@ -16,7 +16,7 @@ public class AnalyticRepository(IConnectionFactory connectionFactory) : IAnalyti
 
     public async Task<ParentAnalyticProfile> GetAllParentsToAllChildAnalytic(Guid homeId, int year)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var totalNumberOfAssignments =
             await GetTotalNumberById(con, AssignmentsTable, homeId, nameof(AssignmentEntity.HomeId), year);
         var totalNumberOfPenalties =
@@ -40,7 +40,7 @@ public class AnalyticRepository(IConnectionFactory connectionFactory) : IAnalyti
 
     public async Task<ParentAnalyticProfile> GetAllParentsToOneChildAnalytic(Guid childId, int year)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var totalNumberOfAssignments =
             await GetTotalNumberById(con, AssignmentsTable, childId, nameof(AssignmentEntity.AssigneeId), year);
         var totalNumberOfPenalties =
@@ -65,7 +65,7 @@ public class AnalyticRepository(IConnectionFactory connectionFactory) : IAnalyti
 
     public async Task<ChildAnalyticProfile> GetChildAnalyticByChildId(Guid childId, int year)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
 
         var (pointsReduced, totalNumberOfPenalties) =
             await GetSumNumberById(con, PenaltyTable, nameof(PenaltyEntity.PointsDeducted), childId,

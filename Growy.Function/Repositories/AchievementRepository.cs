@@ -14,7 +14,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<Achievement> GetAchievementById(Guid achievementId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -29,7 +29,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<List<Achievement>> GetAllAchievementsByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -49,7 +49,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -69,7 +69,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -91,7 +91,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     public async Task<Guid> InsertAchievement(CreateAchievementRequest request)
     {
         var achievementEntity = request.ToAchievementEntity();
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {AchievementsTable} (Name, HomeId, IconCode, PointsGranted, Description, VisionaryId, AchieverId) VALUES (@Name, @HomeId, @IconCode, @PointsGranted, @Description, @VisionaryId, @AchieverId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, achievementEntity);
@@ -100,7 +100,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     public async Task<Guid> EditAchievementByAchievementId(EditAchievementRequest request)
     {
         var achievementEntity = request.ToAchievementEntity();
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                 UPDATE {AchievementsTable} 
@@ -119,7 +119,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     public async Task<EditAchievementEntityResponse> EditAchievementGrantByAchievementId(Guid achievementId,
         bool isAchievementGranted)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {AchievementsTable} SET AchievedDateUtc = @AchievedDateUtc WHERE Id = @Id RETURNING Id, AchieverId AS ChildId, PointsGranted AS Points;";
         return await con.QuerySingleAsync<EditAchievementEntityResponse>(query,
@@ -128,7 +128,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task DeleteAchievementByAchievementId(Guid achievementId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query = $"DELETE FROM {AchievementsTable} where id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = achievementId });
     }

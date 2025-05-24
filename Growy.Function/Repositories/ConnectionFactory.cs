@@ -8,9 +8,9 @@ namespace Growy.Function.Repositories;
 
 public class ConnectionFactory(IOptions<ConnectionStrings> connectionStrings) : IConnectionFactory
 {
-    private readonly string _connectionStrings = connectionStrings.Value.FamilyMerchandiseDB;
+    private readonly string _connectionStrings = connectionStrings.Value.GrowyDB;
 
-    public IDbConnection GetFamilyMerchandiseDBConnection()
+    public IDbConnection GetDBConnection()
     {
         return new NpgsqlConnection(_connectionStrings);
     }

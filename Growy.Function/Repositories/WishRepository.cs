@@ -14,7 +14,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
 
     public async Task<Wish> GetWishById(Guid wishId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -29,7 +29,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
 
     public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -49,7 +49,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
 
     public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -69,7 +69,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
 
     public async Task<List<Wish>> GetAllWishesByChildId(Guid childId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -90,7 +90,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     public async Task<Guid> InsertWish(CreateWishRequest request)
     {
         var wishEntity = request.ToWishEntity();
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {WishesTable} (Name, HomeId, IconCode, Description, GenieId, WisherId) VALUES (@Name, @HomeId, @IconCode, @Description, @GenieId, @WisherId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, wishEntity);
@@ -99,7 +99,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     public async Task<Guid> EditWishByWishId(EditWishRequest request)
     {
         var wishEntity = request.ToWishEntity();
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                 UPDATE {WishesTable} 
@@ -118,7 +118,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     public async Task<EditWishEntityResponse> EditWishFulFillStatusByWishId(Guid wishId,
         bool isFulFilled)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {WishesTable} SET FulFilledDateUtc = @FulFilledDateUtc WHERE Id = @Id RETURNING Id, WisherId AS ChildId, PointsCost AS Points;";
         return await con.QuerySingleAsync<EditWishEntityResponse>(query,
@@ -127,7 +127,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
 
     public async Task DeleteWishByWishId(Guid wishId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query = $"DELETE FROM {WishesTable} where id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = wishId });
     }

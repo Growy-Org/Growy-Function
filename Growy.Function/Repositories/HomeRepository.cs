@@ -12,7 +12,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
 
     public async Task<Home> GetHome(Guid homeId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"SELECT * FROM {HomesTable} WHERE Id = @Id";
         var homeEntity = await con.QuerySingleAsync<HomeEntity>(query, new { Id = homeId });
@@ -22,7 +22,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
     public async Task<Guid> InsertHome(CreateHomeRequest request)
     {
         var homeEntity = request.ToHomeEntity();
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {HomesTable} (Name, Address, AppUserId) VALUES (@Name, @Address, @AppUserId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
@@ -31,7 +31,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
     public async Task<Guid> EditHomeByHomeId(EditHomeRequest request)
     {
         var homeEntity = request.ToHomeEntity();
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {HomesTable} SET Name = @Name, Address = @Address WHERE Id = @Id RETURNING Id;";
         return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
@@ -39,7 +39,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
 
     public async Task DeleteHomeByHomeId(Guid homeId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"DELETE FROM {HomesTable} WHERE Id = @Id RETURNING Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = homeId });
@@ -47,7 +47,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
 
     public async Task<Guid?> GetHomeIdByAppUserId(Guid appUserId)
     {
-        using var con = connectionFactory.GetFamilyMerchandiseDBConnection();
+        using var con = connectionFactory.GetDBConnection();
         var query =
             $"SELECT Id FROM {HomesTable} WHERE AppUserId = @AppUserId";
         return await con.QuerySingleOrDefaultAsync<Guid?>(query, new { AppUserId = appUserId });
