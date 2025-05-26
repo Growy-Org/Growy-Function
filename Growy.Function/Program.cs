@@ -11,6 +11,7 @@ var host = new HostBuilder()
     .ConfigureEnvironmentAppSettings()
     .ConfigureServices((context, services) =>
     {
+        // Configuration
         services.Configure<ConnectionStrings>(context.Configuration.GetSection(ConnectionStrings.KEY));
 
         // Services

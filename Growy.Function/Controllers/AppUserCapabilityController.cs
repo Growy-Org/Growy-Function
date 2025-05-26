@@ -1,4 +1,3 @@
-using Growy.Function.Exceptions;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services;
@@ -15,6 +14,15 @@ public class AppUserCapabilityController(
     IAppUserService appUserService)
 {
     private const string AuthIdp = "MS-AZURE-B2C";
+
+    [Function("SecurePing")]
+    public IActionResult SecurePing(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "secure-ping")]
+        HttpRequest req)
+    {
+        return new OkObjectResult(string.Join("\n", req.Headers.Select(
+            header => $"{header.Key}={string.Join(", ", header.Value)}")));
+    }
 
     [Function("GetAppUser")]
     public async Task<IActionResult> GetAppUser(
@@ -71,6 +79,7 @@ public class AppUserCapabilityController(
         {
             return new NotFoundResult();
         }
+
         return new OkObjectResult(res);
     }
 }
