@@ -17,7 +17,16 @@ public class AppUserCapabilityController(
 
     [Function("SecurePing")]
     public IActionResult SecurePing(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "secure-ping")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secure-ping")]
+        HttpRequest req)
+    {
+        return new OkObjectResult(string.Join("\n", req.Headers.Select(
+            header => $"{header.Key}={string.Join(", ", header.Value)}")));
+    }
+    
+    [Function("Ping")]
+    public IActionResult Ping(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ping")]
         HttpRequest req)
     {
         return new OkObjectResult(string.Join("\n", req.Headers.Select(
