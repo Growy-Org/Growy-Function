@@ -10,14 +10,6 @@ public class AppUserService(
     ILogger<HomeService> logger)
     : IAppUserService
 {
-    public async Task<AppUser> GetAppUserById(Guid appUserId)
-    {
-        logger.LogInformation($"Getting a app user by Id {appUserId}");
-        var appUser = await appUserRepository.GetAppUserById(appUserId);
-        logger.LogInformation($"Successfully get user with Id: {appUserId}");
-        return appUser;
-    }
-
     public async Task<Guid> RegisterUser(AppUser user)
     {
         logger.LogInformation($"Registering a user to the app with email: {user.Email}");
@@ -25,12 +17,13 @@ public class AppUserService(
         logger.LogInformation($"Successfully registered user with Id: {userId}");
         return userId;
     }
-
-    public async Task<Guid?> GetHomeIdByAppUserId(Guid userId)
+    
+    public async Task<List<Home>> GetHomesByAppUserId(Guid appUserId)
     {
-        logger.LogInformation("Getting home ids by app user Id");
-        var homeId = await homeRepository.GetHomeIdByAppUserId(userId);
-        logger.LogInformation($"Successfully get home : {homeId} by app user Id: {userId}");
-        return homeId;
+        logger.LogInformation($"Getting home all homes by app user Id {appUserId}");
+        var homes = await homeRepository.GetAllHomeByAppUserId(appUserId);
+        logger.LogInformation($"Successfully get {homes.Count} by app user Id: {appUserId}");
+        return homes;
     }
+
 }

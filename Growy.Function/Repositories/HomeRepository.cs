@@ -19,6 +19,15 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         return homeEntity.ToHome();
     }
 
+    public async Task<List<Home>> GetAllHomeByAppUserId(Guid appUserId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"SELECT * FROM {HomesTable} WHERE AppUserId = @AppUserId ORDER BY StepOrder";
+        var homesEntity = await con.QueryAsync<HomeEntity>(query, new { AppUserId = appUserId });
+        return homesEntity.Select(e => e.ToHome()).ToList();
+    }
+
     public async Task<Guid> InsertHome(CreateHomeRequest request)
     {
         var homeEntity = request.ToHomeEntity();

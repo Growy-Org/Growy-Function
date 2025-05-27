@@ -10,15 +10,6 @@ public class AppUserRepository(IConnectionFactory connectionFactory) : IAppUserR
 {
     private const string AppUsersTable = "appusers";
 
-    public async Task<AppUser> GetAppUserById(Guid appUserId)
-    {
-        using var con = connectionFactory.GetDBConnection();
-        var query =
-            $"SELECT * FROM {AppUsersTable} WHERE Id = @Id";
-        var appUser = await con.QuerySingleAsync<AppUserEntity>(query, new { Id = appUserId });
-        return appUser.ToAppUser();
-    }
-
     public async Task<AppUser> GetAppUserByIdpId(string idpId)
     {
         using var con = connectionFactory.GetDBConnection();

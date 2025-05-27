@@ -21,6 +21,14 @@ public class HomeService(
 {
     #region Home
 
+    public async Task<Guid?> GetHomeIdByAppUserId(Guid userId)
+    {
+        logger.LogInformation("Getting home ids by app user Id");
+        var homeId = await homeRepository.GetHomeIdByAppUserId(userId);
+        logger.LogInformation($"Successfully get home : {homeId} by app user Id: {userId}");
+        return homeId;
+    }
+
     public async Task<Home> GetHomeInfoById(Guid homeId)
     {
         logger.LogInformation($"Getting Home by Id: {homeId}");

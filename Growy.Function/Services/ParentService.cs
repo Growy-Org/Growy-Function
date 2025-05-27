@@ -302,7 +302,6 @@ public class ParentService(
         logger.LogInformation(
             $"Submitting Development Quotient Report for Child Id {request.CandidateId} by {request.ExaminerId}");
 
-
         logger.LogInformation(
             $"Month: {request.CandidateMonth}, Total Score : {request.TotalScore}, Result : {request.DqResult}");
 

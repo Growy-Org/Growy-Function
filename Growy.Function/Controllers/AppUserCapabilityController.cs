@@ -38,22 +38,6 @@ public class AppUserCapabilityController(
             header => $"{header.Key}={string.Join(", ", header.Value)}")));
     }
 
-    [Function("GetAppUser")]
-    public async Task<IActionResult> GetAppUser(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "app-user/{id}")]
-        HttpRequest req,
-        string id)
-    {
-        if (!Guid.TryParse(id, out var appUserId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
-
-        var res = await appUserService.GetAppUserById(appUserId);
-        return new OkObjectResult(res);
-    }
-
     [Function("RegisterAppUser")]
     public async Task<IActionResult> RegisterAppUser(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "app-user")]
@@ -76,9 +60,9 @@ public class AppUserCapabilityController(
         return new OkObjectResult(res);
     }
 
-    [Function("GetHomeIdByAppUserId")]
-    public async Task<IActionResult> GetHomeIdByAppUserId(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "app-user/{id}/home")]
+    [Function("GetHomesByAppUserId")]
+    public async Task<IActionResult> GetHomesByAppUserId(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "app-user/{id}/homes")]
         HttpRequest req,
         string id)
     {
@@ -88,12 +72,7 @@ public class AppUserCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await appUserService.GetHomeIdByAppUserId(appUserId);
-        if (res == null)
-        {
-            return new NotFoundResult();
-        }
-        
+        var res = await appUserService.GetHomesByAppUserId(appUserId);
         return new OkObjectResult(res);
     }
 }
