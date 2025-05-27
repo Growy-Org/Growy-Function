@@ -16,13 +16,19 @@ public class AppUserCapabilityController(
     IAuthWrapper authWrapper)
 {
     private const string MsAuthIdp = "MS-AZURE-ENTRA";
+    private const string HomeIdKey = "X-HOME-ID";
 
     [Function("SecurePing")]
     public async Task<IActionResult> SecurePing(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secure-ping")]
         HttpRequest req, ClaimsPrincipal principal)
     {
-        return await authWrapper.SecureExecute(req, async () =>
+        if (!req.Headers.TryGetValue(HomeIdKey, out var homeId))
+        {
+            return new UnauthorizedObjectResult($"No {HomeIdKey} found in header, Authentication failed");
+        }
+
+        return await authWrapper.SecureExecute(req, Guid.Parse(homeId.ToString()), async () =>
         {
             return await Task.FromResult(new OkObjectResult(string.Join("\n", req.Headers.Select(
                 header => $"{header.Key}={string.Join(", ", header.Value)}"))));

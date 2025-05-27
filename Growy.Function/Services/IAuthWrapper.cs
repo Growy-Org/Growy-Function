@@ -5,5 +5,5 @@ namespace Growy.Function.Services;
 
 public interface IAuthWrapper
 {
-    Task<IActionResult> SecureExecute(HttpRequest req, Func<Task<IActionResult>> func);
+    Task<IActionResult> SecureExecute(HttpRequest req, Guid homeId, Func<Task<IActionResult>> func);
 }
