@@ -19,7 +19,6 @@ public static class ModelConversionExtension
     {
         return new AppUserEntity()
         {
-            Id = u.Id,
             Email = u.Email,
             IdentityProvider = u.IdentityProvider,
             DisplayName = u.DisplayName,

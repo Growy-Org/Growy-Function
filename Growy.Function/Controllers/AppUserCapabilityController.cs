@@ -15,7 +15,7 @@ public class AppUserCapabilityController(
     IAppUserService appUserService,
     IAuthWrapper authWrapper)
 {
-    private const string AuthIdp = "MS-AZURE-B2C";
+    private const string MsAuthIdp = "MS-AZURE-ENTRA";
 
     [Function("SecurePing")]
     public async Task<IActionResult> SecurePing(
@@ -56,22 +56,22 @@ public class AppUserCapabilityController(
 
     [Function("RegisterAppUser")]
     public async Task<IActionResult> RegisterAppUser(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "app-user")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "app-user")]
         HttpRequest req,
         [FromBody] CreateAppUserRequest appUserRequest)
     {
-        // Currently MS Azure B2C is used
+        // Currently MS Azure Entra is used
         // Identity provider id == Object ID
         // Id == Object ID @ b2c
         // Id should only be meaningful to the system internally
         // Sku set as "Free" for now.
         var res = await appUserService.RegisterUser(new AppUser()
         {
-            Id = Guid.Parse(appUserRequest.IdpId),
-            IdentityProvider = AuthIdp,
+            IdentityProvider = MsAuthIdp,
             IdpId = appUserRequest.IdpId,
             Email = appUserRequest.Email,
-            Sku = AppSku.Premium,
+            Sku = AppSku.Free,
+            DisplayName = appUserRequest.DisplayName
         });
         return new OkObjectResult(res);
     }
@@ -89,6 +89,11 @@ public class AppUserCapabilityController(
         }
 
         var res = await appUserService.GetHomeIdByAppUserId(appUserId);
+        if (res == null)
+        {
+            return new NotFoundResult();
+        }
+        
         return new OkObjectResult(res);
     }
 }

@@ -43,14 +43,10 @@ public class AuthWrapper(
             return new NotFoundObjectResult($"Failed to get user with ID {oid.ToString()}");
         }
 
-        Guid matchingHomeId;
-        try
+        var matchingHomeId = await homeRepository.GetHomeIdByAppUserId(user.Id);
+        if (matchingHomeId == null)
         {
-            matchingHomeId = await homeRepository.GetHomeIdByAppUserId(user.Id);
-        }
-        catch (Exception e)
-        {
-            logger.LogWarning(e, $"Failed to get homeId with user ID {user.Id.ToString()}");
+            logger.LogWarning($"Failed to get homeId with user ID {user.Id.ToString()}");
             return new NotFoundObjectResult($"Failed to get homeId with user ID {user.Id.ToString()}");
         }
 
