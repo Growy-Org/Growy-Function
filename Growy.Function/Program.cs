@@ -20,6 +20,7 @@ var host = new HostBuilder()
         services.AddSingleton<IParentService, ParentService>();
         services.AddSingleton<IChildService, ChildService>();
         services.AddSingleton<IAnalyticService, AnalyticService>();
+        services.AddSingleton<IAuthWrapper, AuthWrapper>();
 
         // Repositories 
         services.AddSingleton<IConnectionFactory, ConnectionFactory>();

@@ -58,3 +58,9 @@ In the future, image can be published and pull down for integration test
 
 - Would it not be great to Track on your kids growth? collection of memory
 - Only Recruit Parent who loves kids and share the same vision
+
+## Authentication
+- Configure Authentication at Microsoft Entra
+- Then Added it in Function > Authentication
+- Principal id can be accessed with header `X-MS-CLIENT-PRINCIPAL-ID`
+- App also need to provide `X-HOME-ID` so that it could match with the Home Id found using IdpId

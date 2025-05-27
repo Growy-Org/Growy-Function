@@ -22,6 +22,7 @@ public static class ModelConversionExtension
             Id = u.Id,
             Email = u.Email,
             IdentityProvider = u.IdentityProvider,
+            DisplayName = u.DisplayName,
             IdpId = u.IdpId,
             Sku = u.Sku.ToString(),
         };

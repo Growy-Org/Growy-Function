@@ -4,9 +4,10 @@ namespace Growy.Function.Models;
 
 public record AppUser
 {
-    public Guid? Id { get; set; }
+    public Guid Id { get; set; }
     public string Email { get; init; } = string.Empty;
-    public string? IdentityProvider { get; set; } = string.Empty;
+    public string IdentityProvider { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
     public string IdpId { get; init; } = string.Empty;
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public AppSku Sku { get; set; }

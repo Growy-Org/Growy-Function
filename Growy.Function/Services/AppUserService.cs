@@ -26,15 +26,10 @@ public class AppUserService(
         return userId;
     }
 
-    public async Task<Guid?> GetHomeIdByAppUserId(Guid userId)
+    public async Task<Guid> GetHomeIdByAppUserId(Guid userId)
     {
         logger.LogInformation("Getting home ids by app user Id");
         var homeId = await homeRepository.GetHomeIdByAppUserId(userId);
-        if (homeId == null)
-        {
-            logger.LogInformation($"No home Id found for this app user : {userId}. Probably first time user");
-            return null;
-        }
         logger.LogInformation($"Successfully get home : {homeId} by app user Id: {userId}");
         return homeId;
     }

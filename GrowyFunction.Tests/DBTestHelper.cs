@@ -28,6 +28,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         {
             Id = idpUserId,
             Email = _faker.Internet.Email(_faker.Name.FirstName(), _faker.Name.LastName()),
+            DisplayName = _faker.Name.FirstName(),
             IdpId = idpUserId.ToString(),
             IdentityProvider = "AzureB2C"
         };
@@ -40,7 +41,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             AppUserId = idpUserId
         };
         var homeId = await _homeRepo.InsertHome(homeRequest);
-
+        
         var child = new Child()
         {
             Name = _faker.Name.FullName(),
@@ -57,7 +58,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.BOY),
             PointsEarned = _faker.Random.Int(0, 9999),
         };
-
+        
         var childId = await _childRepo.InsertChild(homeId, child);
         var childId2 = await _childRepo.InsertChild(homeId, child2);
     }
@@ -66,12 +67,16 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
     public async Task InsertInitialData()
     {
         var idpUserId = Guid.NewGuid();
+        var oid = Guid.NewGuid();
+        var name = $"{_faker.Name.FirstName()} {_faker.Name.LastName()}";
         var appUser = new AppUser()
         {
             Id = idpUserId,
             Email = _faker.Internet.Email(_faker.Name.FirstName(), _faker.Name.LastName()),
-            IdpId = idpUserId.ToString(),
-            IdentityProvider = "AzureB2C"
+            DisplayName = name,
+            IdpId = oid.ToString(),
+            IdentityProvider = "AzureB2C",
+            Sku = AppSku.Premium,
         };
 
         await _appUserRepo.InsertIfNotExist(appUser);
@@ -242,7 +247,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             DqResult = 100.2f,
             CandidateMonth = 5.2f
         };
-        
+
         await _assessmentRepository.CreateReport(dqReport);
     }
 }

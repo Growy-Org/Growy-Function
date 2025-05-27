@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services;
@@ -11,23 +12,27 @@ namespace Growy.Function.Controllers;
 
 public class AppUserCapabilityController(
     ILogger<AppUserCapabilityController> logger,
-    IAppUserService appUserService)
+    IAppUserService appUserService,
+    IAuthWrapper authWrapper)
 {
     private const string AuthIdp = "MS-AZURE-B2C";
 
     [Function("SecurePing")]
-    public IActionResult SecurePing(
+    public async Task<IActionResult> SecurePing(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secure-ping")]
-        HttpRequest req)
+        HttpRequest req, ClaimsPrincipal principal)
     {
-        return new OkObjectResult(string.Join("\n", req.Headers.Select(
-            header => $"{header.Key}={string.Join(", ", header.Value)}")));
+        return await authWrapper.SecureExecute(req, async () =>
+        {
+            return await Task.FromResult(new OkObjectResult(string.Join("\n", req.Headers.Select(
+                header => $"{header.Key}={string.Join(", ", header.Value)}"))));
+        });
     }
-    
+
     [Function("Ping")]
     public IActionResult Ping(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ping")]
-        HttpRequest req)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ping")]
+        HttpRequest req, ClaimsPrincipal principal)
     {
         return new OkObjectResult(string.Join("\n", req.Headers.Select(
             header => $"{header.Key}={string.Join(", ", header.Value)}")));
@@ -84,11 +89,6 @@ public class AppUserCapabilityController(
         }
 
         var res = await appUserService.GetHomeIdByAppUserId(appUserId);
-        if (res == null)
-        {
-            return new NotFoundResult();
-        }
-
         return new OkObjectResult(res);
     }
 }

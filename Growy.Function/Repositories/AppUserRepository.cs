@@ -19,6 +19,15 @@ public class AppUserRepository(IConnectionFactory connectionFactory) : IAppUserR
         return appUser.ToAppUser();
     }
 
+    public async Task<AppUser> GetAppUserByIdpId(string idpId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"SELECT * FROM {AppUsersTable} WHERE IdpId = @IdpId";
+        var appUser = await con.QuerySingleAsync<AppUserEntity>(query, new { IdpId = idpId });
+        return appUser.ToAppUser();
+    }
+
     public async Task<Guid> InsertIfNotExist(AppUser user)
     {
         var appUserEntity = user.ToAppUserEntity();
@@ -26,7 +35,7 @@ public class AppUserRepository(IConnectionFactory connectionFactory) : IAppUserR
         // This will be called multiple time, we could just check if Idp id exist, because Idp Id should be Unique. Id is internal to this app only
         // TODO: Maybe Email will change in the future
         var query =
-            $"INSERT INTO {AppUsersTable} (Id, Email, IdentityProvider, IdpId, Sku) VALUES (@Id, @Email, @IdentityProvider, @IdpId, @Sku) ON CONFLICT (IdpId) DO UPDATE SET IdpId = @IdpId RETURNING Id";
+            $"INSERT INTO {AppUsersTable} (Id, Email, IdentityProvider, IdpId, Sku, DisplayName) VALUES (@Id, @Email, @IdentityProvider, @IdpId, @Sku, @DisplayName) ON CONFLICT (IdpId) DO UPDATE SET IdpId = @IdpId RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, appUserEntity);
     }
 }
