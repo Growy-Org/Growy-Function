@@ -23,7 +23,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
     {
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"SELECT * FROM {HomesTable} WHERE AppUserId = @AppUserId ORDER BY StepOrder";
+            $"SELECT * FROM {HomesTable} WHERE AppUserId = @AppUserId";
         var homesEntity = await con.QueryAsync<HomeEntity>(query, new { AppUserId = appUserId });
         return homesEntity.Select(e => e.ToHome()).ToList();
     }
