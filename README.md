@@ -64,3 +64,12 @@ In the future, image can be published and pull down for integration test
 - Then Added it in Function > Authentication
 - Principal id can be accessed with header `X-MS-CLIENT-PRINCIPAL-ID`
 - App also need to provide `X-HOME-ID` so that it could match with the Home Id found using IdpId
+
+## Endpoint convention
+```
+GET SINGLE : GET https://domain/resource/<id>
+GET ALL: GET https://domain/<id>/resources
+ADD: POST https://domain/<home-id>/resource
+EDIT : PUT https://domain/resource {payload}
+DELETE : DELETE https://domain/resource/<id>
+```
