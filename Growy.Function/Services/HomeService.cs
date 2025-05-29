@@ -21,12 +21,13 @@ public class HomeService(
 {
     #region Home
 
-    public async Task<Guid?> GetHomeIdByAppUserId(Guid userId)
+
+    public async Task<List<Home>> GetHomesByAppUserId(Guid appUserId)
     {
-        logger.LogInformation("Getting home ids by app user Id");
-        var homeId = await homeRepository.GetHomeIdByAppUserId(userId);
-        logger.LogInformation($"Successfully get home : {homeId} by app user Id: {userId}");
-        return homeId;
+        logger.LogInformation($"Getting home all homes by app user Id {appUserId}");
+        var homes = await homeRepository.GetAllHomeByAppUserId(appUserId);
+        logger.LogInformation($"Successfully get {homes.Count} by app user Id: {appUserId}");
+        return homes;
     }
 
     public async Task<Home> GetHomeInfoById(Guid homeId)

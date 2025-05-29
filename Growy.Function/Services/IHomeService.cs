@@ -7,6 +7,7 @@ public interface IHomeService
 {
     // Home 
     public Task<Home> GetHomeInfoById(Guid homeId);
+    public Task<List<Home>> GetHomesByAppUserId(Guid appUserId);
     public Task<Guid> CreateHome(CreateHomeRequest home);
     public Task<Guid> EditHome(EditHomeRequest request);
     public Task DeleteHome(Guid homeId);

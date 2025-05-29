@@ -31,7 +31,23 @@ public class HomeCapabilityController(
         var res = await homeService.GetHomeInfoById(homeId);
         return new OkObjectResult(res);
     }
+    
+    
+    [Function("GetHomesByAppUserId")]
+    public async Task<IActionResult> GetHomesByAppUserId(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{appuserId}/homes")]
+        HttpRequest req,
+        string appuserId)
+    {
+        if (!Guid.TryParse(appuserId, out var appUserId))
+        {
+            logger.LogWarning($"Invalid ID format: {appuserId}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
 
+        var res = await homeService.GetHomesByAppUserId(appUserId);
+        return new OkObjectResult(res);
+    }
     [Function("AddHome")]
     public async Task<IActionResult> AddHome(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home")]
