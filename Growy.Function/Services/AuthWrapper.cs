@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using Growy.Function.Models;
 using Growy.Function.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -11,16 +12,24 @@ public class AuthWrapper(
     IHomeRepository homeRepository,
     ILogger<AuthWrapper> logger) : IAuthWrapper
 {
-    private const string
-        OidHeaderKey = "X-MS-CLIENT-PRINCIPAL-ID"; // Provided by Function App After authenticated 
-
     public async Task<IActionResult> SecureExecute(HttpRequest req, Guid homeId, Func<Task<IActionResult>> func)
     {
         logger.LogInformation("Performing Authentication Check");
-        // At the moment using MS Idp. Could use other Idp in the future
-        if (!req.Headers.TryGetValue(OidHeaderKey, out var oid))
+        var oid = "";
+        if (req.Headers.TryGetValue("Authorization", out var authHeaders))
         {
-            return new UnauthorizedObjectResult($"No OID {OidHeaderKey} found, Authentication failed");
+            var token = authHeaders.FirstOrDefault()?.Replace("Bearer ", "");
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwt = handler.ReadJwtToken(token);
+
+            oid = jwt.Claims.FirstOrDefault(c => c.Type == "oid")?.Value;
+        }
+
+        // At the moment using MS Idp. Could use other Idp in the future
+        if (string.IsNullOrEmpty(oid))
+        {
+            return new UnauthorizedObjectResult($"No oid found from jwt, Authentication failed");
         }
 
         if (homeId == Guid.Empty)
@@ -40,21 +49,21 @@ public class AuthWrapper(
             return new NotFoundObjectResult($"Failed to get user with ID {oid.ToString()}");
         }
 
-        var matchingHomeId = await homeRepository.GetHomeIdByAppUserId(user.Id);
-        if (matchingHomeId == null)
+        var homes = await homeRepository.GetAllHomeByAppUserId(user.Id);
+        if (homes.Count == 0)
         {
-            logger.LogWarning($"Failed to get homeId with user ID {user.Id.ToString()}");
+            logger.LogWarning($"No home found for app user ID {user.Id.ToString()}");
             return new NotFoundObjectResult($"Failed to get homeId with user ID {user.Id.ToString()}");
         }
 
         // Check to see if stored home id is matching the provided home id
-        if (matchingHomeId.ToString() != homeId.ToString())
+        if (homes.Any(home => home.Id == homeId))
         {
-            return new UnauthorizedObjectResult(
-                $"HomeId found by {user.Id} is {homeId}, does not match homeId {matchingHomeId} in request header");
+            // Execute func method
+            return await func();
         }
 
-        // Execute func method
-        return await func();
+        return new UnauthorizedObjectResult(
+            $"No home ids owned by user is {user.Id} matches the requested home Id {homeId}");
     }
 }

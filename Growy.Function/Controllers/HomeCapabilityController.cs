@@ -12,13 +12,14 @@ namespace Growy.Function.Controllers;
 
 public class HomeCapabilityController(
     ILogger<HomeCapabilityController> logger,
-    IHomeService homeService)
+    IHomeService homeService,
+    IAuthWrapper authWrapper)
 {
     #region Homes
 
     [Function("GetHome")]
     public async Task<IActionResult> GetHome(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}")]
         HttpRequest req,
         string id)
     {
@@ -31,8 +32,8 @@ public class HomeCapabilityController(
         var res = await homeService.GetHomeInfoById(homeId);
         return new OkObjectResult(res);
     }
-    
-    
+
+
     [Function("GetHomesByAppUserId")]
     public async Task<IActionResult> GetHomesByAppUserId(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{appuserId}/homes")]
@@ -48,6 +49,7 @@ public class HomeCapabilityController(
         var res = await homeService.GetHomesByAppUserId(appUserId);
         return new OkObjectResult(res);
     }
+
     [Function("AddHome")]
     public async Task<IActionResult> AddHome(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home")]
@@ -77,17 +79,20 @@ public class HomeCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        try
+        return await authWrapper.SecureExecute(req, homeId, async () =>
         {
-            await homeService.DeleteHome(homeId);
-        }
-        catch (DeletionFailureException _)
-        {
-            return new ConflictObjectResult(
-                $"Failed to delete Home with ID {homeId}, make sure all linked resources are deleted first");
-        }
+            try
+            {
+                await homeService.DeleteHome(homeId);
+            }
+            catch (DeletionFailureException _)
+            {
+                return new ConflictObjectResult(
+                    $"Failed to delete Home with ID {homeId}, make sure all linked resources are deleted first");
+            }
 
-        return new OkResult();
+            return new NoContentResult();
+        });
     }
 
     #endregion
