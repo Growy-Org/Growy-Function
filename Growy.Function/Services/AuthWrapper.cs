@@ -18,7 +18,13 @@ public class AuthWrapper(
         var oid = "";
         if (req.Headers.TryGetValue("Authorization", out var authHeaders))
         {
+            
             var token = authHeaders.FirstOrDefault()?.Replace("Bearer ", "");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return new UnauthorizedObjectResult("Valid authorization token is missing");
+            }
 
             var handler = new JwtSecurityTokenHandler();
             var jwt = handler.ReadJwtToken(token);
@@ -29,12 +35,12 @@ public class AuthWrapper(
         // At the moment using MS Idp. Could use other Idp in the future
         if (string.IsNullOrEmpty(oid))
         {
-            return new UnauthorizedObjectResult($"No oid found from jwt, Authentication failed");
+            return new UnauthorizedObjectResult("No oid found from jwt, Authentication failed");
         }
 
         if (homeId == Guid.Empty)
         {
-            return new NotFoundObjectResult($"No HomeId found, Check authentication failed");
+            return new NotFoundObjectResult("No HomeId found, Check authentication failed");
         }
 
         // System Specific App User Id

@@ -29,8 +29,11 @@ public class HomeCapabilityController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await homeService.GetHomeInfoById(homeId);
-        return new OkObjectResult(res);
+        return await authWrapper.SecureExecute(req, homeId, async () =>
+        {
+            var res = await homeService.GetHomeInfoById(homeId);
+            return new OkObjectResult(res);
+        });
     }
 
 
