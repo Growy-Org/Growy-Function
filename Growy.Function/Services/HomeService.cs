@@ -81,45 +81,6 @@ public class HomeService(
 
     #endregion
 
-    #region Children
-
-    public async Task<Guid> AddChildToHome(Guid homeId, Child child)
-    {
-        logger.LogInformation($"Adding a new Child to Home: {homeId}");
-        var childId = await childRepository.InsertChild(homeId, child);
-        logger.LogInformation($"Successfully added a child : {childId} to Home: {homeId}");
-        return childId;
-    }
-
-    public async Task<Guid> EditChild(EditChildRequest request)
-    {
-        logger.LogInformation($"Editing Child: {request.ChildId}");
-        var childId = await childRepository.EditChildByChildId(request);
-        logger.LogInformation($"Successfully edit child : {childId}");
-        return childId;
-    }
-
-    public async Task DeleteChild(Guid childId)
-    {
-        logger.LogInformation($"Deleting Child: {childId}");
-        try
-        {
-            await childRepository.DeleteChildByChildId(childId);
-        }
-        catch (DbException e)
-        {
-            if (e.SqlState == "23503")
-            {
-                logger.LogWarning($"Failed to delete Child: {childId}", e.Message);
-                throw new DeletionFailureException();
-            }
-        }
-
-        logger.LogInformation($"Successfully delete Child : {childId}");
-    }
-
-    #endregion
-
     #region Parents
 
     public async Task<Guid> AddParentToHome(Guid homeId, Parent parent)

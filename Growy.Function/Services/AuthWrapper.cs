@@ -18,7 +18,6 @@ public class AuthWrapper(
         var oid = "";
         if (req.Headers.TryGetValue("Authorization", out var authHeaders))
         {
-            
             var token = authHeaders.FirstOrDefault()?.Replace("Bearer ", "");
 
             if (string.IsNullOrEmpty(token))

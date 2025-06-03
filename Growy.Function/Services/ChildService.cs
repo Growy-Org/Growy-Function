@@ -1,3 +1,5 @@
+using System.Data.Common;
+using Growy.Function.Exceptions;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Models;
 using Growy.Function.Repositories.Interfaces;
@@ -15,6 +17,50 @@ public class ChildService(
     ILogger<ParentService> logger)
     : IChildService
 {
+    #region Children
+
+    public async Task<Guid> GetHomeIdByChildId(Guid childId)
+    {
+        return await childRepository.GetHomeIdByChildId(childId);
+    }
+
+    public async Task<Guid> AddChildToHome(Guid homeId, Child child)
+    {
+        logger.LogInformation($"Adding a new Child to Home: {homeId}");
+        var childId = await childRepository.InsertChild(homeId, child);
+        logger.LogInformation($"Successfully added a child : {childId} to Home: {homeId}");
+        return childId;
+    }
+
+    public async Task<Guid> EditChild(EditChildRequest request)
+    {
+        logger.LogInformation($"Editing Child: {request.ChildId}");
+        var childId = await childRepository.EditChildByChildId(request);
+        logger.LogInformation($"Successfully edit child : {childId}");
+        return childId;
+    }
+
+    public async Task DeleteChild(Guid childId)
+    {
+        logger.LogInformation($"Deleting Child: {childId}");
+        try
+        {
+            await childRepository.DeleteChildByChildId(childId);
+        }
+        catch (DbException e)
+        {
+            if (e.SqlState == "23503")
+            {
+                logger.LogWarning($"Failed to delete Child: {childId}", e.Message);
+                throw new DeletionFailureException();
+            }
+        }
+
+        logger.LogInformation($"Successfully delete Child : {childId}");
+    }
+
+    #endregion
+
     public Task<Child> GetProfileByChildId(Guid childId)
     {
         throw new NotImplementedException();

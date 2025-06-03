@@ -12,10 +12,6 @@ public interface IHomeService
     public Task<Guid> EditHome(EditHomeRequest request);
     public Task DeleteHome(Guid homeId);
 
-    // Children
-    public Task<Guid> AddChildToHome(Guid childId, Child child);
-    public Task<Guid> EditChild(EditChildRequest request);
-    public Task DeleteChild(Guid childId);
 
     // Parent
     public Task<Guid> AddParentToHome(Guid parentId, Parent parent);

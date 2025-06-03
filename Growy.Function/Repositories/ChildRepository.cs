@@ -10,6 +10,13 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
 {
     private const string ChildrenTable = "inventory.children";
 
+    public async Task<Guid> GetHomeIdByChildId(Guid childId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"SELECT HomeId FROM {ChildrenTable} WHERE ChildId = @ChildId";
+        return await con.QuerySingleAsync<Guid>(query, new { ChildId = childId });
+    }
     public async Task<Child> GetChildById(Guid childId)
     {
         using var con = connectionFactory.GetDBConnection();

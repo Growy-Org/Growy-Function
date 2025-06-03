@@ -5,6 +5,12 @@ namespace Growy.Function.Services;
 
 public interface IChildService
 {
+    // Children
+    public Task<Guid> GetHomeIdByChildId(Guid id);
+    public Task<Guid> AddChildToHome(Guid childId, Child child);
+    public Task<Guid> EditChild(EditChildRequest request);
+    public Task DeleteChild(Guid childId);
+    
     // Assignments
     public Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId, int pageNumber, int pageSize);
 

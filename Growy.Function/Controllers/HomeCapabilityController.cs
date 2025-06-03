@@ -100,59 +100,6 @@ public class HomeCapabilityController(
 
     #endregion
 
-    #region Children
-
-    [Function("AddChildToHome")]
-    public async Task<IActionResult> AddChildToHome(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/{id}/child")]
-        HttpRequest req,
-        string id, [FromBody] Child child)
-    {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
-
-        var res = await homeService.AddChildToHome(homeId, child);
-        return new OkObjectResult(res);
-    }
-
-    [Function("EditChild")]
-    public async Task<IActionResult> EditChild(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child")]
-        HttpRequest req, [FromBody] EditChildRequest request)
-    {
-        var res = await homeService.EditChild(request);
-        return new OkObjectResult(res);
-    }
-
-    [Function("DeleteChild")]
-    public async Task<IActionResult> DeleteChild(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "child/{id}")]
-        HttpRequest req, string id)
-    {
-        if (!Guid.TryParse(id, out var childId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
-
-        try
-        {
-            await homeService.DeleteChild(childId);
-        }
-        catch (DeletionFailureException _)
-        {
-            return new ConflictObjectResult(
-                $"Failed to delete Child with ID {childId}, make sure all linked resources are deleted first");
-        }
-
-        return new OkResult();
-    }
-
-    #endregion
-
     #region Parents
 
     [Function("AddParentToHome")]
@@ -345,6 +292,7 @@ public class HomeCapabilityController(
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
+
 
         var res = await homeService.GetPenaltyById(penaltyId);
         return new OkObjectResult(res);
