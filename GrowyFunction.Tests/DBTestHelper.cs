@@ -131,7 +131,6 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ParentId = parentId,
             ChildId = childId,
             AssignmentName = "Assignment 1",
-            AssignmentIconCode = _faker.Random.Int(0, 100),
             AssignmentDescription = _faker.Lorem.Sentence(50),
             DueDateUtc = _faker.Date.Recent(50),
             Points = _faker.Random.Int(100, 999)
@@ -144,7 +143,6 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ChildId = childId2,
             AssignmentName = "Assignment 1",
             AssignmentDescription = _faker.Lorem.Sentence(50),
-            AssignmentIconCode = _faker.Random.Int(0, 100),
             DueDateUtc = _faker.Date.Recent(50),
             Points = _faker.Random.Int(100, 999)
         };
@@ -183,7 +181,6 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ChildId = childId,
             WishName = _faker.Random.Word(),
             WishDescription = _faker.Lorem.Sentence(50),
-            WishIconCode = _faker.Random.Int(0, 100),
         };
         var wishRequest2 = new CreateWishRequest()
         {
@@ -192,7 +189,6 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ChildId = childId2,
             WishName = _faker.Random.Word(),
             WishDescription = _faker.Lorem.Sentence(50),
-            WishIconCode = _faker.Random.Int(0, 100),
         };
         
         await _wishRepo.InsertWish(wishRequest1);
@@ -205,7 +201,6 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ChildId = childId,
             AchievementName = "Achievement 1",
             AchievementDescription = _faker.Lorem.Sentence(50),
-            AchievementIconCode = _faker.Random.Int(0, 100),
             AchievementPointsGranted = _faker.Random.Int(100, 9999),
         };
         var achievementRequest2 = new CreateAchievementRequest()
@@ -215,7 +210,6 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ChildId = childId2,
             AchievementName = "Achievement 1",
             AchievementDescription = _faker.Lorem.Sentence(50),
-            AchievementIconCode = _faker.Random.Int(0, 100),
             AchievementPointsGranted = _faker.Random.Int(100, 9999),
         };
         
@@ -229,7 +223,6 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ChildId = childId,
             PenaltyName = "Penalty 1",
             PenaltyReason = _faker.Lorem.Sentence(50),
-            PenaltyIconCode = _faker.Random.Int(0, 100),
             PenaltyPointsDeducted = _faker.Random.Int(100, 500),
         };
         

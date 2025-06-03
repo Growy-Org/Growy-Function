@@ -8,7 +8,6 @@ public record AchievementEntity
     public Guid HomeId { get; set; }
     public Guid AchieverId { get; set; }
     public Guid VisionaryId { get; set; }
-    public int IconCode { get; set; }
     public int PointsGranted { get; set; }
     public DateTime CreatedDateUtc { get; set; }
     public DateTime UpdatedDateUtc { get; set; }

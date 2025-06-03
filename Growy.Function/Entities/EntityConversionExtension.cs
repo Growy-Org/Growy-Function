@@ -102,7 +102,6 @@ public static class EntityConversionExtension
             Id = a.Id,
             Name = a.Name,
             Description = a.Description,
-            IconCode = a.IconCode,
             PointsGranted = a.PointsGranted,
             CreatedDateUtc = a.CreatedDateUtc,
             UpdatedDateUtc = a.UpdatedDateUtc,

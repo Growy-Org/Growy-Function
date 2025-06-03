@@ -119,7 +119,6 @@ public static class ModelConversionExtension
             Name = r.AssignmentName,
             Description = r.AssignmentDescription,
             HomeId = r.HomeId,
-            IconCode = r.AssignmentIconCode,
             Points = r.Points,
             RepeatAfter = r.RepeatAfter,
             DueDateUtc = r.DueDateUtc,
@@ -135,7 +134,6 @@ public static class ModelConversionExtension
             Id = r.AssignmentId,
             Name = r.AssignmentName,
             Description = r.AssignmentDescription,
-            IconCode = r.AssignmentIconCode,
             Points = r.Points,
             RepeatAfter = r.RepeatAfter,
             DueDateUtc = r.DueDateUtc,
@@ -172,7 +170,6 @@ public static class ModelConversionExtension
             WisherId = r.ChildId,
             Name = r.WishName,
             Description = r.WishDescription,
-            IconCode = r.WishIconCode
         };
     }
 
@@ -199,7 +196,6 @@ public static class ModelConversionExtension
             AchieverId = r.ChildId,
             Name = r.AchievementName,
             Description = r.AchievementDescription,
-            IconCode = r.AchievementIconCode,
             PointsGranted = r.AchievementPointsGranted
         };
     }
@@ -213,7 +209,6 @@ public static class ModelConversionExtension
             AchieverId = r.ChildId,
             Name = r.AchievementName,
             Description = r.AchievementDescription,
-            IconCode = r.AchievementIconCode,
             PointsGranted = r.AchievementPointsGranted,
         };
     }
@@ -227,7 +222,6 @@ public static class ModelConversionExtension
             ViolatorId = r.ChildId,
             Name = r.PenaltyName,
             Reason = r.PenaltyReason,
-            IconCode = r.PenaltyIconCode,
             PointsDeducted = r.PenaltyPointsDeducted
         };
     }
@@ -241,7 +235,6 @@ public static class ModelConversionExtension
             ViolatorId = r.ChildId,
             Name = r.PenaltyName,
             Reason = r.PenaltyReason,
-            IconCode = r.PenaltyIconCode,
             PointsDeducted = r.PenaltyPointsDeducted
         };
     }
