@@ -32,10 +32,10 @@ public class ChildService(
         return childId;
     }
 
-    public async Task<Guid> EditChild(EditChildRequest request)
+    public async Task<Guid> EditChild(Child child)
     {
-        logger.LogInformation($"Editing Child: {request.ChildId}");
-        var childId = await childRepository.EditChildByChildId(request);
+        logger.LogInformation($"Editing Child: {child.Id}");
+        var childId = await childRepository.EditChild(child);
         logger.LogInformation($"Successfully edit child : {childId}");
         return childId;
     }

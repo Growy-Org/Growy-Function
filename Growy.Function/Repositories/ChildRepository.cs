@@ -17,6 +17,7 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
             $"SELECT HomeId FROM {ChildrenTable} WHERE ChildId = @ChildId";
         return await con.QuerySingleAsync<Guid>(query, new { ChildId = childId });
     }
+
     public async Task<Child> GetChildById(Guid childId)
     {
         using var con = connectionFactory.GetDBConnection();
@@ -37,7 +38,8 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
 
     public async Task<Guid> InsertChild(Guid homeId, Child child)
     {
-        var childEntity = child.ToChildEntity(homeId);
+        var childEntity = child.ToChildEntity();
+        childEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {ChildrenTable} (Name, HomeId, IconCode, DOB, Gender, PointsEarned) VALUES (@Name, @HomeId, @IconCode, @DOB, @Gender, @PointsEarned) RETURNING Id";
@@ -52,9 +54,9 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
         return await con.ExecuteScalarAsync<Guid>(query, new { Id = childId, PointsDelta = deltaPoints });
     }
 
-    public async Task<Guid> EditChildByChildId(EditChildRequest request)
+    public async Task<Guid> EditChild(Child child)
     {
-        var childEntity = request.ToChildEntity();
+        var childEntity = child.ToChildEntity();
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"""

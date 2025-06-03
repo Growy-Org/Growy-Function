@@ -46,7 +46,6 @@ public static class EntityConversionExtension
             Id = c.Id,
             Name = c.Name,
             Gender = (ChildGender)Enum.Parse(typeof(ChildGender), c.Gender),
-            IconCode = c.IconCode,
             PointsEarned = c.PointsEarned,
             DOB = c.DOB,
         };

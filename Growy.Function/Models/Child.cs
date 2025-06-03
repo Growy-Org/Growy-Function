@@ -4,9 +4,8 @@ namespace Growy.Function.Models;
 
 public record Child
 {
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public int? IconCode { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ChildGender Gender { get; set; }
     public DateTime DOB { get; set; }
