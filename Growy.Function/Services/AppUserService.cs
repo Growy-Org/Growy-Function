@@ -1,12 +1,13 @@
 using Growy.Function.Models;
 using Growy.Function.Repositories.Interfaces;
+using Growy.Function.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Growy.Function.Services;
 
 public class AppUserService(
     IAppUserRepository appUserRepository,
-    ILogger<HomeService> logger)
+    ILogger<AppUserService> logger)
     : IAppUserService
 {
     public async Task<Guid> RegisterUser(AppUser user)
@@ -16,6 +17,4 @@ public class AppUserService(
         logger.LogInformation($"Successfully registered user with Id: {userId}");
         return userId;
     }
-
-
 }

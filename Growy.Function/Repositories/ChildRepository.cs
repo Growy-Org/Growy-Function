@@ -1,7 +1,6 @@
 using Dapper;
 using Growy.Function.Entities;
 using Growy.Function.Models;
-using Growy.Function.Models.Dtos;
 using Growy.Function.Repositories.Interfaces;
 
 namespace Growy.Function.Repositories;
@@ -14,8 +13,8 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
     {
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"SELECT HomeId FROM {ChildrenTable} WHERE ChildId = @ChildId";
-        return await con.QuerySingleAsync<Guid>(query, new { ChildId = childId });
+            $"SELECT HomeId FROM {ChildrenTable} WHERE Id = @Id";
+        return await con.QuerySingleAsync<Guid>(query, new { Id = childId });
     }
 
     public async Task<Child> GetChildById(Guid childId)

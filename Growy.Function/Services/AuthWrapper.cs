@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Growy.Function.Models;
 using Growy.Function.Repositories.Interfaces;
+using Growy.Function.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

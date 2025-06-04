@@ -2,6 +2,7 @@ using Growy.Function.Options;
 using Growy.Function.Repositories;
 using Growy.Function.Repositories.Interfaces;
 using Growy.Function.Services;
+using Growy.Function.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,11 @@ var host = new HostBuilder()
         services.AddSingleton<IHomeService, HomeService>();
         services.AddSingleton<IParentService, ParentService>();
         services.AddSingleton<IChildService, ChildService>();
+        services.AddSingleton<IAssignmentService, AssignmentService>();
+        services.AddSingleton<IAchievementService, AchievementService>();
+        services.AddSingleton<IWishService, WishService>();
+        services.AddSingleton<IPenaltyService, PenaltyService>();
+        services.AddSingleton<IAssessmentService, AssessmentService>();
         services.AddSingleton<IAnalyticService, AnalyticService>();
         services.AddSingleton<IAuthWrapper, AuthWrapper>();
 

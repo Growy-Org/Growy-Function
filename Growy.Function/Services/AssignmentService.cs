@@ -1,0 +1,171 @@
+using Growy.Function.Models.Dtos;
+using Growy.Function.Models;
+using Growy.Function.Repositories.Interfaces;
+using Growy.Function.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+
+namespace Growy.Function.Services;
+
+public class AssignmentService(
+    IChildRepository childRepository,
+    IAssignmentRepository assignmentRepository,
+    IStepRepository stepRepository,
+    ILogger<AssignmentService> logger)
+    : IAssignmentService
+{
+    # region Assignments
+
+    // Read
+    public async Task<Assignment> GetAssignmentById(Guid assignmentId)
+    {
+        logger.LogInformation($"Getting assignment by Id: {assignmentId}");
+        var assignment = await assignmentRepository.GetAssignmentById(assignmentId);
+
+        logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
+        var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
+        assignment.SetSteps(steps);
+
+        logger.LogInformation(
+            $"Successfully getting assignment by Id: {assignment.Id}");
+        return assignment;
+    }
+
+    public async Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId, int pageNumber, int pageSize)
+    {
+        logger.LogInformation($"Getting all assignments by ChildId: {childId}");
+        var assignments = await assignmentRepository.GetAllAssignmentsByChildId(childId, pageNumber, pageSize);
+
+        foreach (var assignment in assignments)
+        {
+            logger.LogInformation($"Getting Children Info with ChildId: {childId}");
+            var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
+            assignment.SetSteps(steps);
+        }
+
+        logger.LogInformation(
+            $"Successfully getting all assignments by ChildId : {childId}");
+        return assignments;
+    }
+
+
+    public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize)
+    {
+        logger.LogInformation($"Getting all assignments by Home: {homeId}");
+        var assignments = await assignmentRepository.GetAllAssignmentsByHomeId(homeId, pageNumber, pageSize);
+
+        foreach (var assignment in assignments)
+        {
+            logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
+            var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
+            assignment.SetSteps(steps);
+        }
+
+        logger.LogInformation(
+            $"Successfully getting all assignments by Home : {homeId}");
+        return assignments;
+    }
+
+    public async Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId, int pageNumber, int pageSize)
+    {
+        logger.LogInformation($"Getting all assignments by Parent: {parentId}");
+        var assignments = await assignmentRepository.GetAllAssignmentsByParentId(parentId, pageNumber, pageSize);
+
+        foreach (var assignment in assignments)
+        {
+            logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
+            var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
+            assignment.SetSteps(steps);
+        }
+
+        logger.LogInformation(
+            $"Successfully getting all assignments by Parent : {parentId}");
+        return assignments;
+    }
+
+    // Create
+    public async Task<Guid> CreateAssignment(CreateAssignmentRequest request)
+    {
+        logger.LogInformation($"Adding a new Assignment to Home: {request.HomeId}");
+        var assignmentId = await assignmentRepository.InsertAssignment(request);
+        logger.LogInformation(
+            $"Successfully added an Assignment : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");
+        return assignmentId;
+    }
+
+    // Update
+    public async Task<Guid> EditAssignment(EditAssignmentRequest request)
+    {
+        logger.LogInformation($"Editing assignment: {request.AssignmentId}");
+        var assignmentId = await assignmentRepository.EditAssignmentByAssignmentId(request);
+        logger.LogInformation(
+            $"Successfully edited an Assignment : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");
+        return assignmentId;
+    }
+
+    public async Task<Guid> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted)
+    {
+        logger.LogInformation($"Setting Assignment :{assignmentId} to {(isCompleted ? "Completed" : "In-Complete")}");
+        var response = await assignmentRepository.EditAssignmentCompleteStatus(assignmentId, isCompleted);
+        logger.LogInformation(
+            $"Successfully Setting Assignment : {response.Id} completed status");
+        var childId = await childRepository.EditPointsByChildId(response.ChildId,
+            isCompleted ? response.Points : -response.Points);
+
+        logger.LogInformation(
+            $"Successfully {(isCompleted ? "adding" : "removing")} {response.Points} Points {(isCompleted ? "to" : "from")} child profile with id: {childId}");
+        return assignmentId;
+    }
+
+    // Delete
+    public async Task DeleteAssignment(Guid assignmentId)
+    {
+        logger.LogInformation($"Deleting assignment {assignmentId}");
+        await assignmentRepository.DeleteAssignmentByAssignmentId(assignmentId);
+        logger.LogInformation(
+            $"Successfully deleted assignment {assignmentId}");
+    }
+
+    # endregion
+
+    # region Steps
+
+    // Create
+    public async Task<Guid> CreateStepToAssignment(CreateStepRequest request)
+    {
+        logger.LogInformation($"Adding a new Step to Assignment: {request.AssignmentId}");
+        var stepId = await stepRepository.InsertStep(request);
+        logger.LogInformation(
+            $"Successfully added a Step : {stepId}, to Assignment {request.AssignmentId}");
+        return stepId;
+    }
+
+    // Update
+    public async Task<Guid> EditStep(EditStepRequest request)
+    {
+        logger.LogInformation($"Editing Step: {request.StepId}");
+        var stepId = await stepRepository.EditStepByStepId(request);
+        logger.LogInformation(
+            $"Successfully edited Step: {stepId}");
+        return stepId;
+    }
+
+    public async Task<Guid> EditStepCompleteStatus(Guid stepId, bool isCompleted)
+    {
+        logger.LogInformation($"Setting Step :{stepId} to {(isCompleted ? "Completed" : "In-Complete")}");
+        var id = await stepRepository.EditStepCompleteStatusByStepId(stepId, isCompleted);
+        logger.LogInformation(
+            $"Successfully setting step {id} completed status");
+        return stepId;
+    }
+
+    // Delete
+    public async Task DeleteStep(Guid stepId)
+    {
+        logger.LogInformation($"Deleting step {stepId}");
+        await stepRepository.DeleteStepByStepId(stepId);
+        logger.LogInformation(
+            $"Successfully deleted step {stepId}");
+    }
+
+    # endregion
+}

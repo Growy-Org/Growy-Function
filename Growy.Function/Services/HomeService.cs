@@ -3,6 +3,7 @@ using Growy.Function.Exceptions;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Repositories.Interfaces;
+using Growy.Function.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Growy.Function.Services;
@@ -11,17 +12,12 @@ public class HomeService(
     IHomeRepository homeRepository,
     IChildRepository childRepository,
     IParentRepository parentRepository,
-    IAssignmentRepository assignmentRepository,
-    IAchievementRepository achievementRepository,
-    IWishRepository wishRepository,
-    IPenaltyRepository penaltyRepository,
-    IStepRepository stepRepository,
     ILogger<HomeService> logger)
     : IHomeService
 {
     #region Home
 
-
+    // Read
     public async Task<List<Home>> GetHomesByAppUserId(Guid appUserId)
     {
         logger.LogInformation($"Getting home all homes by app user Id {appUserId}");
@@ -44,6 +40,7 @@ public class HomeService(
         return home;
     }
 
+    // Create
     public async Task<Guid> CreateHome(CreateHomeRequest request)
     {
         logger.LogInformation($"Adding a new Home: {request.HomeName}");
@@ -52,6 +49,7 @@ public class HomeService(
         return homeId;
     }
 
+    // Update
     public async Task<Guid> EditHome(EditHomeRequest request)
     {
         logger.LogInformation($"Editing Home: {request.HomeId}");
@@ -60,6 +58,7 @@ public class HomeService(
         return homeId;
     }
 
+    // Delete
     public async Task DeleteHome(Guid homeId)
     {
         logger.LogInformation($"Deleting Home: {homeId}");
@@ -77,149 +76,6 @@ public class HomeService(
         }
 
         logger.LogInformation($"Successfully delete Home : {homeId}");
-    }
-
-    #endregion
-
-    #region Parents
-
-    public async Task<Guid> AddParentToHome(Guid homeId, Parent parent)
-    {
-        logger.LogInformation($"Adding a new Parent to Home: {homeId}");
-        var parentId = await parentRepository.InsertParent(homeId, parent);
-        logger.LogInformation($"Successfully added a parent : {parentId} to Home: {homeId}");
-        return parentId;
-    }
-
-    public async Task<Guid> EditParent(EditParentRequest request)
-    {
-        logger.LogInformation($"Editing Parent: {request.ParentId}");
-        var parentId = await parentRepository.EditParentByParentId(request);
-        logger.LogInformation($"Successfully edit parent : {parentId}");
-        return parentId;
-    }
-
-    public async Task DeleteParent(Guid parentId)
-    {
-        logger.LogInformation($"Deleting Parent: {parentId}");
-        try
-        {
-            await parentRepository.DeleteParentByParentId(parentId);
-        }
-        catch (DbException e)
-        {
-            if (e.SqlState == "23503")
-            {
-                logger.LogWarning($"Failed to delete Parent: {parentId}", e.Message);
-                throw new DeletionFailureException();
-            }
-        }
-
-        logger.LogInformation($"Successfully delete Parent : {parentId}");
-    }
-
-    #endregion
-
-    #region Assignments
-
-    public async Task<Assignment> GetAssignmentById(Guid assignmentId)
-    {
-        logger.LogInformation($"Getting assignment by Id: {assignmentId}");
-        var assignment = await assignmentRepository.GetAssignmentById(assignmentId);
-
-        logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
-        var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
-        assignment.SetSteps(steps);
-
-        logger.LogInformation(
-            $"Successfully getting assignment by Id: {assignment.Id}");
-        return assignment;
-    }
-
-    public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all assignments by Home: {homeId}");
-        var assignments = await assignmentRepository.GetAllAssignmentsByHomeId(homeId, pageNumber, pageSize);
-
-        foreach (var assignment in assignments)
-        {
-            logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
-            var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
-            assignment.SetSteps(steps);
-        }
-
-        logger.LogInformation(
-            $"Successfully getting all assignments by Home : {homeId}");
-        return assignments;
-    }
-
-    #endregion
-
-    #region Wishes
-
-    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all wishes by Home: {homeId}");
-        var wishes = await wishRepository.GetAllWishesByHomeId(homeId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all wishes by Home : {homeId}");
-        return wishes;
-    }
-
-    public async Task<Wish> GetWishById(Guid wishId)
-    {
-        logger.LogInformation($"Getting wish by Id: {wishId}");
-        var wish = await wishRepository.GetWishById(wishId);
-
-        logger.LogInformation(
-            $"Successfully getting wish by Id: {wish.Id}");
-        return wish;
-    }
-
-    #endregion
-
-    #region Achievements
-
-    public async Task<List<Achievement>> GetAllAchievementByHomeId(Guid homeId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all achievements by HomeId: {homeId}");
-        var achievements = await achievementRepository.GetAllAchievementsByHomeId(homeId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all achievements by HomeId : {homeId}");
-        return achievements;
-    }
-
-    public async Task<Achievement> GetAchievementById(Guid achievementId)
-    {
-        logger.LogInformation($"Getting achievement by Id: {achievementId}");
-        var achievement = await achievementRepository.GetAchievementById(achievementId);
-
-        logger.LogInformation(
-            $"Successfully getting achievement by Id: {achievement.Id}");
-        return achievement;
-    }
-
-    #endregion
-
-    #region Penalties
-
-    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all penalties by HomeId: {homeId}");
-        var penalties = await penaltyRepository.GetAllPenaltiesByHomeId(homeId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all penalties by HomeId : {homeId}");
-        return penalties;
-    }
-
-    public async Task<Penalty> GetPenaltyById(Guid penaltyId)
-    {
-        logger.LogInformation($"Getting penalty by Id: {penaltyId}");
-        var penalty = await penaltyRepository.GetPenaltyById(penaltyId);
-
-        logger.LogInformation(
-            $"Successfully getting penalty by Id: {penalty.Id}");
-        return penalty;
     }
 
     #endregion

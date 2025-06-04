@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Growy.Function.Services;
+namespace Growy.Function.Services.Interfaces;
 
 public interface IAuthWrapper
 {

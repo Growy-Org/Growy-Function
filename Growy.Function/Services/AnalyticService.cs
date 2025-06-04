@@ -1,5 +1,6 @@
 using Growy.Function.Models;
 using Growy.Function.Repositories.Interfaces;
+using Growy.Function.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Growy.Function.Services;
@@ -14,7 +15,7 @@ public class AnalyticService(
         int? year)
     {
         var result = new AnalyticProfileResult<ParentAnalyticProfile>
-        { Status = RequestStatus.Success, Message = "Success!" };
+            { Status = RequestStatus.Success, Message = "Success!" };
 
         // TODO : validator should be on it's own 
         switch (viewType)
@@ -63,7 +64,7 @@ public class AnalyticService(
         ChildAnalyticViewType viewType, string? childId, int? year)
     {
         var result = new AnalyticProfileResult<ChildAnalyticProfile>
-        { Status = RequestStatus.Success, Message = "Success!" };
+            { Status = RequestStatus.Success, Message = "Success!" };
 
         // TODO : validator should be on it's own 
         switch (viewType)
