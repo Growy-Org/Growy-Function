@@ -16,7 +16,6 @@ var host = new HostBuilder()
         services.Configure<ConnectionStrings>(context.Configuration.GetSection(ConnectionStrings.KEY));
 
         // Services
-        services.AddSingleton<IAppUserService, AppUserService>();
         services.AddSingleton<IHomeService, HomeService>();
         services.AddSingleton<IParentService, ParentService>();
         services.AddSingleton<IChildService, ChildService>();
@@ -26,7 +25,7 @@ var host = new HostBuilder()
         services.AddSingleton<IPenaltyService, PenaltyService>();
         services.AddSingleton<IAssessmentService, AssessmentService>();
         services.AddSingleton<IAnalyticService, AnalyticService>();
-        services.AddSingleton<IAuthWrapper, AuthWrapper>();
+        services.AddSingleton<IAuthService, AuthService>();
 
         // Repositories 
         services.AddSingleton<IConnectionFactory, ConnectionFactory>();

@@ -41,19 +41,19 @@ public class HomeService(
     }
 
     // Create
-    public async Task<Guid> CreateHome(CreateHomeRequest request)
+    public async Task<Guid> CreateHome(Guid appUserId, Home home)
     {
-        logger.LogInformation($"Adding a new Home: {request.HomeName}");
-        var homeId = await homeRepository.InsertHome(request);
+        logger.LogInformation($"Adding a new Home: {home.Name} with appUserId: {appUserId}");
+        var homeId = await homeRepository.InsertHome(appUserId,home);
         logger.LogInformation($"Successfully added a home: {homeId}");
         return homeId;
     }
 
     // Update
-    public async Task<Guid> EditHome(EditHomeRequest request)
+    public async Task<Guid> EditHome(Home home)
     {
-        logger.LogInformation($"Editing Home: {request.HomeId}");
-        var homeId = await homeRepository.EditHomeByHomeId(request);
+        logger.LogInformation($"Editing Home: {home.Id}");
+        var homeId = await homeRepository.EditHomeByHomeId(home);
         logger.LogInformation($"Successfully edit home : {homeId}");
         return homeId;
     }

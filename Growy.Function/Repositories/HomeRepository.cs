@@ -28,18 +28,19 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         return homesEntity.Select(e => e.ToHome()).ToList();
     }
 
-    public async Task<Guid> InsertHome(CreateHomeRequest request)
+    public async Task<Guid> InsertHome(Guid appUserId, Home home)
     {
-        var homeEntity = request.ToHomeEntity();
+        var homeEntity = home.ToHomeEntity();
+        homeEntity.AppUserId = appUserId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {HomesTable} (Name, Address, AppUserId) VALUES (@Name, @Address, @AppUserId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
     }
 
-    public async Task<Guid> EditHomeByHomeId(EditHomeRequest request)
+    public async Task<Guid> EditHomeByHomeId(Home home)
     {
-        var homeEntity = request.ToHomeEntity();
+        var homeEntity = home.ToHomeEntity();
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {HomesTable} SET Name = @Name, Address = @Address WHERE Id = @Id RETURNING Id;";

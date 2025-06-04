@@ -14,7 +14,7 @@ namespace Growy.Function.Controllers;
 public class AssignmentController(
     ILogger<AssignmentController> logger,
     IAssignmentService assignmentService,
-    IAuthWrapper authWrapper)
+    IAuthService authService)
 {
     # region Assignments
 

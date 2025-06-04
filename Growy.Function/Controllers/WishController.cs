@@ -10,7 +10,7 @@ namespace Growy.Function.Controllers;
 public class WishController(
     ILogger<WishController> logger,
     IWishService wishService,
-    IAuthWrapper authWrapper)
+    IAuthService authService)
 {
     // Read
     [Function("GetAllWishesByParent")]

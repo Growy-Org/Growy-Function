@@ -10,7 +10,7 @@ namespace Growy.Function.Controllers;
 public class PenaltyController(
     ILogger<PenaltyController> logger,
     IPenaltyService penaltyService,
-    IAuthWrapper authWrapper)
+    IAuthService authService)
 {
     // Read
     [Function("GetAllPenaltiesByParent")]

@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using Growy.Function.Exceptions;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
@@ -14,7 +15,7 @@ namespace Growy.Function.Controllers;
 public class HomeController(
     ILogger<HomeController> logger,
     IHomeService homeService,
-    IAuthWrapper authWrapper)
+    IAuthService authService)
 {
     // Read
     [Function("GetHome")]
@@ -29,48 +30,68 @@ public class HomeController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        return await authWrapper.SecureExecute(req, homeId, async () =>
+        return await authService.SecureExecute(req, homeId, async () =>
         {
             var res = await homeService.GetHomeInfoById(homeId);
             return new OkObjectResult(res);
         });
     }
 
-
-    [Function("GetHomesByAppUserId")]
+    [Function("GetAllHomesByAppUserId")]
     public async Task<IActionResult> GetHomesByAppUserId(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{appuserId}/homes")]
-        HttpRequest req,
-        string appuserId)
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "homes")]
+        HttpRequest req)
     {
-        if (!Guid.TryParse(appuserId, out var appUserId))
+        try
         {
-            logger.LogWarning($"Invalid ID format: {appuserId}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+            var appUserId = await authService.GetAppUserIdFromOid(req);
+            var res = await homeService.GetHomesByAppUserId(appUserId);
+            return new OkObjectResult(res);
         }
-
-        var res = await homeService.GetHomesByAppUserId(appUserId);
-        return new OkObjectResult(res);
+        catch (AuthenticationException e)
+        {
+            return new UnauthorizedObjectResult(e.Message);
+        }
     }
 
     // Create
     [Function("AddHome")]
     public async Task<IActionResult> AddHome(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home")]
-        HttpRequest req, [FromBody] CreateHomeRequest homeRequest)
+        HttpRequest req, [FromBody] Home home)
     {
-        var res = await homeService.CreateHome(homeRequest);
-        return new OkObjectResult(res);
+        try
+        {
+            var appUserId = await authService.GetAppUserIdFromOid(req);
+            var res = await homeService.CreateHome(appUserId, home);
+            return new OkObjectResult(res);
+        }
+        catch (AuthenticationException e)
+        {
+            return new UnauthorizedObjectResult(e.Message);
+        }
     }
 
     // Update
     [Function("EditHome")]
     public async Task<IActionResult> EditHome(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "home")]
-        HttpRequest req, [FromBody] EditHomeRequest request)
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "home/{id}")]
+        HttpRequest req, string id, [FromBody] Home home)
     {
-        var res = await homeService.EditHome(request);
-        return new OkObjectResult(res);
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        home.Id = homeId;
+        return await authService.SecureExecute(req, homeId,
+            async () =>
+            {
+                var res = await homeService.EditHome(home);
+                return new OkObjectResult(res);
+            }
+        );
     }
 
     // Delete
@@ -85,7 +106,7 @@ public class HomeController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        return await authWrapper.SecureExecute(req, homeId, async () =>
+        return await authService.SecureExecute(req, homeId, async () =>
         {
             try
             {

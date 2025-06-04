@@ -26,7 +26,6 @@ public static class EntityConversionExtension
         };
     }
 
-
     public static Parent ToParent(this ParentEntity p)
     {
         return new Parent

@@ -13,7 +13,7 @@ namespace Growy.Function.Controllers;
 public class ChildController(
     ILogger<ChildController> logger,
     IChildService childService,
-    IAuthWrapper authWrapper)
+    IAuthService authService)
 {
     [Function("AddChildToHome")]
     public async Task<IActionResult> AddChildToHome(
@@ -27,7 +27,7 @@ public class ChildController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        return await authWrapper.SecureExecute(req, homeId, async () =>
+        return await authService.SecureExecute(req, homeId, async () =>
         {
             var res = await childService.AddChildToHome(homeId, child);
             return new OkObjectResult(res);
@@ -46,7 +46,7 @@ public class ChildController(
         }
 
         var homeId = await childService.GetHomeIdByChildId(childId);
-        return await authWrapper.SecureExecute(req, homeId, async () =>
+        return await authService.SecureExecute(req, homeId, async () =>
         {
             child.Id = childId;
             var res = await childService.EditChild(child);
@@ -66,7 +66,7 @@ public class ChildController(
         }
 
         var homeId = await childService.GetHomeIdByChildId(childId);
-        return await authWrapper.SecureExecute(req, homeId, async () =>
+        return await authService.SecureExecute(req, homeId, async () =>
         {
             try
             {

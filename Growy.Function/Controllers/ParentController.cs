@@ -13,7 +13,7 @@ namespace Growy.Function.Controllers;
 public class ParentController(
     ILogger<ChildController> logger,
     IParentService parentService,
-    IAuthWrapper authWrapper)
+    IAuthService authService)
 {
     [Function("AddParentToHome")]
     public async Task<IActionResult> AddParentToHome(
