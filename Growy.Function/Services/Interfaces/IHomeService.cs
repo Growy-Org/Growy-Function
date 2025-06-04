@@ -10,10 +10,10 @@ public interface IHomeService
     public Task<List<Home>> GetHomesByAppUserId(Guid appUserId);
     
     // Create
-    public Task<Guid> CreateHome(Guid appUserId, Home home);
+    public Task<Guid> CreateHome(Guid appUserId, HomeRequest home);
     
     // Update
-    public Task<Guid> EditHome(Home request);
+    public Task<Guid> EditHome(Guid homeId, HomeRequest request);
     
     // Delete
     public Task DeleteHome(Guid homeId);

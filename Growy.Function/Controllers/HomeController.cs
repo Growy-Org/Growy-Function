@@ -58,12 +58,12 @@ public class HomeController(
     [Function("AddHome")]
     public async Task<IActionResult> AddHome(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home")]
-        HttpRequest req, [FromBody] Home home)
+        HttpRequest req, [FromBody] HomeRequest request)
     {
         try
         {
             var appUserId = await authService.GetAppUserIdFromToken(req);
-            var res = await homeService.CreateHome(appUserId, home);
+            var res = await homeService.CreateHome(appUserId, request);
             return new OkObjectResult(res);
         }
         catch (AuthenticationException e)
@@ -76,7 +76,7 @@ public class HomeController(
     [Function("EditHome")]
     public async Task<IActionResult> EditHome(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "home/{id}")]
-        HttpRequest req, string id, [FromBody] Home home)
+        HttpRequest req, string id, [FromBody] HomeRequest request)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
@@ -84,11 +84,10 @@ public class HomeController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        home.Id = homeId;
         return await authService.SecureExecute(req, homeId,
             async () =>
             {
-                var res = await homeService.EditHome(home);
+                var res = await homeService.EditHome(homeId, request);
                 return new OkObjectResult(res);
             }
         );

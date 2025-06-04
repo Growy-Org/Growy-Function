@@ -28,7 +28,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         return homesEntity.Select(e => e.ToHome()).ToList();
     }
 
-    public async Task<Guid> InsertHome(Guid appUserId, Home home)
+    public async Task<Guid> InsertHome(Guid appUserId, HomeRequest home)
     {
         var homeEntity = home.ToHomeEntity();
         homeEntity.AppUserId = appUserId;
@@ -38,9 +38,10 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
         return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
     }
 
-    public async Task<Guid> EditHomeByHomeId(Home home)
+    public async Task<Guid> EditHomeByHomeId(Guid homeId, HomeRequest home)
     {
         var homeEntity = home.ToHomeEntity();
+        homeEntity.Id = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {HomesTable} SET Name = @Name, Address = @Address WHERE Id = @Id RETURNING Id;";
@@ -54,5 +55,4 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
             $"DELETE FROM {HomesTable} WHERE Id = @Id RETURNING Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = homeId });
     }
-
 }

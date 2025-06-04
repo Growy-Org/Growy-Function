@@ -64,11 +64,10 @@ public static class ModelConversionExtension
         };
     }
 
-    public static HomeEntity ToHomeEntity(this Home h)
+    public static HomeEntity ToHomeEntity(this HomeRequest h)
     {
         return new HomeEntity()
         {
-            Id = h.Id,
             Name = h.Name,
             Address = h.Address,
         };
@@ -129,8 +128,9 @@ public static class ModelConversionExtension
         {
             GenieId = r.ParentId,
             WisherId = r.ChildId,
-            Name = r.WishName,
-            Description = r.WishDescription,
+            Name = r.Name,
+            Description = r.Description,
+            PointsCost = r.PointsCost
         };
     }
 

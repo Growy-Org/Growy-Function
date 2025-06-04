@@ -7,7 +7,7 @@ public interface IHomeRepository
 {
     public Task<Home> GetHome(Guid homeId);
     public Task<List<Home>> GetAllHomeByAppUserId(Guid appUserId);
-    public Task<Guid> InsertHome(Guid appUserId, Home home);
-    public Task<Guid> EditHomeByHomeId(Home request);
+    public Task<Guid> InsertHome(Guid appUserId, HomeRequest home);
+    public Task<Guid> EditHomeByHomeId(Guid homeId, HomeRequest request);
     public Task DeleteHomeByHomeId(Guid homeId);
 }
