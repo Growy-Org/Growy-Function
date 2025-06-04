@@ -2,8 +2,8 @@ namespace Growy.Function.Entities;
 
 public record StepEntity
 {
-    public Guid Id { get; init; }
-    public Guid AssignmentId { get; init; }
+    public Guid Id { get; set; }
+    public Guid AssignmentId { get; set; }
     public int StepOrder { get; init; }
     public string Description { get; init; } = string.Empty;
     public DateTime CreatedDateUtc { get; init; }

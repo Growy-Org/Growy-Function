@@ -1,6 +1,7 @@
 using Dapper;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Entities;
+using Growy.Function.Entities.EntityResponse;
 using Growy.Function.Models;
 using Growy.Function.Repositories.Interfaces;
 
@@ -11,6 +12,16 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
     private const string AssignmentsTable = "inventory.assignments";
     public const string ChildrenTable = "inventory.children";
     public const string ParentTable = "inventory.parents";
+
+    public async Task<Guid> GetHomeIdByAssignmentId(Guid assignmentId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"""
+                 SELECT HomeId FROM {AssignmentsTable} WHERE Id = @Id
+             """;
+        return await con.QuerySingleAsync<Guid>(query, new { Id = assignmentId });
+    }
 
     public async Task<Assignment> GetAssignmentById(Guid assignmentId)
     {
@@ -81,27 +92,20 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         return assignmentEntities.ToList();
     }
 
-    private readonly Func<AssignmentEntity, ChildEntity, ParentEntity, Assignment> _mapEntitiesToAssignmentModel =
-        (a, c, p) =>
-        {
-            var assignment = a.ToAssignment();
-            assignment.Assignee = c.ToChild();
-            assignment.Assigner = p.ToParent();
-            return assignment;
-        };
-
-    public async Task<Guid> InsertAssignment(CreateAssignmentRequest request)
+    public async Task<Guid> InsertAssignment(Guid homeId, AssignmentRequest request)
     {
         var assignmentEntity = request.ToAssignmentEntity();
+        assignmentEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {AssignmentsTable} (Name, HomeId, Points, Description, RepeatAfter, DueDateUtc, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @Points, @Description, @RepeatAfter, @DueDateUtc, @AssigneeId, @AssignerId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, assignmentEntity);
     }
 
-    public async Task<Guid> EditAssignmentByAssignmentId(EditAssignmentRequest request)
+    public async Task<Guid> EditAssignmentByAssignmentId(Guid assignmentId, AssignmentRequest request)
     {
         var assignmentEntity = request.ToAssignmentEntity();
+        assignmentEntity.Id = assignmentId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
@@ -132,4 +136,13 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         var query = $"DELETE FROM {AssignmentsTable} where id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = assignmentId });
     }
+
+    private readonly Func<AssignmentEntity, ChildEntity, ParentEntity, Assignment> _mapEntitiesToAssignmentModel =
+        (a, c, p) =>
+        {
+            var assignment = a.ToAssignment();
+            assignment.Assignee = c.ToChild();
+            assignment.Assigner = p.ToParent();
+            return assignment;
+        };
 }

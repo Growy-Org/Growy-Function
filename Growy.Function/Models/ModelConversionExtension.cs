@@ -73,52 +73,25 @@ public static class ModelConversionExtension
         };
     }
 
-    public static AssignmentEntity ToAssignmentEntity(this CreateAssignmentRequest r)
+    public static AssignmentEntity ToAssignmentEntity(this AssignmentRequest r)
     {
         return new AssignmentEntity
         {
-            Name = r.AssignmentName,
-            Description = r.AssignmentDescription,
-            HomeId = r.HomeId,
+            Name = r.Name,
+            Description = r.Description,
             Points = r.Points,
-            RepeatAfter = r.RepeatAfter,
             DueDateUtc = r.DueDateUtc,
             AssigneeId = r.ChildId,
             AssignerId = r.ParentId
         };
     }
 
-    public static AssignmentEntity ToAssignmentEntity(this EditAssignmentRequest r)
-    {
-        return new AssignmentEntity
-        {
-            Id = r.AssignmentId,
-            Name = r.AssignmentName,
-            Description = r.AssignmentDescription,
-            Points = r.Points,
-            RepeatAfter = r.RepeatAfter,
-            DueDateUtc = r.DueDateUtc,
-            AssigneeId = r.ChildId,
-            AssignerId = r.ParentId
-        };
-    }
-
-    public static StepEntity ToStepEntity(this CreateStepRequest r)
+    public static StepEntity ToStepEntity(this StepRequest r)
     {
         return new StepEntity()
         {
             StepOrder = r.StepOrder,
-            AssignmentId = r.AssignmentId,
-            Description = r.StepDescription,
-        };
-    }
-
-    public static StepEntity ToStepEntity(this EditStepRequest r)
-    {
-        return new StepEntity()
-        {
-            Id = r.StepId,
-            Description = r.StepDescription,
+            Description = r.Description,
         };
     }
 

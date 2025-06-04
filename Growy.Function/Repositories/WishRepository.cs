@@ -1,6 +1,7 @@
 using Dapper;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Entities;
+using Growy.Function.Entities.EntityResponse;
 using Growy.Function.Models;
 using Growy.Function.Repositories.Interfaces;
 

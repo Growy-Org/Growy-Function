@@ -47,6 +47,17 @@ public class AssignmentService(
         return assignments;
     }
 
+    public async Task<Guid> GetHomeIdByAssignmentId(Guid assignmentId)
+    {
+        return await assignmentRepository.GetHomeIdByAssignmentId(assignmentId);
+    }
+
+    public async Task<Guid> GetHomeIdByStepId(Guid stepId)
+    {
+        var assignmentId = await stepRepository.GetAssignmentIdByStepId(stepId);
+        return await assignmentRepository.GetHomeIdByAssignmentId(assignmentId);
+    }
+
 
     public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
@@ -83,23 +94,23 @@ public class AssignmentService(
     }
 
     // Create
-    public async Task<Guid> CreateAssignment(CreateAssignmentRequest request)
+    public async Task<Guid> CreateAssignment(Guid homeId, AssignmentRequest request)
     {
-        logger.LogInformation($"Adding a new Assignment to Home: {request.HomeId}");
-        var assignmentId = await assignmentRepository.InsertAssignment(request);
+        logger.LogInformation($"Adding a new Assignment to Home: {homeId}");
+        var assignmentId = await assignmentRepository.InsertAssignment(homeId, request);
         logger.LogInformation(
             $"Successfully added an Assignment : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");
         return assignmentId;
     }
 
     // Update
-    public async Task<Guid> EditAssignment(EditAssignmentRequest request)
+    public async Task<Guid> EditAssignment(Guid assignmentId, AssignmentRequest request)
     {
-        logger.LogInformation($"Editing assignment: {request.AssignmentId}");
-        var assignmentId = await assignmentRepository.EditAssignmentByAssignmentId(request);
+        logger.LogInformation($"Editing assignment: {assignmentId}");
+        var id = await assignmentRepository.EditAssignmentByAssignmentId(assignmentId, request);
         logger.LogInformation(
             $"Successfully edited an Assignment : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");
-        return assignmentId;
+        return id;
     }
 
     public async Task<Guid> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted)
@@ -130,23 +141,23 @@ public class AssignmentService(
     # region Steps
 
     // Create
-    public async Task<Guid> CreateStepToAssignment(CreateStepRequest request)
+    public async Task<Guid> CreateStepToAssignment(Guid assignmentId, StepRequest request)
     {
-        logger.LogInformation($"Adding a new Step to Assignment: {request.AssignmentId}");
-        var stepId = await stepRepository.InsertStep(request);
+        logger.LogInformation($"Adding a new Step to Assignment: {assignmentId}");
+        var id = await stepRepository.InsertStep(assignmentId, request);
         logger.LogInformation(
-            $"Successfully added a Step : {stepId}, to Assignment {request.AssignmentId}");
-        return stepId;
+            $"Successfully added a Step : {id}, to Assignment {assignmentId}");
+        return id;
     }
 
     // Update
-    public async Task<Guid> EditStep(EditStepRequest request)
+    public async Task<Guid> EditStep(Guid stepId, StepRequest request)
     {
-        logger.LogInformation($"Editing Step: {request.StepId}");
-        var stepId = await stepRepository.EditStepByStepId(request);
+        logger.LogInformation($"Editing Step: {stepId}");
+        var id = await stepRepository.EditStepByStepId(stepId, request);
         logger.LogInformation(
-            $"Successfully edited Step: {stepId}");
-        return stepId;
+            $"Successfully edited Step: {id}");
+        return id;
     }
 
     public async Task<Guid> EditStepCompleteStatus(Guid stepId, bool isCompleted)

@@ -1,6 +1,7 @@
 using Growy.Function.Exceptions;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
+using Growy.Function.Repositories.Interfaces;
 using Growy.Function.Services;
 using Growy.Function.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
@@ -14,6 +15,8 @@ namespace Growy.Function.Controllers;
 public class AssignmentController(
     ILogger<AssignmentController> logger,
     IAssignmentService assignmentService,
+    IParentService parentService,
+    IChildService childService,
     IAuthService authService)
 {
     # region Assignments
@@ -30,10 +33,14 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await assignmentService.GetAllAssignmentsByParentId(parentId,
-            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-        return new OkObjectResult(res);
+        var homeId = await parentService.GetHomeIdByParentId(parentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.GetAllAssignmentsByParentId(parentId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("GetAllAssignmentsByChild")]
@@ -47,10 +54,14 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await assignmentService.GetAllAssignmentsByChildId(childId,
-            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-        return new OkObjectResult(res);
+        var homeId = await childService.GetHomeIdByChildId(childId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.GetAllAssignmentsByChildId(childId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("GetAllAssignmentsByHome")]
@@ -64,10 +75,13 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await assignmentService.GetAllAssignmentsByHomeId(homeId,
-            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-        return new OkObjectResult(res);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.GetAllAssignmentsByHomeId(homeId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("GetAssignmentById")]
@@ -81,28 +95,51 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await assignmentService.GetAssignmentById(assignmentId);
-        return new OkObjectResult(res);
+        var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.GetAssignmentById(assignmentId);
+            return new OkObjectResult(res);
+        });
     }
 
     // Create
     [Function("CreateAssignment")]
     public async Task<IActionResult> CreateAssignmentToHome(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/assignment")]
-        HttpRequest req, [FromBody] CreateAssignmentRequest assignmentRequest)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/assignment")]
+        HttpRequest req, string id, [FromBody] AssignmentRequest assignmentRequest)
     {
-        var res = await assignmentService.CreateAssignment(assignmentRequest);
-        return new OkObjectResult(res);
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.CreateAssignment(homeId, assignmentRequest);
+            return new OkObjectResult(res);
+        });
     }
 
     // Update
     [Function("EditAssignment")]
     public async Task<IActionResult> EditAssignment(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment")]
-        HttpRequest req, [FromBody] EditAssignmentRequest request)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment/{id}")]
+        HttpRequest req, string id, [FromBody] AssignmentRequest request)
     {
-        var res = await assignmentService.EditAssignment(request);
-        return new OkObjectResult(res);
+        if (!Guid.TryParse(id, out var assignmentId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.EditAssignment(assignmentId, request);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("CompleteAssignment")]
@@ -116,8 +153,12 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await assignmentService.EditAssignmentCompleteStatus(assignmentId, true);
-        return new OkObjectResult(res);
+        var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.EditAssignmentCompleteStatus(assignmentId, true);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("UnCompleteAssignment")]
@@ -131,8 +172,12 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await assignmentService.EditAssignmentCompleteStatus(assignmentId, false);
-        return new OkObjectResult(res);
+        var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.EditAssignmentCompleteStatus(assignmentId, false);
+            return new OkObjectResult(res);
+        });
     }
 
     // Delete
@@ -147,8 +192,12 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        await assignmentService.DeleteAssignment(assignmentId);
-        return new OkResult();
+        var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            await assignmentService.DeleteAssignment(assignmentId);
+            return new NoContentResult();
+        });
     }
 
     #endregion
@@ -158,21 +207,41 @@ public class AssignmentController(
     // Create
     [Function("CreateStep")]
     public async Task<IActionResult> CreateStep(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "step")]
-        HttpRequest req, [FromBody] CreateStepRequest stepRequest)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "assignment/{id}/step")]
+        HttpRequest req, string id, [FromBody] StepRequest stepRequest)
     {
-        var res = await assignmentService.CreateStepToAssignment(stepRequest);
-        return new OkObjectResult(res);
+        if (!Guid.TryParse(id, out var assignmentId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.CreateStepToAssignment(assignmentId, stepRequest);
+            return new OkObjectResult(res);
+        });
     }
 
     // Update
     [Function("EditStep")]
     public async Task<IActionResult> EditStep(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step")]
-        HttpRequest req, [FromBody] EditStepRequest request)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step/{id}")]
+        HttpRequest req, string id, [FromBody] StepRequest request)
     {
-        var res = await assignmentService.EditStep(request);
-        return new OkObjectResult(res);
+        if (!Guid.TryParse(id, out var stepId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var homeId = await assignmentService.GetHomeIdByStepId(stepId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.EditStep(stepId, request);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("CompleteStep")]
@@ -186,8 +255,12 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await assignmentService.EditStepCompleteStatus(stepId, true);
-        return new OkObjectResult(res);
+        var homeId = await assignmentService.GetHomeIdByStepId(stepId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.EditStepCompleteStatus(stepId, true);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("UnCompleteStep")]
@@ -201,8 +274,12 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await assignmentService.EditStepCompleteStatus(stepId, false);
-        return new OkObjectResult(res);
+        var homeId = await assignmentService.GetHomeIdByStepId(stepId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.EditStepCompleteStatus(stepId, false);
+            return new OkObjectResult(res);
+        });
     }
 
     // Delete
@@ -217,8 +294,12 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        await assignmentService.DeleteStep(stepId);
-        return new OkResult();
+        var homeId = await assignmentService.GetHomeIdByStepId(stepId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            await assignmentService.DeleteStep(stepId);
+            return new NoContentResult();
+        });
     }
 
     #endregion

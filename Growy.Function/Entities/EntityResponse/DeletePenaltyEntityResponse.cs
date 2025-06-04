@@ -1,6 +1,6 @@
-namespace Growy.Function.Models.Dtos;
+namespace Growy.Function.Entities.EntityResponse;
 
-public record EditAssignmentEntityResponse
+public record DeletePenaltyEntityResponse
 {
     public Guid Id { get; init; }
     public Guid ChildId { get; init; }

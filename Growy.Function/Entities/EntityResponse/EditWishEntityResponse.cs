@@ -1,4 +1,4 @@
-namespace Growy.Function.Models.Dtos;
+namespace Growy.Function.Entities.EntityResponse;
 
 public record EditWishEntityResponse
 {

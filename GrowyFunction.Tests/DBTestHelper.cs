@@ -118,54 +118,49 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         var parentId = await _parentRepo.InsertParent(homeId, parent);
         var parentId2 = await _parentRepo.InsertParent(homeId, parent2);
 
-        var assignmentRequest1 = new CreateAssignmentRequest
+        var assignmentRequest1 = new AssignmentRequest
         {
-            HomeId = homeId,
             ParentId = parentId,
             ChildId = childId,
-            AssignmentName = "Assignment 1",
-            AssignmentDescription = _faker.Lorem.Sentence(50),
+            Name = "Assignment 1",
+            Description = _faker.Lorem.Sentence(50),
             DueDateUtc = _faker.Date.Recent(50),
             Points = _faker.Random.Int(100, 999)
         };
 
-        var assignmentRequest2 = new CreateAssignmentRequest
+        var assignmentRequest2 = new AssignmentRequest
         {
-            HomeId = homeId,
             ParentId = parentId2,
             ChildId = childId2,
-            AssignmentName = "Assignment 1",
-            AssignmentDescription = _faker.Lorem.Sentence(50),
+            Name = "Assignment 1",
+            Description = _faker.Lorem.Sentence(50),
             DueDateUtc = _faker.Date.Recent(50),
             Points = _faker.Random.Int(100, 999)
         };
 
-        var assignmentId1 = await _assignmentRepo.InsertAssignment(assignmentRequest1);
-        var assignmentId2 = await _assignmentRepo.InsertAssignment(assignmentRequest2);
+        var assignmentId1 = await _assignmentRepo.InsertAssignment(homeId, assignmentRequest1);
+        var assignmentId2 = await _assignmentRepo.InsertAssignment(homeId, assignmentRequest2);
 
-        var stepRequest1 = new CreateStepRequest
+        var stepRequest1 = new StepRequest
         {
-            AssignmentId = assignmentId1,
             StepOrder = 0,
-            StepDescription = _faker.Lorem.Sentence(20),
+            Description = _faker.Lorem.Sentence(20),
         };
 
-        var stepRequest2 = new CreateStepRequest
+        var stepRequest2 = new StepRequest
         {
-            AssignmentId = assignmentId1,
             StepOrder = 1,
-            StepDescription = _faker.Lorem.Sentence(20),
+            Description = _faker.Lorem.Sentence(20),
         };
 
-        var stepRequest3 = new CreateStepRequest
+        var stepRequest3 = new StepRequest
         {
-            AssignmentId = assignmentId2,
             StepOrder = 0,
-            StepDescription = _faker.Lorem.Sentence(20),
+            Description = _faker.Lorem.Sentence(20),
         };
-        await _stepRepo.InsertStep(stepRequest1);
-        await _stepRepo.InsertStep(stepRequest2);
-        await _stepRepo.InsertStep(stepRequest3);
+        await _stepRepo.InsertStep(assignmentId1, stepRequest1);
+        await _stepRepo.InsertStep(assignmentId1, stepRequest2);
+        await _stepRepo.InsertStep(assignmentId2, stepRequest3);
 
         var wishRequest1 = new WishRequest()
         {
