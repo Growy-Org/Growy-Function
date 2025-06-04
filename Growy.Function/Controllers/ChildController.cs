@@ -1,5 +1,5 @@
 using Growy.Function.Exceptions;
-using Growy.Function.Models;
+using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -18,7 +18,7 @@ public class ChildController(
     public async Task<IActionResult> AddChildToHome(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/child")]
         HttpRequest req,
-        string id, [FromBody] Child child)
+        string id, [FromBody] ChildRequest request)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
@@ -28,7 +28,7 @@ public class ChildController(
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var res = await childService.AddChildToHome(homeId, child);
+            var res = await childService.AddChildToHome(homeId, request);
             return new OkObjectResult(res);
         });
     }
@@ -36,7 +36,7 @@ public class ChildController(
     [Function("EditChild")]
     public async Task<IActionResult> EditChild(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "child/{id}")]
-        HttpRequest req, string id, [FromBody] Child child)
+        HttpRequest req, string id, [FromBody] ChildRequest request)
     {
         if (!Guid.TryParse(id, out var childId))
         {
@@ -47,8 +47,7 @@ public class ChildController(
         var homeId = await childService.GetHomeIdByChildId(childId);
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            child.Id = childId;
-            var res = await childService.EditChild(child);
+            var res = await childService.EditChild(childId, request);
             return new OkObjectResult(res);
         });
     }

@@ -46,7 +46,7 @@ public class AppUserController(
     public async Task<IActionResult> RegisterAppUser(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "app-user")]
         HttpRequest req,
-        [FromBody] CreateAppUserRequest appUserRequest)
+        [FromBody] AppUserRequest appUserRequest)
     {
         // Currently MS Azure Entra is used
         // Identity provider id == Object ID
