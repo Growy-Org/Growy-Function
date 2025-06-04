@@ -1,5 +1,4 @@
 using Growy.Function.Models;
-using Growy.Function.Services;
 using Growy.Function.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -12,7 +11,7 @@ public class AnalyticController(
     ILogger<AnalyticController> logger,
     IAnalyticService analyticService)
 {
-
+    // TODO : Wrap this under auth wrapper
     [Function("GetParentAnalytics")]
     public async Task<IActionResult> GetParentAnalytics(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/getParentAnalytics/{analyticType}")]
@@ -37,6 +36,7 @@ public class AnalyticController(
     }
 
 
+    // TODO : Wrap this under auth wrapper
     [Function("GetChildAnalytics")]
     public async Task<IActionResult> GetChildAnalytics(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/getChildAnalytics/{analyticType}")]
