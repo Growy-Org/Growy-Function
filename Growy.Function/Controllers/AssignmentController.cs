@@ -21,7 +21,7 @@ public class AssignmentController(
     // Read
     [Function("GetAllAssignmentsByParent")]
     public async Task<IActionResult> GetAllAssignmentsByParent(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "parent/{id}/assignments")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "parent/{id}/assignments")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var parentId))
@@ -38,7 +38,7 @@ public class AssignmentController(
 
     [Function("GetAllAssignmentsByChild")]
     public async Task<IActionResult> GetAllAssignmentsByChild(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "child/{id}/assignments")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "child/{id}/assignments")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var childId))
@@ -55,7 +55,7 @@ public class AssignmentController(
 
     [Function("GetAllAssignmentsByHome")]
     public async Task<IActionResult> GetAllAssignmentsByHome(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/assignments")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assignments")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var homeId))
@@ -72,7 +72,7 @@ public class AssignmentController(
 
     [Function("GetAssignmentById")]
     public async Task<IActionResult> GetAssignmentById(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "assignment/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "assignment/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var assignmentId))
@@ -88,7 +88,7 @@ public class AssignmentController(
     // Create
     [Function("CreateAssignment")]
     public async Task<IActionResult> CreateAssignmentToHome(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/assignment")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/assignment")]
         HttpRequest req, [FromBody] CreateAssignmentRequest assignmentRequest)
     {
         var res = await assignmentService.CreateAssignment(assignmentRequest);
@@ -98,7 +98,7 @@ public class AssignmentController(
     // Update
     [Function("EditAssignment")]
     public async Task<IActionResult> EditAssignment(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "assignment")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment")]
         HttpRequest req, [FromBody] EditAssignmentRequest request)
     {
         var res = await assignmentService.EditAssignment(request);
@@ -107,7 +107,7 @@ public class AssignmentController(
 
     [Function("CompleteAssignment")]
     public async Task<IActionResult> CompleteAssignment(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "assignment/{id}/complete")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment/{id}/complete")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var assignmentId))
@@ -122,7 +122,7 @@ public class AssignmentController(
 
     [Function("UnCompleteAssignment")]
     public async Task<IActionResult> UnCompleteAssignment(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "assignment/{id}/incomplete")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment/{id}/incomplete")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var assignmentId))
@@ -138,7 +138,7 @@ public class AssignmentController(
     // Delete
     [Function("DeleteAssignment")]
     public async Task<IActionResult> DeleteAssignment(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "assignment/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "assignment/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var assignmentId))
@@ -158,7 +158,7 @@ public class AssignmentController(
     // Create
     [Function("CreateStep")]
     public async Task<IActionResult> CreateStep(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "step")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "step")]
         HttpRequest req, [FromBody] CreateStepRequest stepRequest)
     {
         var res = await assignmentService.CreateStepToAssignment(stepRequest);
@@ -168,7 +168,7 @@ public class AssignmentController(
     // Update
     [Function("EditStep")]
     public async Task<IActionResult> EditStep(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "step")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step")]
         HttpRequest req, [FromBody] EditStepRequest request)
     {
         var res = await assignmentService.EditStep(request);
@@ -177,7 +177,7 @@ public class AssignmentController(
 
     [Function("CompleteStep")]
     public async Task<IActionResult> CompleteStep(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "step/{id}/complete")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step/{id}/complete")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var stepId))
@@ -192,7 +192,7 @@ public class AssignmentController(
 
     [Function("UnCompleteStep")]
     public async Task<IActionResult> UnCompleteStep(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "step/{id}/incomplete")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step/{id}/incomplete")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var stepId))
@@ -208,7 +208,7 @@ public class AssignmentController(
     // Delete
     [Function("DeleteStep")]
     public async Task<IActionResult> DeleteStep(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "step/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "step/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var stepId))

@@ -15,6 +15,12 @@ public class WishService(
     # region Wishes
 
     // Read
+
+    public Task<Guid> GetHomeIdByWishId(Guid wishId)
+    {
+        return wishRepository.GetHomeIdByWishId(wishId);
+    }
+
     public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all wishes by Parent: {parentId}");
@@ -53,22 +59,22 @@ public class WishService(
     }
 
     // Create
-    public async Task<Guid> CreateWish(CreateWishRequest request)
+    public async Task<Guid> CreateWish(Guid homeId, WishRequest wish)
     {
-        logger.LogInformation($"Adding a new Wish to Home: {request.HomeId}");
-        var wishId = await wishRepository.InsertWish(request);
+        logger.LogInformation($"Adding a new Wish to Home: {homeId}");
+        var wishId = await wishRepository.InsertWish(homeId, wish);
         logger.LogInformation(
-            $"Successfully added a wish : {wishId}, Parent {request.ParentId}. Child {request.ChildId}");
+            $"Successfully added a wish : {wishId}");
         return wishId;
     }
 
     // Update
-    public async Task<Guid> EditWish(EditWishRequest request)
+    public async Task<Guid> EditWish(Guid wishId, WishRequest request)
     {
-        logger.LogInformation($"Editing wish {request.WishId}");
-        var id = await wishRepository.EditWishByWishId(request);
+        logger.LogInformation($"Editing wish {wishId}");
+        var id = await wishRepository.EditWishByWishId(wishId, request);
         logger.LogInformation(
-            $"Successfully wish edited {request.WishId}");
+            $"Successfully wish edited {wishId}");
         return id;
     }
 

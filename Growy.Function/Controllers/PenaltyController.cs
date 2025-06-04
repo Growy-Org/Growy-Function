@@ -15,7 +15,7 @@ public class PenaltyController(
     // Read
     [Function("GetAllPenaltiesByParent")]
     public async Task<IActionResult> GetAllPenaltiesByParent(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "parent/{id}/penalties")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "parent/{id}/penalties")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var homeId))
@@ -32,7 +32,7 @@ public class PenaltyController(
 
     [Function("GetAllPenaltiesByChild")]
     public async Task<IActionResult> GetAlPenaltiesByChild(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "child/{id}/penalties")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "child/{id}/penalties")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var childId))
@@ -49,7 +49,7 @@ public class PenaltyController(
 
     [Function("GetAllPenaltiesByHome")]
     public async Task<IActionResult> GetAllPenaltiesByHome(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/penalties")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/penalties")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var homeId))
@@ -66,7 +66,7 @@ public class PenaltyController(
 
     [Function("GetPenaltyById")]
     public async Task<IActionResult> GetPenaltyById(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "penalty/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "penalty/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var penaltyId))
@@ -83,7 +83,7 @@ public class PenaltyController(
     // Create
     [Function("CreatePenalty")]
     public async Task<IActionResult> CreatePenalty(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/penalty")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/penalty")]
         HttpRequest req, [FromBody] CreatePenaltyRequest penaltyRequest)
     {
         var res = await penaltyService.CreatePenalty(penaltyRequest);
@@ -93,7 +93,7 @@ public class PenaltyController(
     // Update
     [Function("EditPenalty")]
     public async Task<IActionResult> EditPenalty(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "penalty")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "penalty")]
         HttpRequest req, [FromBody] EditPenaltyRequest request)
     {
         var res = await penaltyService.EditPenalty(request);
@@ -103,7 +103,7 @@ public class PenaltyController(
     // Delete
     [Function("DeletePenalty")]
     public async Task<IActionResult> DeletePenalty(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "penalty/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "penalty/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var penaltyId))

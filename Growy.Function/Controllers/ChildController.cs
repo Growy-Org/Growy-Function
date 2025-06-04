@@ -35,7 +35,7 @@ public class ChildController(
 
     [Function("EditChild")]
     public async Task<IActionResult> EditChild(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "child/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "child/{id}")]
         HttpRequest req, string id, [FromBody] Child child)
     {
         if (!Guid.TryParse(id, out var childId))

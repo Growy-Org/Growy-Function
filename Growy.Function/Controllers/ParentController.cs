@@ -17,7 +17,7 @@ public class ParentController(
 {
     [Function("AddParentToHome")]
     public async Task<IActionResult> AddParentToHome(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/{id}/parent")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/parent")]
         HttpRequest req,
         string id, [FromBody] Parent parent)
     {
@@ -36,7 +36,7 @@ public class ParentController(
 
     [Function("EditParent")]
     public async Task<IActionResult> EditParent(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "parent/{id}")]
         HttpRequest req, string id, [FromBody] Parent parent)
     {
         if (!Guid.TryParse(id, out var parentId))
@@ -57,7 +57,7 @@ public class ParentController(
 
     [Function("DeleteParent")]
     public async Task<IActionResult> DeleteParent(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "parent/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "parent/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var parentId))

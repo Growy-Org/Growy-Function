@@ -14,7 +14,7 @@ public class AchievementController(
     // Read
     [Function("GetAllAchievementsByParent")]
     public async Task<IActionResult> GetAllAchievementsByParent(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "parent/{id}/achievements")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "parent/{id}/achievements")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var parentId))
@@ -32,7 +32,7 @@ public class AchievementController(
 
     [Function("GetAllAchievementsByChild")]
     public async Task<IActionResult> GetAllAchievementsByChild(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "child/{id}/achievements")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "child/{id}/achievements")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var childId))
@@ -49,7 +49,7 @@ public class AchievementController(
 
     [Function("GetAllAchievementsByHome")]
     public async Task<IActionResult> GetAllAchievementsByHome(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "home/{id}/achievements")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/achievements")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
         if (!Guid.TryParse(id, out var homeId))
@@ -66,7 +66,7 @@ public class AchievementController(
 
     [Function("GetAchievementById")]
     public async Task<IActionResult> GetAchievementById(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "achievement/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "achievement/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var achievementId))
@@ -82,7 +82,7 @@ public class AchievementController(
     // Create
     [Function("CreateAchievement")]
     public async Task<IActionResult> CreateAchievement(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "home/achievement")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/achievement")]
         HttpRequest req, [FromBody] CreateAchievementRequest achievementRequest)
     {
         var res = await achievementService.CreateAchievement(achievementRequest);
@@ -93,7 +93,7 @@ public class AchievementController(
     // Update
     [Function("EditAchievement")]
     public async Task<IActionResult> EditAchievement(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "achievement")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "achievement")]
         HttpRequest req, [FromBody] EditAchievementRequest request)
     {
         var res = await achievementService.EditAchievement(request);
@@ -103,7 +103,7 @@ public class AchievementController(
 
     [Function("GrantedAchievement")]
     public async Task<IActionResult> GrantedAchievement(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "achievement/{id}/grant")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "achievement/{id}/grant")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var achievementId))
@@ -118,7 +118,7 @@ public class AchievementController(
 
     [Function("RevokeGrantedAchievement")]
     public async Task<IActionResult> RevokeGrantedAchievement(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "achievement/{id}/revoke-grant")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "achievement/{id}/revoke-grant")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var achievementId))
@@ -134,7 +134,7 @@ public class AchievementController(
     // Delete
     [Function("DeleteAchievement")]
     public async Task<IActionResult> DeleteAchievement(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "achievement/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "achievement/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var achievementId))

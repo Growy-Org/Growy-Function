@@ -123,28 +123,14 @@ public static class ModelConversionExtension
         };
     }
 
-    public static WishEntity ToWishEntity(this CreateWishRequest r)
+    public static WishEntity ToWishEntity(this WishRequest r)
     {
         return new WishEntity
         {
-            HomeId = r.HomeId,
             GenieId = r.ParentId,
             WisherId = r.ChildId,
             Name = r.WishName,
             Description = r.WishDescription,
-        };
-    }
-
-    public static WishEntity ToWishEntity(this EditWishRequest r)
-    {
-        return new WishEntity
-        {
-            Id = r.WishId,
-            GenieId = r.ParentId,
-            WisherId = r.ChildId,
-            Name = r.WishName,
-            Description = r.WishDescription,
-            PointsCost = r.WishCost
         };
     }
 

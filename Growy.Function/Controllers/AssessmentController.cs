@@ -14,7 +14,7 @@ public class AssessmentController(
 {
     [Function("SubmitDevelopmentQuotientReport")]
     public async Task<IActionResult> SubmitDevelopmentQuotientReport(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "assessment/developmentquotientreport")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "assessment/developmentquotientreport")]
         HttpRequest req, [FromBody] SubmitDevelopmentReportRequest request)
     {
         var res = await assessmentService.SubmitDevelopmentQuotientReport(request);

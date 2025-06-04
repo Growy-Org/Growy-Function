@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
@@ -15,19 +14,19 @@ public class AppUserController(
     IAuthService authService)
 {
     private const string MsAuthIdp = "MS-AZURE-ENTRA";
-    private const string HomeIdKey = "X-HOME-ID";
 
     [Function("SecurePing")]
     public async Task<IActionResult> SecurePing(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secure-ping")]
-        HttpRequest req, ClaimsPrincipal principal)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secure-home-ping/{id}")]
+        HttpRequest req, string id)
     {
-        if (!req.Headers.TryGetValue(HomeIdKey, out var homeId))
+        if (!Guid.TryParse(id, out var homeId))
         {
-            return new UnauthorizedObjectResult($"No {HomeIdKey} found in header, Authentication failed");
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        return await authService.SecureExecute(req, Guid.Parse(homeId.ToString()), async () =>
+        return await authService.SecureExecute(req, homeId, async () =>
         {
             return await Task.FromResult(new OkObjectResult(string.Join("\n", req.Headers.Select(
                 header => $"{header.Key}={string.Join(", ", header.Value)}"))));
@@ -37,7 +36,7 @@ public class AppUserController(
     [Function("Ping")]
     public IActionResult Ping(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "ping")]
-        HttpRequest req, ClaimsPrincipal principal)
+        HttpRequest req)
     {
         return new OkObjectResult(string.Join("\n", req.Headers.Select(
             header => $"{header.Key}={string.Join(", ", header.Value)}")));
@@ -54,10 +53,11 @@ public class AppUserController(
         // Id == Object ID @ b2c
         // Id should only be meaningful to the system internally
         // Sku set as "Free" for now.
+        var idpId = authService.GetIdpIdFromToken(req);
         var res = await authService.RegisterUser(new AppUser()
         {
             IdentityProvider = MsAuthIdp,
-            IdpId = appUserRequest.IdpId,
+            IdpId = idpId,
             Email = appUserRequest.Email,
             Sku = AppSku.Free,
             DisplayName = appUserRequest.DisplayName

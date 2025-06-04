@@ -9,6 +9,7 @@ public record AppUser
     public string IdentityProvider { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
     public string IdpId { get; init; } = string.Empty;
+
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public AppSku Sku { get; set; }
 }

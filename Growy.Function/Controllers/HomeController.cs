@@ -39,12 +39,12 @@ public class HomeController(
 
     [Function("GetAllHomesByAppUserId")]
     public async Task<IActionResult> GetHomesByAppUserId(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "homes")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "homes")]
         HttpRequest req)
     {
         try
         {
-            var appUserId = await authService.GetAppUserIdFromOid(req);
+            var appUserId = await authService.GetAppUserIdFromToken(req);
             var res = await homeService.GetHomesByAppUserId(appUserId);
             return new OkObjectResult(res);
         }
@@ -62,7 +62,7 @@ public class HomeController(
     {
         try
         {
-            var appUserId = await authService.GetAppUserIdFromOid(req);
+            var appUserId = await authService.GetAppUserIdFromToken(req);
             var res = await homeService.CreateHome(appUserId, home);
             return new OkObjectResult(res);
         }
@@ -75,7 +75,7 @@ public class HomeController(
     // Update
     [Function("EditHome")]
     public async Task<IActionResult> EditHome(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "home/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "home/{id}")]
         HttpRequest req, string id, [FromBody] Home home)
     {
         if (!Guid.TryParse(id, out var homeId))
@@ -97,7 +97,7 @@ public class HomeController(
     // Delete
     [Function("DeleteHome")]
     public async Task<IActionResult> DeleteHome(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "home/{id}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "home/{id}")]
         HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var homeId))

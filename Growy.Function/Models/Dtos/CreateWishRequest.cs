@@ -1,8 +1,7 @@
 namespace Growy.Function.Models.Dtos;
 
-public record CreateWishRequest
+public record WishRequest
 {
-    public Guid HomeId { get; init; }
     public Guid ParentId { get; init; }
     public Guid ChildId { get; init; }
 

@@ -12,6 +12,16 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     public const string ChildrenTable = "inventory.children";
     public const string ParentTable = "inventory.parents";
 
+    public async Task<Guid> GetHomeIdByWishId(Guid wishId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"""
+                 SELECT HomeId FROM {WishesTable} WHERE Id = @Id
+             """;
+        return await con.QuerySingleAsync<Guid>(query, new { Id = wishId });
+    }
+
     public async Task<Wish> GetWishById(Guid wishId)
     {
         using var con = connectionFactory.GetDBConnection();
@@ -87,18 +97,20 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         return wishEntities.ToList();
     }
 
-    public async Task<Guid> InsertWish(CreateWishRequest request)
+    public async Task<Guid> InsertWish(Guid homeId, WishRequest request)
     {
         var wishEntity = request.ToWishEntity();
+        wishEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {WishesTable} (Name, HomeId, Description, GenieId, WisherId) VALUES (@Name, @HomeId, @Description, @GenieId, @WisherId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, wishEntity);
     }
 
-    public async Task<Guid> EditWishByWishId(EditWishRequest request)
+    public async Task<Guid> EditWishByWishId(Guid wishId, WishRequest request)
     {
         var wishEntity = request.ToWishEntity();
+        wishEntity.Id = wishId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"""

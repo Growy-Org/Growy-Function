@@ -15,7 +15,7 @@ public class AnalyticController(
 
     [Function("GetParentAnalytics")]
     public async Task<IActionResult> GetParentAnalytics(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "analytic/getParentAnalytics/{analyticType}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/getParentAnalytics/{analyticType}")]
         HttpRequest req, string analyticType, [FromQuery] string? homeId,
         [FromQuery] string? parentId, [FromQuery] string? childId, [FromQuery] int? year)
     {
@@ -39,7 +39,7 @@ public class AnalyticController(
 
     [Function("GetChildAnalytics")]
     public async Task<IActionResult> GetChildAnalytics(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "analytic/getChildAnalytics/{analyticType}")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/getChildAnalytics/{analyticType}")]
         HttpRequest req, string analyticType,
         [FromQuery] string? childId, [FromQuery] int? year)
     {
