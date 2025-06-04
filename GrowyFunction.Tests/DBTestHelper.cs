@@ -34,14 +34,14 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         };
 
         await _appUserRepo.InsertIfNotExist(appUser);
-        var homeRequest = new Home()
+        var homeRequest = new HomeRequest()
         {
             Address = _faker.Address.FullAddress(),
             Name = $"{_faker.Random.Word()}'s Home",
         };
         var homeId = await _homeRepo.InsertHome(idpUserId, homeRequest);
 
-        var child = new Child()
+        var child = new ChildRequest()
         {
             Name = _faker.Name.FullName(),
 
@@ -49,10 +49,9 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.GIRL),
             PointsEarned = _faker.Random.Int(0, 9999),
         };
-        var child2 = new Child()
+        var child2 = new ChildRequest()
         {
             Name = _faker.Name.FullName(),
-
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.BOY),
             PointsEarned = _faker.Random.Int(0, 9999),
@@ -78,25 +77,23 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
 
         var idpUserId = await _appUserRepo.InsertIfNotExist(appUser);
 
-        var homeRequest = new Home()
+        var homeRequest = new HomeRequest()
         {
             Address = _faker.Address.FullAddress(),
             Name = $"{_faker.Random.Word()}'s Home",
         };
         var homeId = await _homeRepo.InsertHome(idpUserId, homeRequest);
 
-        var child = new Child()
+        var child = new ChildRequest()
         {
             Name = _faker.Name.FullName(),
-
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.GIRL),
             PointsEarned = _faker.Random.Int(0, 9999),
         };
-        var child2 = new Child()
+        var child2 = new ChildRequest()
         {
             Name = _faker.Name.FullName(),
-
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.BOY),
             PointsEarned = _faker.Random.Int(0, 9999),
@@ -105,17 +102,15 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         var childId = await _childRepo.InsertChild(homeId, child);
         var childId2 = await _childRepo.InsertChild(homeId, child2);
 
-        var parent = new Parent
+        var parent = new ParentRequest()
         {
             Name = _faker.Name.FullName(),
-
             DOB = _faker.Date.Past(18),
             Role = _faker.PickRandom(ParentRole.FATHER, ParentRole.MOTHER),
         };
-        var parent2 = new Parent
+        var parent2 = new ParentRequest
         {
             Name = _faker.Name.FullName(),
-
             DOB = _faker.Date.Past(18),
             Role = _faker.PickRandom(ParentRole.FATHER, ParentRole.FATHER),
         };
@@ -172,47 +167,43 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         await _stepRepo.InsertStep(stepRequest2);
         await _stepRepo.InsertStep(stepRequest3);
 
-        var wishRequest1 = new CreateWishRequest()
+        var wishRequest1 = new WishRequest()
         {
-            HomeId = homeId,
             ParentId = parentId,
             ChildId = childId,
-            WishName = _faker.Random.Word(),
-            WishDescription = _faker.Lorem.Sentence(50),
+            Name = _faker.Random.Word(),
+            Description = _faker.Lorem.Sentence(50),
         };
-        var wishRequest2 = new CreateWishRequest()
+        var wishRequest2 = new WishRequest()
         {
-            HomeId = homeId,
             ParentId = parentId2,
             ChildId = childId2,
-            WishName = _faker.Random.Word(),
-            WishDescription = _faker.Lorem.Sentence(50),
+            Name = _faker.Random.Word(),
+            Description = _faker.Lorem.Sentence(50),
         };
 
-        await _wishRepo.InsertWish(wishRequest1);
-        await _wishRepo.InsertWish(wishRequest2);
+        await _wishRepo.InsertWish(homeId, wishRequest1);
+        await _wishRepo.InsertWish(homeId, wishRequest2);
 
-        var achievementRequest1 = new CreateAchievementRequest()
+        var achievementRequest1 = new AchievementRequest()
         {
-            HomeId = homeId,
             ParentId = parentId,
             ChildId = childId,
-            AchievementName = "Achievement 1",
-            AchievementDescription = _faker.Lorem.Sentence(50),
-            AchievementPointsGranted = _faker.Random.Int(100, 9999),
+            Name = "Achievement 1",
+            Description = _faker.Lorem.Sentence(50),
+            PointsGranted = _faker.Random.Int(100, 9999),
         };
-        var achievementRequest2 = new CreateAchievementRequest()
+        var achievementRequest2 = new AchievementRequest()
         {
-            HomeId = homeId,
             ParentId = parentId2,
             ChildId = childId2,
-            AchievementName = "Achievement 1",
-            AchievementDescription = _faker.Lorem.Sentence(50),
-            AchievementPointsGranted = _faker.Random.Int(100, 9999),
+            Name = "Achievement 1",
+            Description = _faker.Lorem.Sentence(50),
+            PointsGranted = _faker.Random.Int(100, 9999),
         };
 
-        await _achievementRepo.InsertAchievement(achievementRequest1);
-        await _achievementRepo.InsertAchievement(achievementRequest2);
+        await _achievementRepo.InsertAchievement(homeId, achievementRequest1);
+        await _achievementRepo.InsertAchievement(homeId, achievementRequest2);
 
         var penaltyRequest = new CreatePenaltyRequest()
         {

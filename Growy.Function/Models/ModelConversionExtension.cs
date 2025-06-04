@@ -134,29 +134,15 @@ public static class ModelConversionExtension
         };
     }
 
-    public static AchievementEntity ToAchievementEntity(this CreateAchievementRequest r)
+    public static AchievementEntity ToAchievementEntity(this AchievementRequest r)
     {
         return new AchievementEntity()
         {
-            HomeId = r.HomeId,
             VisionaryId = r.ParentId,
             AchieverId = r.ChildId,
-            Name = r.AchievementName,
-            Description = r.AchievementDescription,
-            PointsGranted = r.AchievementPointsGranted
-        };
-    }
-
-    public static AchievementEntity ToAchievementEntity(this EditAchievementRequest r)
-    {
-        return new AchievementEntity()
-        {
-            Id = r.AchievementId,
-            VisionaryId = r.ParentId,
-            AchieverId = r.ChildId,
-            Name = r.AchievementName,
-            Description = r.AchievementDescription,
-            PointsGranted = r.AchievementPointsGranted,
+            Name = r.Name,
+            Description = r.Description,
+            PointsGranted = r.PointsGranted
         };
     }
 

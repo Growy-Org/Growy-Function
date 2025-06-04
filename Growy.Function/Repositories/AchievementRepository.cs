@@ -12,6 +12,15 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     public const string ChildrenTable = "inventory.children";
     public const string ParentTable = "inventory.parents";
 
+    public async Task<Guid> GetHomeIdByAchievementId(Guid achievementId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"""
+                 SELECT HomeId FROM {AchievementsTable} WHERE Id = @Id
+             """;
+        return await con.QuerySingleAsync<Guid>(query, new { Id = achievementId });
+    }
     public async Task<Achievement> GetAchievementById(Guid achievementId)
     {
         using var con = connectionFactory.GetDBConnection();
@@ -88,18 +97,20 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     }
 
 
-    public async Task<Guid> InsertAchievement(CreateAchievementRequest request)
+    public async Task<Guid> InsertAchievement(Guid homeId, AchievementRequest request)
     {
         var achievementEntity = request.ToAchievementEntity();
+        achievementEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {AchievementsTable} (Name, HomeId, PointsGranted, Description, VisionaryId, AchieverId) VALUES (@Name, @HomeId, @PointsGranted, @Description, @VisionaryId, @AchieverId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, achievementEntity);
     }
 
-    public async Task<Guid> EditAchievementByAchievementId(EditAchievementRequest request)
+    public async Task<Guid> EditAchievementByAchievementId(Guid achievementId, AchievementRequest request)
     {
         var achievementEntity = request.ToAchievementEntity();
+        achievementEntity.Id = achievementId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"""

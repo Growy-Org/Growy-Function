@@ -15,6 +15,11 @@ public class AchievementService(
     #region Achievements
 
     // Read
+    public Task<Guid> GetHomeIdByAchievementId(Guid achievementId)
+    {
+        return achievementRepository.GetHomeIdByAchievementId(achievementId);
+    }
+    
     public async Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId, int pageNumber, int pageSize)
     {
         logger.LogInformation($"Getting all achievements by Parent: {parentId}");
@@ -53,20 +58,20 @@ public class AchievementService(
     }
 
     // Create
-    public async Task<Guid> CreateAchievement(CreateAchievementRequest request)
+    public async Task<Guid> CreateAchievement(Guid homeId, AchievementRequest request)
     {
-        logger.LogInformation($"Adding a new Achievement to Home: {request.HomeId}");
-        var assignmentId = await achievementRepository.InsertAchievement(request);
+        logger.LogInformation($"Adding a new Achievement to Home: {homeId}");
+        var assignmentId = await achievementRepository.InsertAchievement(homeId, request);
         logger.LogInformation(
             $"Successfully added an Achievement : {assignmentId}, by Parent {request.ParentId} to Child {request.ChildId}");
         return assignmentId;
     }
 
     // Update
-    public async Task<Guid> EditAchievement(EditAchievementRequest request)
+    public async Task<Guid> EditAchievement(Guid achievementId, AchievementRequest request)
     {
-        logger.LogInformation($"Editing achievement {request.AchievementId}");
-        var id = await achievementRepository.EditAchievementByAchievementId(request);
+        logger.LogInformation($"Editing achievement {achievementId}");
+        var id = await achievementRepository.EditAchievementByAchievementId(achievementId, request);
         logger.LogInformation(
             $"Successfully edit achievement with id: {id}");
         return id;

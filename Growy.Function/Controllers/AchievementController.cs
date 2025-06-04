@@ -9,7 +9,10 @@ namespace Growy.Function.Controllers;
 
 public class AchievementController(
     ILogger<AchievementController> logger,
-    IAchievementService achievementService)
+    IAchievementService achievementService,
+    IParentService parentService,
+    IChildService childService,
+    IAuthService authService)
 {
     // Read
     [Function("GetAllAchievementsByParent")]
@@ -23,12 +26,15 @@ public class AchievementController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await achievementService.GetAllAchievementsByParentId(parentId,
-            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-        return new OkObjectResult(res);
+        var homeId = await parentService.GetHomeIdByParentId(parentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await achievementService.GetAllAchievementsByParentId(parentId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            return new OkObjectResult(res);
+        });
     }
-
 
     [Function("GetAllAchievementsByChild")]
     public async Task<IActionResult> GetAllAchievementsByChild(
@@ -41,10 +47,14 @@ public class AchievementController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await achievementService.GetAllAchievementsByChildId(childId,
-            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-        return new OkObjectResult(res);
+        var homeId = await childService.GetHomeIdByChildId(childId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await achievementService.GetAllAchievementsByChildId(childId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("GetAllAchievementsByHome")]
@@ -58,10 +68,13 @@ public class AchievementController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await achievementService.GetAllAchievementsByHomeId(homeId,
-            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-        return new OkObjectResult(res);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await achievementService.GetAllAchievementsByHomeId(homeId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("GetAchievementById")]
@@ -75,31 +88,52 @@ public class AchievementController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await achievementService.GetAchievementById(achievementId);
-        return new OkObjectResult(res);
+        var homeId = await achievementService.GetHomeIdByAchievementId(achievementId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await achievementService.GetAchievementById(achievementId);
+            return new OkObjectResult(res);
+        });
     }
 
     // Create
     [Function("CreateAchievement")]
     public async Task<IActionResult> CreateAchievement(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/achievement")]
-        HttpRequest req, [FromBody] CreateAchievementRequest achievementRequest)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/achievement")]
+        HttpRequest req, string id, [FromBody] AchievementRequest achievementRequest)
     {
-        var res = await achievementService.CreateAchievement(achievementRequest);
-        return new OkObjectResult(res);
-    }
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
 
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await achievementService.CreateAchievement(homeId, achievementRequest);
+            return new OkObjectResult(res);
+        });
+    }
 
     // Update
     [Function("EditAchievement")]
     public async Task<IActionResult> EditAchievement(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "achievement")]
-        HttpRequest req, [FromBody] EditAchievementRequest request)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "achievement/{id}")]
+        HttpRequest req, string id, [FromBody] AchievementRequest request)
     {
-        var res = await achievementService.EditAchievement(request);
-        return new OkObjectResult(res);
-    }
+        if (!Guid.TryParse(id, out var achievementId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
 
+        var homeId = await achievementService.GetHomeIdByAchievementId(achievementId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await achievementService.EditAchievement(achievementId, request);
+            return new OkObjectResult(res);
+        });
+    }
 
     [Function("GrantedAchievement")]
     public async Task<IActionResult> GrantedAchievement(
@@ -112,8 +146,12 @@ public class AchievementController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await achievementService.EditAchievementGrants(achievementId, true);
-        return new OkObjectResult(res);
+        var homeId = await achievementService.GetHomeIdByAchievementId(achievementId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await achievementService.EditAchievementGrants(achievementId, true);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("RevokeGrantedAchievement")]
@@ -127,8 +165,12 @@ public class AchievementController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await achievementService.EditAchievementGrants(achievementId, false);
-        return new OkObjectResult(res);
+        var homeId = await achievementService.GetHomeIdByAchievementId(achievementId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await achievementService.EditAchievementGrants(achievementId, false);
+            return new OkObjectResult(res);
+        });
     }
 
     // Delete
@@ -143,7 +185,11 @@ public class AchievementController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        await achievementService.DeleteAchievement(achievementId);
-        return new OkResult();
+        var homeId = await achievementService.GetHomeIdByAchievementId(achievementId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            await achievementService.DeleteAchievement(achievementId);
+            return new NoContentResult();
+        });
     }
 }
