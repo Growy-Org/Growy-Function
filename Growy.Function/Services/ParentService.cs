@@ -31,10 +31,10 @@ public class ParentService(
     }
 
     // Update
-    public async Task<Guid> EditParent(EditParentRequest request)
+    public async Task<Guid> EditParent(Parent parent)
     {
-        logger.LogInformation($"Editing Parent: {request.ParentId}");
-        var parentId = await parentRepository.EditParentByParentId(request);
+        logger.LogInformation($"Editing Parent: {parent.Id}");
+        var parentId = await parentRepository.EditParentByParentId(parent);
         logger.LogInformation($"Successfully edit parent : {parentId}");
         return parentId;
     }

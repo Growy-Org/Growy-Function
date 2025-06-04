@@ -33,7 +33,6 @@ public static class EntityConversionExtension
             Id = p.Id,
             Name = p.Name,
             Role = (ParentRole)Enum.Parse(typeof(ParentRole), p.Role),
-            IconCode = p.IconCode,
             DOB = p.DOB,
         };
     }

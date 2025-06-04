@@ -12,7 +12,7 @@ public interface IParentService
     public Task<Guid> AddParentToHome(Guid parentId, Parent parent);
     
     // Update
-    public Task<Guid> EditParent(EditParentRequest request);
+    public Task<Guid> EditParent(Parent parent);
     
     // Delete
     public Task DeleteParent(Guid parentId);

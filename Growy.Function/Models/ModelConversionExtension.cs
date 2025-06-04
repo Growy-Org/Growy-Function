@@ -54,27 +54,13 @@ public static class ModelConversionExtension
         };
     }
 
-    public static ParentEntity ToParentEntity(this Parent p, Guid homeId)
+    public static ParentEntity ToParentEntity(this Parent p)
     {
         return new ParentEntity
         {
             Name = p.Name,
-            IconCode = p.IconCode ?? 5, // Default Child Avatar
             DOB = p.DOB,
             Role = p.Role.ToString(),
-            HomeId = homeId,
-        };
-    }
-
-    public static ParentEntity ToParentEntity(this EditParentRequest r)
-    {
-        return new ParentEntity()
-        {
-            Id = r.ParentId,
-            Name = r.ParentName,
-            DOB = r.ParentDoB,
-            Role = r.ParentRole.ToString(),
-            IconCode = r.ParentIconCode,
         };
     }
 

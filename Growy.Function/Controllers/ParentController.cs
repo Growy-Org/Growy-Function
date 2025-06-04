@@ -27,17 +27,31 @@ public class ParentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await parentService.AddParentToHome(homeId, parent);
-        return new OkObjectResult(res);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await parentService.AddParentToHome(homeId, parent);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("EditParent")]
     public async Task<IActionResult> EditParent(
-        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent")]
-        HttpRequest req, [FromBody] EditParentRequest parent)
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "parent/{id}")]
+        HttpRequest req, string id, [FromBody] Parent parent)
     {
-        var res = await parentService.EditParent(parent);
-        return new OkObjectResult(res);
+        if (!Guid.TryParse(id, out var parentId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var homeId = await parentService.GetHomeIdByParentId(parentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            parent.Id = parentId;
+            var res = await parentService.EditParent(parent);
+            return new OkObjectResult(res);
+        });
     }
 
 
@@ -52,16 +66,20 @@ public class ParentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        try
+        var homeId = await parentService.GetHomeIdByParentId(parentId);
+        return await authService.SecureExecute(req, homeId, async () =>
         {
-            await parentService.DeleteParent(parentId);
-        }
-        catch (DeletionFailureException _)
-        {
-            return new ConflictObjectResult(
-                $"Failed to delete Parent with ID {parentId}, make sure all linked resources are deleted first");
-        }
+            try
+            {
+                await parentService.DeleteParent(parentId);
+            }
+            catch (DeletionFailureException _)
+            {
+                return new ConflictObjectResult(
+                    $"Failed to delete Parent with ID {parentId}, make sure all linked resources are deleted first");
+            }
 
-        return new OkResult();
+            return new NoContentResult();
+        });
     }
 }

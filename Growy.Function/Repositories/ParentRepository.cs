@@ -29,23 +29,23 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
 
     public async Task<Guid> InsertParent(Guid homeId, Parent parent)
     {
-        var parentEntity = parent.ToParentEntity(homeId);
+        var parentEntity = parent.ToParentEntity();
+        parentEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"INSERT INTO {ParentsTable} (Name, HomeId, IconCode, DOB, Role) VALUES (@Name, @HomeId, @IconCode, @DOB, @Role) RETURNING Id";
+            $"INSERT INTO {ParentsTable} (Name, HomeId, DOB, Role) VALUES (@Name, @HomeId, @DOB, @Role) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, parentEntity);
     }
 
-    public async Task<Guid> EditParentByParentId(EditParentRequest request)
+    public async Task<Guid> EditParentByParentId(Parent parent)
     {
-        var parentEntity = request.ToParentEntity();
+        var parentEntity = parent.ToParentEntity();
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
                  UPDATE {ParentsTable} SET Name = @Name, 
                      DOB = @DOB,
                      Role = @Role,
-                     IconCode = @IconCode
                  WHERE Id = @Id RETURNING Id;
              """;
         return await con.ExecuteScalarAsync<Guid>(query, parentEntity);
