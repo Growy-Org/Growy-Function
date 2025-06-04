@@ -11,9 +11,10 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
 {
     private const string DqTable = "assessment.DevelopmentQuotientResult";
 
-    public async Task<Guid> CreateReport(SubmitDevelopmentReportRequest request)
+    public async Task<Guid> CreateReport(Guid homeId, DevelopmentReportRequest request)
     {
         var dqResultEntity = request.ToDqAssessmentEntity();
+        dqResultEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {DqTable} (HomeId, CandidateId, ExaminerId, Answer, DqResult, TotalScore, CandidateMonth) VALUES (@HomeId, @CandidateId, @ExaminerId, @Answer, @DqResult, @TotalScore, @CandidateMonth) RETURNING Id";

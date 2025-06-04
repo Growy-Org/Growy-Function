@@ -7,7 +7,7 @@ public interface IAssessmentService
 {
     // Read 
     // Create
-    public Task<Guid> SubmitDevelopmentQuotientReport(SubmitDevelopmentReportRequest request);
+    public Task<Guid> SubmitDevelopmentQuotientReport(Guid homeId, DevelopmentReportRequest request);
     // Updtae
     // Delete
 }

@@ -3,7 +3,7 @@ namespace Growy.Function.Entities;
 public record DevelopmentQuotientResultEntity
 {
     public Guid Id { get; init; }
-    public Guid HomeId { get; init; }
+    public Guid HomeId { get; set; }
     public Guid CandidateId { get; init; }
     public Guid ExaminerId { get; init; }
     public List<int> Answer { get; init; } = new();

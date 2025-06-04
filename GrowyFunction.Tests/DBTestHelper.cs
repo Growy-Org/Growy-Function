@@ -216,17 +216,14 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
 
         await _penaltyRepo.InsertPenalty(homeId, penaltyRequest);
 
-        var dqReport = new SubmitDevelopmentReportRequest
+        var dqReport = new DevelopmentReportRequest
         {
-            HomeId = homeId,
-            ExaminerId = parentId,
-            CandidateId = childId,
             Answers = [1, 2, 34, 6],
             TotalScore = 230,
             DqResult = 100.2f,
             CandidateMonth = 5.2f
         };
 
-        await _assessmentRepository.CreateReport(dqReport);
+        await _assessmentRepository.CreateReport(homeId, dqReport);
     }
 }

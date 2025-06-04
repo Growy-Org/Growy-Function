@@ -158,13 +158,12 @@ public static class ModelConversionExtension
         };
     }
 
-    public static DevelopmentQuotientResultEntity ToDqAssessmentEntity(this SubmitDevelopmentReportRequest r)
+    public static DevelopmentQuotientResultEntity ToDqAssessmentEntity(this DevelopmentReportRequest r)
     {
         return new DevelopmentQuotientResultEntity
         {
-            HomeId = r.HomeId,
-            CandidateId = r.CandidateId,
-            ExaminerId = r.ExaminerId,
+            CandidateId = r.ChildId,
+            ExaminerId = r.ParentId,
             Answer = r.Answers,
             TotalScore = r.TotalScore,
             DqResult = r.DqResult,
