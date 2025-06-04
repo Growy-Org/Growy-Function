@@ -1,5 +1,6 @@
 using Growy.Function.Models;
 using Growy.Function.Services;
+using Growy.Function.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
@@ -7,11 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Growy.Function.Controllers;
 
-public class AnalyticCapabilityController(
-    ILogger<AnalyticCapabilityController> logger,
+public class AnalyticController(
+    ILogger<AnalyticController> logger,
     IAnalyticService analyticService)
 {
-    #region Analtytics
 
     [Function("GetParentAnalytics")]
     public async Task<IActionResult> GetParentAnalytics(
@@ -59,6 +59,4 @@ public class AnalyticCapabilityController(
 
         return new OkObjectResult(analyticRes.Result);
     }
-
-    # endregion
 }

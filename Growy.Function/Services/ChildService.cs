@@ -2,6 +2,7 @@ using System.Data.Common;
 using Growy.Function.Exceptions;
 using Growy.Function.Models;
 using Growy.Function.Repositories.Interfaces;
+using Growy.Function.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Growy.Function.Services;

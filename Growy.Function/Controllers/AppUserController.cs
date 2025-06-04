@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services;
+using Growy.Function.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
@@ -10,8 +11,8 @@ using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribut
 
 namespace Growy.Function.Controllers;
 
-public class AppUserCapabilityController(
-    ILogger<AppUserCapabilityController> logger,
+public class AppUserController(
+    ILogger<AppUserController> logger,
     IAppUserService appUserService,
     IAuthWrapper authWrapper)
 {
@@ -65,5 +66,4 @@ public class AppUserCapabilityController(
         });
         return new OkObjectResult(res);
     }
-
 }
