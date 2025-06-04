@@ -27,9 +27,9 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
         return parentEntities.Select(e => e.ToParent()).ToList();
     }
 
-    public async Task<Guid> InsertParent(Guid homeId, Parent parent)
+    public async Task<Guid> InsertParent(Guid homeId, ParentRequest request)
     {
-        var parentEntity = parent.ToParentEntity();
+        var parentEntity = request.ToParentEntity();
         parentEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
@@ -37,9 +37,10 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
         return await con.ExecuteScalarAsync<Guid>(query, parentEntity);
     }
 
-    public async Task<Guid> EditParentByParentId(Parent parent)
+    public async Task<Guid> EditParentByParentId(Guid parentId, ParentRequest request)
     {
-        var parentEntity = parent.ToParentEntity();
+        var parentEntity = request.ToParentEntity();
+        parentEntity.Id = parentId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"""

@@ -9,10 +9,10 @@ public interface IChildService
     public Task<Guid> GetHomeIdByChildId(Guid id);
 
     // Create
-    public Task<Guid> AddChildToHome(Guid childId, Child child);
+    public Task<Guid> AddChildToHome(Guid homeId, ChildRequest child);
 
     // Update
-    public Task<Guid> EditChild(Child request);
+    public Task<Guid> EditChild(Guid childId, ChildRequest request);
 
     // Delete
     public Task DeleteChild(Guid childId);

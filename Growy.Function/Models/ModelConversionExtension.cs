@@ -43,18 +43,18 @@ public static class ModelConversionExtension
         });
     }
 
-    public static ChildEntity ToChildEntity(this Child c)
+    public static ChildEntity ToChildEntity(this ChildRequest c)
     {
         return new ChildEntity
         {
             Name = c.Name,
             DOB = c.DOB,
             Gender = c.Gender.ToString(),
-            PointsEarned = c.PointsEarned ?? 0,
+            PointsEarned = c.PointsEarned,
         };
     }
 
-    public static ParentEntity ToParentEntity(this Parent p)
+    public static ParentEntity ToParentEntity(this ParentRequest p)
     {
         return new ParentEntity
         {

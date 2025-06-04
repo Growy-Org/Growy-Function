@@ -19,7 +19,7 @@ public class ParentController(
     public async Task<IActionResult> AddParentToHome(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/parent")]
         HttpRequest req,
-        string id, [FromBody] Parent parent)
+        string id, [FromBody] ParentRequest request)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
@@ -29,7 +29,7 @@ public class ParentController(
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var res = await parentService.AddParentToHome(homeId, parent);
+            var res = await parentService.AddParentToHome(homeId, request);
             return new OkObjectResult(res);
         });
     }
@@ -37,7 +37,7 @@ public class ParentController(
     [Function("EditParent")]
     public async Task<IActionResult> EditParent(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "parent/{id}")]
-        HttpRequest req, string id, [FromBody] Parent parent)
+        HttpRequest req, string id, [FromBody] ParentRequest request)
     {
         if (!Guid.TryParse(id, out var parentId))
         {
@@ -48,8 +48,7 @@ public class ParentController(
         var homeId = await parentService.GetHomeIdByParentId(parentId);
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            parent.Id = parentId;
-            var res = await parentService.EditParent(parent);
+            var res = await parentService.EditParent(parentId, request);
             return new OkObjectResult(res);
         });
     }

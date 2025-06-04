@@ -22,20 +22,20 @@ public class ParentService(
     }
 
     // Create
-    public async Task<Guid> AddParentToHome(Guid homeId, Parent parent)
+    public async Task<Guid> AddParentToHome(Guid homeId, ParentRequest request)
     {
         logger.LogInformation($"Adding a new Parent to Home: {homeId}");
-        var parentId = await parentRepository.InsertParent(homeId, parent);
+        var parentId = await parentRepository.InsertParent(homeId, request);
         logger.LogInformation($"Successfully added a parent : {parentId} to Home: {homeId}");
         return parentId;
     }
 
     // Update
-    public async Task<Guid> EditParent(Parent parent)
+    public async Task<Guid> EditParent(Guid parentId, ParentRequest request)
     {
-        logger.LogInformation($"Editing Parent: {parent.Id}");
-        var parentId = await parentRepository.EditParentByParentId(parent);
-        logger.LogInformation($"Successfully edit parent : {parentId}");
+        logger.LogInformation($"Editing Parent: {parentId}");
+        var id = await parentRepository.EditParentByParentId(parentId, request);
+        logger.LogInformation($"Successfully edit parent : {id}");
         return parentId;
     }
 

@@ -7,10 +7,9 @@ namespace Growy.Function.Repositories.Interfaces;
 public interface IChildRepository
 {
     public Task<Guid> GetHomeIdByChildId(Guid childId);
-    public Task<Child> GetChildById(Guid childId);
     public Task<List<Child>> GetChildrenByHomeId(Guid homeId);
-    public Task<Guid> InsertChild(Guid homeId, Child child);
+    public Task<Guid> InsertChild(Guid homeId, ChildRequest request);
     public Task<Guid> EditPointsByChildId(Guid childId, int deltaPoints);
-    public Task<Guid> EditChild(Child child);
+    public Task<Guid> EditChild(Guid childId, ChildRequest request);
     public Task DeleteChildByChildId(Guid childId);
 }

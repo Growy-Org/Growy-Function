@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Growy.Function.Exceptions;
 using Growy.Function.Models;
+using Growy.Function.Models.Dtos;
 using Growy.Function.Repositories.Interfaces;
 using Growy.Function.Services.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -21,21 +22,21 @@ public class ChildService(
     }
 
     // Create
-    public async Task<Guid> AddChildToHome(Guid homeId, Child child)
+    public async Task<Guid> AddChildToHome(Guid homeId, ChildRequest request)
     {
         logger.LogInformation($"Adding a new Child to Home: {homeId}");
-        var childId = await childRepository.InsertChild(homeId, child);
+        var childId = await childRepository.InsertChild(homeId, request);
         logger.LogInformation($"Successfully added a child : {childId} to Home: {homeId}");
         return childId;
     }
 
     // Update
-    public async Task<Guid> EditChild(Child child)
+    public async Task<Guid> EditChild(Guid childId, ChildRequest request)
     {
-        logger.LogInformation($"Editing Child: {child.Id}");
-        var childId = await childRepository.EditChild(child);
-        logger.LogInformation($"Successfully edit child : {childId}");
-        return childId;
+        logger.LogInformation($"Editing Child: {childId}");
+        var id = await childRepository.EditChild(childId, request);
+        logger.LogInformation($"Successfully edit child : {id}");
+        return id;
     }
 
     // Delete

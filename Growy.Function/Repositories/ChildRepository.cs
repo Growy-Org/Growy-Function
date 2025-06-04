@@ -1,6 +1,7 @@
 using Dapper;
 using Growy.Function.Entities;
 using Growy.Function.Models;
+using Growy.Function.Models.Dtos;
 using Growy.Function.Repositories.Interfaces;
 
 namespace Growy.Function.Repositories;
@@ -17,15 +18,6 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
         return await con.QuerySingleAsync<Guid>(query, new { Id = childId });
     }
 
-    public async Task<Child> GetChildById(Guid childId)
-    {
-        using var con = connectionFactory.GetDBConnection();
-        var query =
-            $"SELECT * FROM {ChildrenTable} WHERE ChildId = @ChildId";
-        var entity = await con.QuerySingleAsync<ChildEntity>(query, new { ChildId = childId });
-        return entity.ToChild();
-    }
-
     public async Task<List<Child>> GetChildrenByHomeId(Guid homeId)
     {
         using var con = connectionFactory.GetDBConnection();
@@ -35,9 +27,9 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
         return childEntities.Select(e => e.ToChild()).ToList();
     }
 
-    public async Task<Guid> InsertChild(Guid homeId, Child child)
+    public async Task<Guid> InsertChild(Guid homeId, ChildRequest request)
     {
-        var childEntity = child.ToChildEntity();
+        var childEntity = request.ToChildEntity();
         childEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
@@ -53,9 +45,10 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
         return await con.ExecuteScalarAsync<Guid>(query, new { Id = childId, PointsDelta = deltaPoints });
     }
 
-    public async Task<Guid> EditChild(Child child)
+    public async Task<Guid> EditChild(Guid childId, ChildRequest child)
     {
         var childEntity = child.ToChildEntity();
+        childEntity.Id = childId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
