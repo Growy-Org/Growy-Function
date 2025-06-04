@@ -8,7 +8,6 @@ public record AssignmentEntity
     public Guid AssignerId { get; init; }
     public string Name { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
-    public int IconCode { get; init; }
     public int Points { get; init; }
     public TimeSpan? RepeatAfter { get; init; }
     public DateTime? DueDateUtc { get; init; }

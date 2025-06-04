@@ -144,7 +144,6 @@ public static class ModelConversionExtension
             WisherId = r.ChildId,
             Name = r.WishName,
             Description = r.WishDescription,
-            IconCode = r.WishIconCode,
             PointsCost = r.WishCost
         };
     }

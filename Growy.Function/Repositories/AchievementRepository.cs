@@ -93,7 +93,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
         var achievementEntity = request.ToAchievementEntity();
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"INSERT INTO {AchievementsTable} (Name, HomeId, IconCode, PointsGranted, Description, VisionaryId, AchieverId) VALUES (@Name, @HomeId, @IconCode, @PointsGranted, @Description, @VisionaryId, @AchieverId) RETURNING Id";
+            $"INSERT INTO {AchievementsTable} (Name, HomeId, PointsGranted, Description, VisionaryId, AchieverId) VALUES (@Name, @HomeId, @PointsGranted, @Description, @VisionaryId, @AchieverId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, achievementEntity);
     }
 
@@ -105,7 +105,6 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
             $"""
                 UPDATE {AchievementsTable} 
                 SET Name = @Name,
-                 IconCode = @IconCode,
                  Description = @Description,
                  PointsGranted = @PointsGranted,
                  VisionaryId = @VisionaryId,

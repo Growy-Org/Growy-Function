@@ -5,7 +5,6 @@ public record Assignment
     public Guid Id { get; init; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public int IconCode { get; set; }
     public List<Step> Steps { get; set; } = [];
     public int Points { get; set; }
     public TimeSpan? RepeatAfter { get; set; }

@@ -41,7 +41,7 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
         childEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"INSERT INTO {ChildrenTable} (Name, HomeId, IconCode, DOB, Gender, PointsEarned) VALUES (@Name, @HomeId, @IconCode, @DOB, @Gender, @PointsEarned) RETURNING Id";
+            $"INSERT INTO {ChildrenTable} (Name, HomeId, DOB, Gender, PointsEarned) VALUES (@Name, @HomeId, @DOB, @Gender, @PointsEarned) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, childEntity);
     }
 
@@ -62,7 +62,6 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
                  UPDATE {ChildrenTable} SET Name = @Name, 
                      DOB = @DOB,
                      Gender = @Gender,
-                     IconCode = @IconCode
                  WHERE Id = @Id RETURNING Id;
              """;
         return await con.ExecuteScalarAsync<Guid>(query, childEntity);

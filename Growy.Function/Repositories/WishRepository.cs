@@ -92,7 +92,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         var wishEntity = request.ToWishEntity();
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"INSERT INTO {WishesTable} (Name, HomeId, IconCode, Description, GenieId, WisherId) VALUES (@Name, @HomeId, @IconCode, @Description, @GenieId, @WisherId) RETURNING Id";
+            $"INSERT INTO {WishesTable} (Name, HomeId, Description, GenieId, WisherId) VALUES (@Name, @HomeId, @Description, @GenieId, @WisherId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, wishEntity);
     }
 
@@ -104,7 +104,6 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
             $"""
                 UPDATE {WishesTable} 
                 SET Name = @Name,
-                 IconCode = @IconCode,
                  Description = @Description,
                  PointsCost = @PointsCost,
                  GenieId = @GenieId,

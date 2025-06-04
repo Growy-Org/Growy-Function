@@ -95,7 +95,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         var assignmentEntity = request.ToAssignmentEntity();
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"INSERT INTO {AssignmentsTable} (Name, HomeId, IconCode, Points, Description, RepeatAfter, DueDateUtc, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @IconCode, @Points, @Description, @RepeatAfter, @DueDateUtc, @AssigneeId, @AssignerId) RETURNING Id";
+            $"INSERT INTO {AssignmentsTable} (Name, HomeId, Points, Description, RepeatAfter, DueDateUtc, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @Points, @Description, @RepeatAfter, @DueDateUtc, @AssigneeId, @AssignerId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, assignmentEntity);
     }
 
@@ -107,7 +107,6 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
             $"""
                  UPDATE {AssignmentsTable} SET Name = @Name,
                      Description = @Description,
-                     IconCode = @IconCode,
                      Points = @Points,
                      RepeatAfter = @RepeatAfter,
                      DueDateUtc = @DueDateUtc,

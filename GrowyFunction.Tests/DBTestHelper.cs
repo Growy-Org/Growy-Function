@@ -34,18 +34,17 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         };
 
         await _appUserRepo.InsertIfNotExist(appUser);
-        var homeRequest = new CreateHomeRequest()
+        var homeRequest = new Home()
         {
-            HomeAddress = _faker.Address.FullAddress(),
-            HomeName = $"{_faker.Random.Word()}'s Home",
-            AppUserId = idpUserId
+            Address = _faker.Address.FullAddress(),
+            Name = $"{_faker.Random.Word()}'s Home",
         };
-        var homeId = await _homeRepo.InsertHome(homeRequest);
-        
+        var homeId = await _homeRepo.InsertHome(idpUserId, homeRequest);
+
         var child = new Child()
         {
             Name = _faker.Name.FullName(),
-            IconCode = _faker.Random.Int(0, 100),
+
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.GIRL),
             PointsEarned = _faker.Random.Int(0, 9999),
@@ -53,12 +52,12 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         var child2 = new Child()
         {
             Name = _faker.Name.FullName(),
-            IconCode = _faker.Random.Int(0, 100),
+
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.BOY),
             PointsEarned = _faker.Random.Int(0, 9999),
         };
-        
+
         var childId = await _childRepo.InsertChild(homeId, child);
         var childId2 = await _childRepo.InsertChild(homeId, child2);
     }
@@ -78,19 +77,18 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         };
 
         var idpUserId = await _appUserRepo.InsertIfNotExist(appUser);
-        
-        var homeRequest = new CreateHomeRequest()
+
+        var homeRequest = new Home()
         {
-            HomeAddress = _faker.Address.FullAddress(),
-            HomeName = $"{_faker.Random.Word()}'s Home",
-            AppUserId = idpUserId
+            Address = _faker.Address.FullAddress(),
+            Name = $"{_faker.Random.Word()}'s Home",
         };
-        var homeId = await _homeRepo.InsertHome(homeRequest);
-        
+        var homeId = await _homeRepo.InsertHome(idpUserId, homeRequest);
+
         var child = new Child()
         {
             Name = _faker.Name.FullName(),
-            IconCode = _faker.Random.Int(0, 100),
+
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.GIRL),
             PointsEarned = _faker.Random.Int(0, 9999),
@@ -98,33 +96,33 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         var child2 = new Child()
         {
             Name = _faker.Name.FullName(),
-            IconCode = _faker.Random.Int(0, 100),
+
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.BOY),
             PointsEarned = _faker.Random.Int(0, 9999),
         };
-        
+
         var childId = await _childRepo.InsertChild(homeId, child);
         var childId2 = await _childRepo.InsertChild(homeId, child2);
-        
+
         var parent = new Parent
         {
             Name = _faker.Name.FullName(),
-            IconCode = _faker.Random.Int(0, 100),
+
             DOB = _faker.Date.Past(18),
             Role = _faker.PickRandom(ParentRole.FATHER, ParentRole.MOTHER),
         };
         var parent2 = new Parent
         {
             Name = _faker.Name.FullName(),
-            IconCode = _faker.Random.Int(0, 100),
+
             DOB = _faker.Date.Past(18),
             Role = _faker.PickRandom(ParentRole.FATHER, ParentRole.FATHER),
         };
-        
+
         var parentId = await _parentRepo.InsertParent(homeId, parent);
         var parentId2 = await _parentRepo.InsertParent(homeId, parent2);
-        
+
         var assignmentRequest1 = new CreateAssignmentRequest
         {
             HomeId = homeId,
@@ -135,7 +133,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             DueDateUtc = _faker.Date.Recent(50),
             Points = _faker.Random.Int(100, 999)
         };
-        
+
         var assignmentRequest2 = new CreateAssignmentRequest
         {
             HomeId = homeId,
@@ -146,24 +144,24 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             DueDateUtc = _faker.Date.Recent(50),
             Points = _faker.Random.Int(100, 999)
         };
-        
+
         var assignmentId1 = await _assignmentRepo.InsertAssignment(assignmentRequest1);
         var assignmentId2 = await _assignmentRepo.InsertAssignment(assignmentRequest2);
-        
+
         var stepRequest1 = new CreateStepRequest
         {
             AssignmentId = assignmentId1,
             StepOrder = 0,
             StepDescription = _faker.Lorem.Sentence(20),
         };
-        
+
         var stepRequest2 = new CreateStepRequest
         {
             AssignmentId = assignmentId1,
             StepOrder = 1,
             StepDescription = _faker.Lorem.Sentence(20),
         };
-        
+
         var stepRequest3 = new CreateStepRequest
         {
             AssignmentId = assignmentId2,
@@ -173,7 +171,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         await _stepRepo.InsertStep(stepRequest1);
         await _stepRepo.InsertStep(stepRequest2);
         await _stepRepo.InsertStep(stepRequest3);
-        
+
         var wishRequest1 = new CreateWishRequest()
         {
             HomeId = homeId,
@@ -190,10 +188,10 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             WishName = _faker.Random.Word(),
             WishDescription = _faker.Lorem.Sentence(50),
         };
-        
+
         await _wishRepo.InsertWish(wishRequest1);
         await _wishRepo.InsertWish(wishRequest2);
-        
+
         var achievementRequest1 = new CreateAchievementRequest()
         {
             HomeId = homeId,
@@ -212,10 +210,10 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             AchievementDescription = _faker.Lorem.Sentence(50),
             AchievementPointsGranted = _faker.Random.Int(100, 9999),
         };
-        
+
         await _achievementRepo.InsertAchievement(achievementRequest1);
         await _achievementRepo.InsertAchievement(achievementRequest2);
-        
+
         var penaltyRequest = new CreatePenaltyRequest()
         {
             HomeId = homeId,
@@ -225,9 +223,9 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             PenaltyReason = _faker.Lorem.Sentence(50),
             PenaltyPointsDeducted = _faker.Random.Int(100, 500),
         };
-        
+
         await _penaltyRepo.InsertPenalty(penaltyRequest);
-        
+
         var dqReport = new SubmitDevelopmentReportRequest
         {
             HomeId = homeId,
@@ -238,7 +236,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             DqResult = 100.2f,
             CandidateMonth = 5.2f
         };
-        
+
         await _assessmentRepository.CreateReport(dqReport);
     }
 }
