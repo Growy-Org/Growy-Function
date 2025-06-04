@@ -10,6 +10,8 @@ namespace Growy.Function.Controllers;
 public class PenaltyController(
     ILogger<PenaltyController> logger,
     IPenaltyService penaltyService,
+    IParentService parentService,
+    IChildService childService,
     IAuthService authService)
 {
     // Read
@@ -18,16 +20,20 @@ public class PenaltyController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "parent/{id}/penalties")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        if (!Guid.TryParse(id, out var homeId))
+        if (!Guid.TryParse(id, out var parentId))
         {
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await penaltyService.GetAllPenaltiesByParentId(homeId,
-            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-        return new OkObjectResult(res);
+        var homeId = await parentService.GetHomeIdByParentId(parentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await penaltyService.GetAllPenaltiesByParentId(homeId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("GetAllPenaltiesByChild")]
@@ -41,10 +47,14 @@ public class PenaltyController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await penaltyService.GetAllPenaltiesByChildId(childId,
-            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-        return new OkObjectResult(res);
+        var homeId = await childService.GetHomeIdByChildId(childId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await penaltyService.GetAllPenaltiesByChildId(childId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("GetAllPenaltiesByHome")]
@@ -58,10 +68,13 @@ public class PenaltyController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await penaltyService.GetAllPenaltiesByHomeId(homeId,
-            pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-            pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-        return new OkObjectResult(res);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await penaltyService.GetAllPenaltiesByHomeId(homeId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            return new OkObjectResult(res);
+        });
     }
 
     [Function("GetPenaltyById")]
@@ -75,29 +88,51 @@ public class PenaltyController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var res = await penaltyService.GetPenaltyById(penaltyId);
-        return new OkObjectResult(res);
+        var homeId = await penaltyService.GetHomeIdByPenaltyId(penaltyId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await penaltyService.GetPenaltyById(penaltyId);
+            return new OkObjectResult(res);
+        });
     }
-
 
     // Create
     [Function("CreatePenalty")]
     public async Task<IActionResult> CreatePenalty(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/penalty")]
-        HttpRequest req, [FromBody] CreatePenaltyRequest penaltyRequest)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/penalty")]
+        HttpRequest req, string id, [FromBody] PenaltyRequest penaltyRequest)
     {
-        var res = await penaltyService.CreatePenalty(penaltyRequest);
-        return new OkObjectResult(res);
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await penaltyService.CreatePenalty(homeId, penaltyRequest);
+            return new OkObjectResult(res);
+        });
     }
 
     // Update
     [Function("EditPenalty")]
     public async Task<IActionResult> EditPenalty(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "penalty")]
-        HttpRequest req, [FromBody] EditPenaltyRequest request)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "penalty/{id}")]
+        HttpRequest req, string id, [FromBody] PenaltyRequest request)
     {
-        var res = await penaltyService.EditPenalty(request);
-        return new OkObjectResult(res);
+        if (!Guid.TryParse(id, out var penaltyId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var homeId = await penaltyService.GetHomeIdByPenaltyId(penaltyId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await penaltyService.EditPenalty(penaltyId, request);
+            return new OkObjectResult(res);
+        });
     }
 
     // Delete
@@ -112,7 +147,11 @@ public class PenaltyController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        await penaltyService.DeletePenalty(penaltyId);
-        return new OkResult();
+        var homeId = await penaltyService.GetHomeIdByPenaltyId(penaltyId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            await penaltyService.DeletePenalty(penaltyId);
+            return new NoContentResult();
+        });
     }
 }

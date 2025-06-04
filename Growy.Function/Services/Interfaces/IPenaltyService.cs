@@ -13,10 +13,10 @@ public interface IPenaltyService
     public Task<Guid> GetHomeIdByPenaltyId(Guid penaltyId);
 
     // Create
-    public Task<Guid> CreatePenalty(CreatePenaltyRequest request);
+    public Task<Guid> CreatePenalty(Guid homeId, PenaltyRequest request);
 
     // Update
-    public Task<Guid> EditPenalty(EditPenaltyRequest request);
+    public Task<Guid> EditPenalty(Guid penaltyId, PenaltyRequest request);
 
     // Delete
     public Task DeletePenalty(Guid penaltyId);

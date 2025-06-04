@@ -146,29 +146,15 @@ public static class ModelConversionExtension
         };
     }
 
-    public static PenaltyEntity ToPenaltyEntity(this CreatePenaltyRequest r)
+    public static PenaltyEntity ToPenaltyEntity(this PenaltyRequest r)
     {
         return new PenaltyEntity()
         {
-            HomeId = r.HomeId,
             EnforcerId = r.ParentId,
             ViolatorId = r.ChildId,
-            Name = r.PenaltyName,
-            Reason = r.PenaltyReason,
-            PointsDeducted = r.PenaltyPointsDeducted
-        };
-    }
-
-    public static PenaltyEntity ToPenaltyEntity(this EditPenaltyRequest r)
-    {
-        return new PenaltyEntity()
-        {
-            Id = r.PenaltyId,
-            EnforcerId = r.ParentId,
-            ViolatorId = r.ChildId,
-            Name = r.PenaltyName,
-            Reason = r.PenaltyReason,
-            PointsDeducted = r.PenaltyPointsDeducted
+            Name = r.Name,
+            Reason = r.Reason,
+            PointsDeducted = r.PointsDeducted
         };
     }
 

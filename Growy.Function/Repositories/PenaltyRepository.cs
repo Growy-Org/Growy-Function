@@ -27,6 +27,16 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         return penalties.Single();
     }
 
+    public async Task<Guid> GetHomeIdByPenaltyId(Guid penaltyId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"""
+                 SELECT HomeId FROM {PenaltyTable} WHERE Id = @Id
+             """;
+        return await con.QuerySingleAsync<Guid>(query, new { Id = penaltyId });
+    }
+
     public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
         using var con = connectionFactory.GetDBConnection();
@@ -87,27 +97,20 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         return penaltyEntities.ToList();
     }
 
-    private readonly Func<PenaltyEntity, ChildEntity, ParentEntity, Penalty> _mapEntitiesToPenaltyModel =
-        (pe, c, par) =>
-        {
-            var penalty = pe.ToPenalty();
-            penalty.Violator = c.ToChild();
-            penalty.Enforcer = par.ToParent();
-            return penalty;
-        };
-
-    public async Task<CreatePenaltyEntityResponse> InsertPenalty(CreatePenaltyRequest request)
+    public async Task<CreatePenaltyEntityResponse> InsertPenalty(Guid homeId, PenaltyRequest request)
     {
         var penaltyEntity = request.ToPenaltyEntity();
+        penaltyEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {PenaltyTable} (Name, HomeId, PointsDeducted, Reason, ViolatorId, EnforcerId) VALUES (@Name, @HomeId, @PointsDeducted, @Reason, @ViolatorId, @EnforcerId) RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id";
         return await con.QuerySingleAsync<CreatePenaltyEntityResponse>(query, penaltyEntity);
     }
 
-    public async Task<EditPenaltyEntityResponse> EditPenaltyByPenaltyId(EditPenaltyRequest request)
+    public async Task<EditPenaltyEntityResponse> EditPenaltyByPenaltyId(Guid penaltyId, PenaltyRequest request)
     {
         var penaltyEntity = request.ToPenaltyEntity();
+        penaltyEntity.Id = penaltyId;
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
@@ -133,4 +136,13 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
             $"DELETE FROM {PenaltyTable} where id = @Id RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id;";
         return await con.QuerySingleAsync<DeletePenaltyEntityResponse>(query, new { Id = penaltyId });
     }
+
+    private readonly Func<PenaltyEntity, ChildEntity, ParentEntity, Penalty> _mapEntitiesToPenaltyModel =
+        (pe, c, par) =>
+        {
+            var penalty = pe.ToPenalty();
+            penalty.Violator = c.ToChild();
+            penalty.Enforcer = par.ToParent();
+            return penalty;
+        };
 }

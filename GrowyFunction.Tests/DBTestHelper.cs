@@ -205,17 +205,16 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         await _achievementRepo.InsertAchievement(homeId, achievementRequest1);
         await _achievementRepo.InsertAchievement(homeId, achievementRequest2);
 
-        var penaltyRequest = new CreatePenaltyRequest()
+        var penaltyRequest = new PenaltyRequest()
         {
-            HomeId = homeId,
             ParentId = parentId,
             ChildId = childId,
-            PenaltyName = "Penalty 1",
-            PenaltyReason = _faker.Lorem.Sentence(50),
-            PenaltyPointsDeducted = _faker.Random.Int(100, 500),
+            Name = "Penalty 1",
+            Reason = _faker.Lorem.Sentence(50),
+            PointsDeducted = _faker.Random.Int(100, 500),
         };
 
-        await _penaltyRepo.InsertPenalty(penaltyRequest);
+        await _penaltyRepo.InsertPenalty(homeId, penaltyRequest);
 
         var dqReport = new SubmitDevelopmentReportRequest
         {
