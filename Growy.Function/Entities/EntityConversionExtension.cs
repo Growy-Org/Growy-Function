@@ -57,7 +57,6 @@ public static class EntityConversionExtension
             Name = a.Name,
             Description = a.Description,
             Points = a.Points,
-            RepeatAfter = a.RepeatAfter,
             DueDateUtc = a.DueDateUtc,
             CreatedDateUtc = a.CreatedDateUtc,
             UpdatedDateUtc = a.UpdatedDateUtc,

@@ -11,5 +11,4 @@ public record ChildRequest
 
     public DateTime DOB { get; set; }
 
-    public int PointsEarned { get; init; } 
 }

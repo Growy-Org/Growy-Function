@@ -14,7 +14,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
     {
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"SELECT HomeId FROM {ParentsTable} WHERE Id = @ChildId";
+            $"SELECT HomeId FROM {ParentsTable} WHERE Id = @Id";
         return await con.QuerySingleAsync<Guid>(query, new { Id = parentId });
     }
 

@@ -50,7 +50,6 @@ public static class ModelConversionExtension
             Name = c.Name,
             DOB = c.DOB,
             Gender = c.Gender.ToString(),
-            PointsEarned = c.PointsEarned,
         };
     }
 

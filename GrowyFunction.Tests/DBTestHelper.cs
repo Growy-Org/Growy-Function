@@ -47,14 +47,12 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
 
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.GIRL),
-            PointsEarned = _faker.Random.Int(0, 9999),
         };
         var child2 = new ChildRequest()
         {
             Name = _faker.Name.FullName(),
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.BOY),
-            PointsEarned = _faker.Random.Int(0, 9999),
         };
 
         var childId = await _childRepo.InsertChild(homeId, child);
@@ -89,14 +87,12 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             Name = _faker.Name.FullName(),
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.GIRL),
-            PointsEarned = _faker.Random.Int(0, 9999),
         };
         var child2 = new ChildRequest()
         {
             Name = _faker.Name.FullName(),
             DOB = _faker.Date.Past(18),
             Gender = _faker.PickRandom(ChildGender.BOY, ChildGender.BOY),
-            PointsEarned = _faker.Random.Int(0, 9999),
         };
 
         var childId = await _childRepo.InsertChild(homeId, child);
