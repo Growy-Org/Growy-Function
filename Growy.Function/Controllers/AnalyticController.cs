@@ -1,4 +1,3 @@
-using Growy.Function.Models;
 using Growy.Function.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -9,54 +8,65 @@ namespace Growy.Function.Controllers;
 
 public class AnalyticController(
     ILogger<AnalyticController> logger,
-    IAnalyticService analyticService)
+    IAnalyticService analyticService,
+    IChildService childService,
+    IAuthService authService
+)
 {
-    // TODO : Wrap this under auth wrapper
-    [Function("GetParentAnalytics")]
-    public async Task<IActionResult> GetParentAnalytics(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/getParentAnalytics/{analyticType}")]
-        HttpRequest req, string analyticType, [FromQuery] string? homeId,
-        [FromQuery] string? parentId, [FromQuery] string? childId, [FromQuery] int? year)
+    [Function("GetHomeAnalytics")]
+    public async Task<IActionResult> GetHomeAnalytics(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/home/{id}")]
+        HttpRequest req, string id, [FromQuery] int? year)
     {
-        if (!Enum.TryParse<ParentAnalyticViewType>(analyticType, out var viewType))
+        if (!Guid.TryParse(id, out var homeId))
         {
-            logger.LogWarning($"Invalid analyticType value: {analyticType}");
-            return new BadRequestObjectResult(
-                $" 'analyticType' is provided with invalid value: '{analyticType}', accepted values are : [{string.Join(", ", Enum.GetNames(typeof(ParentAnalyticViewType)))}]");
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var analyticRes = await analyticService.GetLiveParentAnalyticProfile(viewType, homeId, parentId, childId, year);
-
-        if (analyticRes.Status == RequestStatus.Failure)
+        return await authService.SecureExecute(req, homeId, async () =>
         {
-            return new BadRequestObjectResult($"Fail to retrieve parent analytics because {analyticRes.Message}");
-        }
-
-        return new OkObjectResult(analyticRes.Result);
+            var result = await analyticService.GetAllParentsToAllChildAnalyticLive(homeId, year);
+            return new OkObjectResult(result);
+        });
     }
 
 
-    // TODO : Wrap this under auth wrapper
+    [Function("GetParentAnalytics")]
+    public async Task<IActionResult> GetParentAnalytics(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/home/{id}/child/{id}")]
+        HttpRequest req, string id, [FromQuery] int? year)
+    {
+        if (!Guid.TryParse(id, out var childId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var homeId = await childService.GetHomeIdByChildId(childId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var result = await analyticService.GetAllParentsToOneChildAnalyticLive(childId, year);
+            return new OkObjectResult(result);
+        });
+    }
+
     [Function("GetChildAnalytics")]
     public async Task<IActionResult> GetChildAnalytics(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/getChildAnalytics/{analyticType}")]
-        HttpRequest req, string analyticType,
-        [FromQuery] string? childId, [FromQuery] int? year)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/child/{id}")]
+        HttpRequest req, string id, [FromQuery] int? year)
     {
-        if (!Enum.TryParse<ChildAnalyticViewType>(analyticType, out var viewType))
+        if (!Guid.TryParse(id, out var childId))
         {
-            logger.LogWarning($"Invalid analyticType value: {analyticType}");
-            return new BadRequestObjectResult(
-                $" 'analyticType' is provided with invalid value: '{analyticType}', accepted values are : [{string.Join(", ", Enum.GetNames(typeof(ChildAnalyticViewType)))}]");
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        var analyticRes = await analyticService.GetLiveChildAnalyticProfile(viewType, childId, year);
-
-        if (analyticRes.Status == RequestStatus.Failure)
+        var homeId = await childService.GetHomeIdByChildId(childId);
+        return await authService.SecureExecute(req, homeId, async () =>
         {
-            return new BadRequestObjectResult($"Fail to retrieve child analytics because {analyticRes.Message}");
-        }
-
-        return new OkObjectResult(analyticRes.Result);
+            var result = await analyticService.GetChildAnalyticByChildIdLive(childId, year);
+            return new OkObjectResult(result);
+        });
     }
 }
