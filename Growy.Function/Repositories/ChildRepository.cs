@@ -54,7 +54,7 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
             $"""
                  UPDATE {ChildrenTable} SET Name = @Name, 
                      DOB = @DOB,
-                     Gender = @Gender,
+                     Gender = @Gender
                  WHERE Id = @Id RETURNING Id;
              """;
         return await con.ExecuteScalarAsync<Guid>(query, childEntity);

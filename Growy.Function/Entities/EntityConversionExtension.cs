@@ -115,4 +115,17 @@ public static class EntityConversionExtension
             UpdatedDateUtc = p.UpdatedDateUtc,
         };
     }
+    
+    public static DevelopmentQuotientResult ToDevelopmentQuotientResult(this DevelopmentQuotientResultEntity d)
+    {
+        return new DevelopmentQuotientResult
+        {
+            Id = d.Id,
+            Answer = d.Answers,
+            TotalMentalAge = d.TotalMentalAge,
+            DqResult = d.DqResult,
+            CandidateMonth = d.CandidateMonth,
+            CreatedDateUtc = d.CreatedDateUtc,
+        };
+    }
 }

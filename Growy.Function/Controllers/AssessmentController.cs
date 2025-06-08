@@ -15,7 +15,7 @@ public class AssessmentController(
 {
     [Function("SubmitDevelopmentQuotientReport")]
     public async Task<IActionResult> SubmitDevelopmentQuotientReport(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/assessment/developmentquotientreport")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "home/{id}/assessment/developmentquotientreport")]
         HttpRequest req, string id, [FromBody] DevelopmentReportRequest request)
     {
         if (!Guid.TryParse(id, out var homeId))

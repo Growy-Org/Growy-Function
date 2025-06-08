@@ -136,8 +136,8 @@ public static class ModelConversionExtension
         {
             CandidateId = r.ChildId,
             ExaminerId = r.ParentId,
-            Answer = r.Answers,
-            TotalScore = r.TotalScore,
+            Answers = r.Answers,
+            TotalMentalAge = r.TotalMentalAge,
             DqResult = r.DqResult,
             CandidateMonth = r.CandidateMonth,
         };

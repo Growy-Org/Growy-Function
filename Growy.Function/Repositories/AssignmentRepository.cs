@@ -10,8 +10,8 @@ namespace Growy.Function.Repositories;
 public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssignmentRepository
 {
     private const string AssignmentsTable = "inventory.assignments";
-    public const string ChildrenTable = "inventory.children";
-    public const string ParentTable = "inventory.parents";
+    private const string ChildrenTable = "inventory.children";
+    private const string ParentTable = "inventory.parents";
 
     public async Task<Guid> GetHomeIdByAssignmentId(Guid assignmentId)
     {

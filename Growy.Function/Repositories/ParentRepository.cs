@@ -46,7 +46,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
             $"""
                  UPDATE {ParentsTable} SET Name = @Name, 
                      DOB = @DOB,
-                     Role = @Role,
+                     Role = @Role
                  WHERE Id = @Id RETURNING Id;
              """;
         return await con.ExecuteScalarAsync<Guid>(query, parentEntity);
