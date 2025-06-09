@@ -44,10 +44,10 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
                  LEFT JOIN {ParentTable} p ON d.ExaminerId = p.Id
                  WHERE d.HomeId = @HomeId
                  ORDER BY d.CreatedDateUtc ASC
-                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize};
+                 LIMIT @PageSize OFFSET (@PageNumber - 1) * @PageSize;
              """;
         var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToDqReportModel,
-            new { HomeId = homeId });
+            new { HomeId = homeId, PageSize = pageSize, PageNumber = pageNumber });
         return assignmentEntities.ToList();
     }
 

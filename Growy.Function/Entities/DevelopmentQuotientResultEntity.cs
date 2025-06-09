@@ -6,7 +6,7 @@ public record DevelopmentQuotientResultEntity
     public Guid HomeId { get; set; }
     public Guid CandidateId { get; init; }
     public Guid ExaminerId { get; init; }
-    public List<int> Answers { get; init; } = new();
+    public int[] Answers { get; init; } = [];
     public int TotalMentalAge { get; init; }
     public float DqResult { get; init; }
     public float CandidateMonth { get; init; }
