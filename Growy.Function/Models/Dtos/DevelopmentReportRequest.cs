@@ -2,8 +2,8 @@ namespace Growy.Function.Models.Dtos;
 
 public record DevelopmentReportRequest
 {
-    public Guid ParentId { get; init; }
-    public Guid ChildId { get; init; }
+    public Guid ParentId { get; set; }
+    public Guid ChildId { get; set; }
     public List<int> Answers { get; init; } = new();
     public int TotalMentalAge { get; init; }
     public float DqResult { get; init; }

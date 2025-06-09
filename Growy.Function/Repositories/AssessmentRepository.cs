@@ -1,4 +1,3 @@
-using System.Data;
 using Dapper;
 using Growy.Function.Entities;
 using Growy.Function.Models;
@@ -13,7 +12,28 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
     private const string ChildrenTable = "inventory.children";
     private const string ParentTable = "inventory.parents";
 
-    public async Task<List<DevelopmentQuotientResult>> GetAllReportsByHomeId(Guid homeId, int pageNumber, int pageSize)
+    public async Task<int> GetDqAssessmentsCount(Guid homeId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"""
+                 SELECT COUNT(*) FROM {DqTable} WHERE HomeId = @HomeId;
+             """;
+        return await con.QuerySingleAsync<int>(query, new { HomeId = homeId });
+    }
+
+    public async Task<Guid> GetHomeIdByDqAssessmentId(Guid assessmentId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"""
+                 SELECT HomeId FROM {DqTable} WHERE Id = @Id;
+             """;
+        return await con.QuerySingleAsync<Guid>(query, new { Id = assessmentId });
+    }
+
+    public async Task<List<DevelopmentQuotientResult>> GetAllDqAssessmentsByHome(Guid homeId, int pageNumber,
+        int pageSize)
     {
         using var con = connectionFactory.GetDBConnection();
         var query =
@@ -24,24 +44,24 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
                  LEFT JOIN {ParentTable} p ON d.ExaminerId = p.Id
                  WHERE d.HomeId = @HomeId
                  ORDER BY d.CreatedDateUtc ASC
-                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize} 
+                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize};
              """;
         var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToDqReportModel,
             new { HomeId = homeId });
         return assignmentEntities.ToList();
     }
 
-    public async Task<Guid> CreateReport(Guid homeId, DevelopmentReportRequest request)
+    public async Task<Guid> CreateDqReport(Guid homeId, DevelopmentReportRequest request)
     {
         var dqResultEntity = request.ToDqAssessmentEntity();
         dqResultEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"INSERT INTO {DqTable} (HomeId, CandidateId, ExaminerId, Answers, DqResult, TotalMentalAge, CandidateMonth) VALUES (@HomeId, @CandidateId, @ExaminerId, @Answers, @DqResult, @TotalMentalAge, @CandidateMonth) RETURNING Id";
+            $"INSERT INTO {DqTable} (HomeId, CandidateId, ExaminerId, Answers, DqResult, TotalMentalAge, CandidateMonth) VALUES (@HomeId, @CandidateId, @ExaminerId, @Answers, @DqResult, @TotalMentalAge, @CandidateMonth) RETURNING Id;";
         return await con.ExecuteScalarAsync<Guid>(query, dqResultEntity);
     }
 
-    public async Task<Guid> UpdateReport(Guid reportId, DevelopmentReportRequest request)
+    public async Task<Guid> UpdateDqReport(Guid reportId, DevelopmentReportRequest request)
     {
         var dqResultEntity = request.ToDqAssessmentEntity();
         dqResultEntity.Id = reportId;
@@ -50,21 +70,21 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
             $"""
              UPDATE {DqTable} SET 
                 CandidateId = @CandidateId, 
-                ExaminerId = @CandidateId, 
+                ExaminerId = @ExaminerId, 
                 Answers = @Answers, 
                 DqResult = @DqResult, 
                 TotalMentalAge = @TotalMentalAge, 
                 CandidateMonth = @CandidateMonth
-             WHERE Id = @Id
+             WHERE Id = @Id;
              """;
         return await con.ExecuteScalarAsync<Guid>(query, dqResultEntity);
     }
 
-    public async Task DeleteReportByReportId(Guid reportId)
+    public async Task DeleteDqReport(Guid reportId)
     {
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"DELETE FROM {DqTable} WHERE Id = @Id RETURNING Id;";
+            $"DELETE FROM {DqTable} WHERE Id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = reportId });
     }
 

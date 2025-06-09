@@ -98,7 +98,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         assignmentEntity.HomeId = homeId;
         using var con = connectionFactory.GetDBConnection();
         var query =
-            $"INSERT INTO {AssignmentsTable} (Name, HomeId, Points, Description, RepeatAfter, DueDateUtc, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @Points, @Description, @RepeatAfter, @DueDateUtc, @AssigneeId, @AssignerId) RETURNING Id";
+            $"INSERT INTO {AssignmentsTable} (Name, HomeId, Points, Description, DueDateUtc, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @Points, @Description, @DueDateUtc, @AssigneeId, @AssignerId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, assignmentEntity);
     }
 
@@ -112,7 +112,6 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
                  UPDATE {AssignmentsTable} SET Name = @Name,
                      Description = @Description,
                      Points = @Points,
-                     RepeatAfter = @RepeatAfter,
                      DueDateUtc = @DueDateUtc,
                      AssigneeId = @AssigneeId,
                      AssignerId = @AssignerId
@@ -133,7 +132,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
     public async Task DeleteAssignmentByAssignmentId(Guid assignmentId)
     {
         using var con = connectionFactory.GetDBConnection();
-        var query = $"DELETE FROM {AssignmentsTable} where id = @Id;";
+        var query = $"DELETE FROM {AssignmentsTable} WHERE Id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = assignmentId });
     }
 

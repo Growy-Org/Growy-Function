@@ -1,8 +1,4 @@
-using Growy.Function.Exceptions;
-using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
-using Growy.Function.Repositories.Interfaces;
-using Growy.Function.Services;
 using Growy.Function.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;

@@ -210,11 +210,13 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         var dqReport = new DevelopmentReportRequest
         {
             Answers = [1, 2, 34, 6],
-            TotalScore = 230,
+            TotalMentalAge = 230,
+            ChildId = childId,
+            ParentId = parentId,
             DqResult = 100.2f,
             CandidateMonth = 5.2f
         };
 
-        await _assessmentRepository.CreateReport(homeId, dqReport);
+        await _assessmentRepository.CreateDqReport(homeId, dqReport);
     }
 }
