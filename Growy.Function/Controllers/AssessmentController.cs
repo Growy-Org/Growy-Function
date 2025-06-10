@@ -34,6 +34,26 @@ public class AssessmentController(
         });
     }
 
+    // Read
+    [Function("GetDqAssessment")]
+    public async Task<IActionResult> GetDqAssessment(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "assessment/dqreport/{id}")]
+        HttpRequest req, string id)
+    {
+        if (!Guid.TryParse(id, out var assessmentId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var homeId = await assessmentService.GetHomeIdByDqAssessmentId(assessmentId);
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assessmentService.GetDqAssessment(assessmentId);
+            return new OkObjectResult(res);
+        });
+    }
+
     [Function("GetDqAssessmentsCount")]
     public async Task<IActionResult> GetDqAssessmentsCount(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assessment/dqreports/count")]

@@ -8,6 +8,7 @@ public interface IAssessmentService
     // Read 
     public Task<int> GetDqAssessmentsPageCount(Guid homeId);
 
+    public Task<DevelopmentQuotientResult> GetDqAssessment(Guid assessmentId);
     public Task<List<DevelopmentQuotientResult>> GetAllDqAssessmentsByHome(Guid homeId, int pageNumber, int pageSize);
 
     public Task<Guid> GetHomeIdByDqAssessmentId(Guid assessmentId);

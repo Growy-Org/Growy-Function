@@ -22,6 +22,18 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
         return await con.QuerySingleAsync<int>(query, new { HomeId = homeId });
     }
 
+    public async Task<DevelopmentQuotientResult> GetDqAssessment(Guid assessmentId)
+    {
+        using var con = connectionFactory.GetDBConnection();
+        var query =
+            $"""
+                 SELECT * FROM {DqTable} WHERE Id = @Id;
+             """;
+        var reportEntity =
+            await con.QuerySingleAsync<DevelopmentQuotientResultEntity>(query, new { Id = assessmentId });
+        return reportEntity.ToDevelopmentQuotientResult();
+    }
+
     public async Task<Guid> GetHomeIdByDqAssessmentId(Guid assessmentId)
     {
         using var con = connectionFactory.GetDBConnection();
