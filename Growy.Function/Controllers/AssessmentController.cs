@@ -75,7 +75,7 @@ public class AssessmentController(
     // Create
     [Function("SubmitDqReport")]
     public async Task<IActionResult> SubmitDqReport(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "home/{id}/assessment/dqreport")]
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/assessment/dqreport")]
         HttpRequest req, string id, [FromBody] DevelopmentReportRequest request)
     {
         if (!Guid.TryParse(id, out var homeId))

@@ -7,7 +7,7 @@ public record DevelopmentQuotientResultEntity
     public Guid CandidateId { get; init; }
     public Guid ExaminerId { get; init; }
     public int[] Answers { get; init; } = [];
-    public int TotalMentalAge { get; init; }
+    public float TotalMentalAge { get; init; }
     public float DqResult { get; init; }
     public float CandidateMonth { get; init; }
     public DateTime CreatedDateUtc { get; init; }

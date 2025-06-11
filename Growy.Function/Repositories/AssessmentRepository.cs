@@ -27,11 +27,16 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
         using var con = connectionFactory.GetDBConnection();
         var query =
             $"""
-                 SELECT * FROM {DqTable} WHERE Id = @Id;
+             SELECT *
+             FROM {DqTable} d
+             LEFT JOIN {ChildrenTable} c ON d.CandidateId = c.Id
+             LEFT JOIN {ParentTable} p ON d.ExaminerId = p.Id
+             WHERE d.Id = @Id
+             ORDER BY d.CreatedDateUtc ASC
              """;
-        var reportEntity =
-            await con.QuerySingleAsync<DevelopmentQuotientResultEntity>(query, new { Id = assessmentId });
-        return reportEntity.ToDevelopmentQuotientResult();
+        var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToDqReportModel,
+            new { Id = assessmentId });
+        return assignmentEntities.Single();
     }
 
     public async Task<Guid> GetHomeIdByDqAssessmentId(Guid assessmentId)

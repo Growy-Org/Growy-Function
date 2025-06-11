@@ -210,7 +210,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
         var dqReport = new DevelopmentReportRequest
         {
             Answers = [1, 2, 34, 6],
-            TotalMentalAge = 230,
+            TotalMentalAge = 23.2f,
             ChildId = childId,
             ParentId = parentId,
             DqResult = 100.2f,

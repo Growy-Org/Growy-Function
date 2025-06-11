@@ -121,7 +121,7 @@ public static class EntityConversionExtension
         return new DevelopmentQuotientResult
         {
             Id = d.Id,
-            Answer = new List<int>(d.Answers),
+            Answers = new List<int>(d.Answers),
             TotalMentalAge = d.TotalMentalAge,
             DqResult = d.DqResult,
             CandidateMonth = d.CandidateMonth,
