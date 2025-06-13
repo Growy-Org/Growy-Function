@@ -20,7 +20,8 @@ public class ConnectionFactory(IOptions<ConnectionStrings> connectionStrings, IH
 
         // Prod
         var credential = new DefaultAzureCredential();
-        var tokenRequestContext = new TokenRequestContext(new[] { $"https://{connectionStrings.Value.GrowyHost}/.default" });
+        var tokenRequestContext =
+            new TokenRequestContext(new[] { "https://ossrdbms-aad.database.windows.net/.default" });
 
         var token = await credential.GetTokenAsync(tokenRequestContext);
 
