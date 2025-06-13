@@ -14,7 +14,7 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
 
     public async Task<int> GetDqAssessmentsCount(Guid homeId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT COUNT(*) FROM {DqTable} WHERE HomeId = @HomeId;
@@ -24,7 +24,7 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
 
     public async Task<DevelopmentQuotientResult> GetDqAssessment(Guid assessmentId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
              SELECT *
@@ -41,7 +41,7 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
 
     public async Task<Guid> GetHomeIdByDqAssessmentId(Guid assessmentId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT HomeId FROM {DqTable} WHERE Id = @Id;
@@ -52,7 +52,7 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
     public async Task<List<DevelopmentQuotientResult>> GetAllDqAssessmentsByHome(Guid homeId, int pageNumber,
         int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -72,7 +72,7 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
     {
         var dqResultEntity = request.ToDqAssessmentEntity();
         dqResultEntity.HomeId = homeId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {DqTable} (HomeId, CandidateId, ExaminerId, Answers, DqResult, TotalMentalAge, CandidateMonth) VALUES (@HomeId, @CandidateId, @ExaminerId, @Answers, @DqResult, @TotalMentalAge, @CandidateMonth) RETURNING Id;";
         return await con.ExecuteScalarAsync<Guid>(query, dqResultEntity);
@@ -82,7 +82,7 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
     {
         var dqResultEntity = request.ToDqAssessmentEntity();
         dqResultEntity.Id = reportId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
              UPDATE {DqTable} SET 
@@ -99,7 +99,7 @@ public class AssessmentRepository(IConnectionFactory connectionFactory) : IAsses
 
     public async Task DeleteDqReport(Guid reportId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"DELETE FROM {DqTable} WHERE Id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = reportId });

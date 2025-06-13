@@ -15,7 +15,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
 
     public async Task<Guid> GetHomeIdByAssignmentId(Guid assignmentId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT HomeId FROM {AssignmentsTable} WHERE Id = @Id
@@ -25,7 +25,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
 
     public async Task<Assignment> GetAssignmentById(Guid assignmentId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -40,7 +40,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
 
     public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -58,7 +58,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
 
     public async Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -76,7 +76,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
 
     public async Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -96,7 +96,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
     {
         var assignmentEntity = request.ToAssignmentEntity();
         assignmentEntity.HomeId = homeId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {AssignmentsTable} (Name, HomeId, Points, Description, DueDateUtc, AssigneeId, AssignerId) VALUES (@Name, @HomeId, @Points, @Description, @DueDateUtc, @AssigneeId, @AssignerId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, assignmentEntity);
@@ -106,7 +106,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
     {
         var assignmentEntity = request.ToAssignmentEntity();
         assignmentEntity.Id = assignmentId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  UPDATE {AssignmentsTable} SET Name = @Name,
@@ -122,7 +122,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
 
     public async Task<EditAssignmentEntityResponse> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {AssignmentsTable} SET CompletedDateUtc = @CompletedDateUtc WHERE Id = @Id RETURNING Id, AssigneeId AS ChildId, Points;";
         return await con.QuerySingleAsync<EditAssignmentEntityResponse>(query,
@@ -131,7 +131,7 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
 
     public async Task DeleteAssignmentByAssignmentId(Guid assignmentId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query = $"DELETE FROM {AssignmentsTable} WHERE Id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = assignmentId });
     }

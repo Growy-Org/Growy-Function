@@ -15,7 +15,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
 
     public async Task<Penalty> GetPenaltyById(Guid penaltyId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -30,7 +30,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
 
     public async Task<Guid> GetHomeIdByPenaltyId(Guid penaltyId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT HomeId FROM {PenaltyTable} WHERE Id = @Id
@@ -40,7 +40,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
 
     public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                 SELECT *
@@ -60,7 +60,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
 
     public async Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                 SELECT *
@@ -80,7 +80,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
 
     public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                 SELECT *
@@ -102,7 +102,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
     {
         var penaltyEntity = request.ToPenaltyEntity();
         penaltyEntity.HomeId = homeId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {PenaltyTable} (Name, HomeId, PointsDeducted, Reason, ViolatorId, EnforcerId) VALUES (@Name, @HomeId, @PointsDeducted, @Reason, @ViolatorId, @EnforcerId) RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id";
         return await con.QuerySingleAsync<CreatePenaltyEntityResponse>(query, penaltyEntity);
@@ -112,7 +112,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
     {
         var penaltyEntity = request.ToPenaltyEntity();
         penaltyEntity.Id = penaltyId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                 WITH Old AS (SELECT PointsDeducted, ViolatorId FROM {PenaltyTable} WHERE Id = @Id)
@@ -132,7 +132,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
 
     public async Task<DeletePenaltyEntityResponse> DeletePenaltyByPenaltyId(Guid penaltyId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"DELETE FROM {PenaltyTable} where id = @Id RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id;";
         return await con.QuerySingleAsync<DeletePenaltyEntityResponse>(query, new { Id = penaltyId });

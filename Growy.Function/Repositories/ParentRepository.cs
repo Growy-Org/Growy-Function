@@ -12,7 +12,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
 
     public async Task<Guid> GetHomeIdByParentId(Guid parentId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"SELECT HomeId FROM {ParentsTable} WHERE Id = @Id";
         return await con.QuerySingleAsync<Guid>(query, new { Id = parentId });
@@ -20,7 +20,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
 
     public async Task<List<Parent>> GetParentsByHomeId(Guid homeId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"SELECT * FROM {ParentsTable} WHERE HomeId = @HomeId";
         var parentEntities = await con.QueryAsync<ParentEntity>(query, new { HomeId = homeId });
@@ -31,7 +31,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
     {
         var parentEntity = request.ToParentEntity();
         parentEntity.HomeId = homeId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {ParentsTable} (Name, HomeId, DOB, Role) VALUES (@Name, @HomeId, @DOB, @Role) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, parentEntity);
@@ -41,7 +41,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
     {
         var parentEntity = request.ToParentEntity();
         parentEntity.Id = parentId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  UPDATE {ParentsTable} SET Name = @Name, 
@@ -54,7 +54,7 @@ public class ParentRepository(IConnectionFactory connectionFactory) : IParentRep
 
     public async Task DeleteParentByParentId(Guid parentId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"DELETE FROM {ParentsTable} WHERE Id = @Id RETURNING Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = parentId });

@@ -12,7 +12,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
 
     public async Task<Home> GetHome(Guid homeId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"SELECT * FROM {HomesTable} WHERE Id = @Id";
         var homeEntity = await con.QuerySingleAsync<HomeEntity>(query, new { Id = homeId });
@@ -21,7 +21,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
 
     public async Task<List<Home>> GetAllHomeByAppUserId(Guid appUserId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"SELECT * FROM {HomesTable} WHERE AppUserId = @AppUserId";
         var homesEntity = await con.QueryAsync<HomeEntity>(query, new { AppUserId = appUserId });
@@ -32,7 +32,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
     {
         var homeEntity = home.ToHomeEntity();
         homeEntity.AppUserId = appUserId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {HomesTable} (Name, Address, AppUserId) VALUES (@Name, @Address, @AppUserId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
@@ -42,7 +42,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
     {
         var homeEntity = home.ToHomeEntity();
         homeEntity.Id = homeId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {HomesTable} SET Name = @Name, Address = @Address WHERE Id = @Id RETURNING Id;";
         return await con.ExecuteScalarAsync<Guid>(query, homeEntity);
@@ -50,7 +50,7 @@ public class HomeRepository(IConnectionFactory connectionFactory) : IHomeReposit
 
     public async Task DeleteHomeByHomeId(Guid homeId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"DELETE FROM {HomesTable} WHERE Id = @Id RETURNING Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = homeId });

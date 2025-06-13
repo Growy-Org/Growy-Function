@@ -2,6 +2,7 @@ using Growy.Function.Options;
 using Growy.Function.Repositories;
 using Growy.Function.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Options;
 
 namespace GrowyFunction.Tests;
@@ -23,7 +24,8 @@ public class FunctionTestFixture : IDisposable
             .GetSection(ConnectionStrings.KEY)
             .Bind(connectionStrings);
         var options = Options.Create(connectionStrings);
-        ConnectionFactory = new ConnectionFactory(options);
+        ConnectionFactory = new ConnectionFactory(options,
+            new HostingEnvironment() { EnvironmentName = "Development" });
     }
 
     public void Dispose()

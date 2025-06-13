@@ -4,5 +4,5 @@ namespace Growy.Function.Repositories.Interfaces;
 
 public interface IConnectionFactory
 {
-    public IDbConnection GetDBConnection();
+    public Task<IDbConnection> GetDBConnection();
 }

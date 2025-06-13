@@ -15,7 +15,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<Guid> GetHomeIdByAchievementId(Guid achievementId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT HomeId FROM {AchievementsTable} WHERE Id = @Id
@@ -25,7 +25,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<Achievement> GetAchievementById(Guid achievementId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -40,7 +40,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<List<Achievement>> GetAllAchievementsByHomeId(Guid homeId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -60,7 +60,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -80,7 +80,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId, int pageNumber, int pageSize)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                  SELECT *
@@ -103,7 +103,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     {
         var achievementEntity = request.ToAchievementEntity();
         achievementEntity.HomeId = homeId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {AchievementsTable} (Name, HomeId, PointsGranted, Description, VisionaryId, AchieverId) VALUES (@Name, @HomeId, @PointsGranted, @Description, @VisionaryId, @AchieverId) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, achievementEntity);
@@ -113,7 +113,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     {
         var achievementEntity = request.ToAchievementEntity();
         achievementEntity.Id = achievementId;
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                 UPDATE {AchievementsTable} 
@@ -131,7 +131,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     public async Task<EditAchievementEntityResponse> EditAchievementGrantByAchievementId(Guid achievementId,
         bool isAchievementGranted)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {AchievementsTable} SET AchievedDateUtc = @AchievedDateUtc WHERE Id = @Id RETURNING Id, AchieverId AS ChildId, PointsGranted AS Points;";
         return await con.QuerySingleAsync<EditAchievementEntityResponse>(query,
@@ -140,7 +140,7 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
 
     public async Task DeleteAchievementByAchievementId(Guid achievementId)
     {
-        using var con = connectionFactory.GetDBConnection();
+        using var con = await connectionFactory.GetDBConnection();
         var query = $"DELETE FROM {AchievementsTable} where id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = achievementId });
     }
