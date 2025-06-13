@@ -136,7 +136,7 @@ public static class ModelConversionExtension
         {
             CandidateId = r.ChildId,
             ExaminerId = r.ParentId,
-            Answers = r.Answers.ToArray(),
+            Answers = r.Answers.Split(",").Select(int.Parse).ToArray(),
             TotalMentalAge = r.TotalMentalAge,
             DqResult = r.DqResult,
             CandidateMonth = r.CandidateMonth,
