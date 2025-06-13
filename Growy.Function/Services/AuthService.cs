@@ -57,7 +57,14 @@ public class AuthService(
             if (homes.Any(home => home.Id == homeId))
             {
                 // Execute func method
-                return await func();
+                try
+                {
+                    return await func();
+                }
+                catch (Exception e)
+                {
+                    return new BadRequestObjectResult(e);
+                }
             }
 
             return new UnauthorizedObjectResult(
