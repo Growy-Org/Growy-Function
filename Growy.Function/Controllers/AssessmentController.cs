@@ -115,7 +115,7 @@ public class AssessmentController(
     [Function("DeleteDqReport")]
     public async Task<IActionResult> DeleteDqReport(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "assessment/dqreport/{id}")]
-        HttpRequest req, string id, [FromBody] DevelopmentReportRequest request)
+        HttpRequest req, string id)
     {
         if (!Guid.TryParse(id, out var assessmentId))
         {
