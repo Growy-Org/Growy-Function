@@ -48,16 +48,7 @@ public class AssessmentService(
         logger.LogInformation(
             $"Month: {request.CandidateMonth}, Total Mental Age : {request.TotalMentalAge}, Result : {request.DqResult}");
 
-        try
-        {
-            logger.LogInformation("Creating report");
-            return await assessmentRepository.CreateDqReport(homeId, request);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex.Message);
-            return new Guid();
-        }
+        return await assessmentRepository.CreateDqReport(homeId, request);
     }
 
     // Update

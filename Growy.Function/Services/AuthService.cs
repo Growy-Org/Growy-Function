@@ -63,7 +63,8 @@ public class AuthService(
                 }
                 catch (Exception e)
                 {
-                    return new BadRequestObjectResult(e);
+                    logger.LogError(e.Message);
+                    return new BadRequestObjectResult(e.Message);
                 }
             }
 
