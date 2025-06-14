@@ -32,16 +32,6 @@ public static class ModelConversionExtension
         h.Steps.AddRange(steps);
     }
 
-    public static void SetAssigner(this Assignment h, List<Parent> parents)
-    {
-        parents.ForEach(p =>
-        {
-            if (h.Assigner.Id == p.Id)
-            {
-                h.Assigner = p;
-            }
-        });
-    }
 
     public static ChildEntity ToChildEntity(this ChildRequest c)
     {

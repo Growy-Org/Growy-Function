@@ -26,6 +26,7 @@ public class AssessmentService(
             $"Getting all dq assessments with homeId {homeId.ToString()}");
         return await assessmentRepository.GetAllDqAssessmentsByHome(homeId, pageNumber, pageSize);
     }
+
     public async Task<DevelopmentQuotientResult> GetDqAssessment(Guid assessmentId)
     {
         logger.LogInformation(
@@ -47,7 +48,16 @@ public class AssessmentService(
         logger.LogInformation(
             $"Month: {request.CandidateMonth}, Total Mental Age : {request.TotalMentalAge}, Result : {request.DqResult}");
 
-        return await assessmentRepository.CreateDqReport(homeId, request);
+        try
+        {
+            logger.LogInformation("Creating report");
+            return await assessmentRepository.CreateDqReport(homeId, request);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.Message);
+            return new Guid();
+        }
     }
 
     // Update
