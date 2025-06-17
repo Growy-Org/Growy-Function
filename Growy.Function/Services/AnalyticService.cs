@@ -10,18 +10,15 @@ public class AnalyticService(
     ILogger<AnalyticService> logger)
     : IAnalyticService
 {
-    public async Task<ParentAnalyticProfile> GetAllParentsToAllChildAnalyticLive(Guid homeId, int? year)
+    public async Task<AnalyticProfile> GetAllParentsToAllChildAnalyticLive(Guid homeId, int? year)
     {
-        return await analyticRepository.GetAllParentsToAllChildAnalytic(homeId, year ?? DateTime.Now.Year);
+        logger.LogInformation($"Getting all parent to all child analytic for homeId {homeId}");
+        return await analyticRepository.GetAnalyticLive(homeId, year ?? DateTime.Now.Year);
     }
-    
-    public async Task<ParentAnalyticProfile> GetAllParentsToOneChildAnalyticLive(Guid childId, int? year)
+
+    public async Task<AnalyticProfile> GetAllParentsToOneChildAnalyticLive(Guid homeId, int? year, Guid childId)
     {
-        return await analyticRepository.GetAllParentsToOneChildAnalytic(childId, year ?? DateTime.Now.Year);
-    }
-    
-    public async Task<ChildAnalyticProfile> GetChildAnalyticByChildIdLive(Guid childId, int? year)
-    {
-        return await analyticRepository.GetChildAnalyticByChildId(childId, year ?? DateTime.Now.Year);
+        logger.LogInformation($"Getting all parent to one child analytic for homeId {homeId} and childId {childId}");
+        return await analyticRepository.GetAnalyticLive(homeId, year ?? DateTime.Now.Year, childId);
     }
 }

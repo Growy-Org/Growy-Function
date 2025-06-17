@@ -13,7 +13,7 @@ public class AnalyticController(
     IAuthService authService
 )
 {
-    [Function("GetHomeAnalytics")]
+    [Function("GetAnalyticsToAllChild")]
     public async Task<IActionResult> GetHomeAnalytics(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/home/{id}")]
         HttpRequest req, string id, [FromQuery] int? year)
@@ -32,7 +32,7 @@ public class AnalyticController(
     }
 
 
-    [Function("GetParentAnalytics")]
+    [Function("GetAnalyticsToOneChild")]
     public async Task<IActionResult> GetParentAnalytics(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/home/{id}/child/{childId}")]
         HttpRequest req, string id, string childId, [FromQuery] int? year)
@@ -42,7 +42,8 @@ public class AnalyticController(
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
-        if (!Guid.TryParse(childId ,out var childIdGuid))
+
+        if (!Guid.TryParse(childId, out var childIdGuid))
         {
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
@@ -56,26 +57,7 @@ public class AnalyticController(
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var result = await analyticService.GetAllParentsToOneChildAnalyticLive(childIdGuid, year);
-            return new OkObjectResult(result);
-        });
-    }
-
-    [Function("GetChildAnalytics")]
-    public async Task<IActionResult> GetChildAnalytics(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/child/{id}")]
-        HttpRequest req, string id, [FromQuery] int? year)
-    {
-        if (!Guid.TryParse(id, out var childId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
-
-        var homeId = await childService.GetHomeIdByChildId(childId);
-        return await authService.SecureExecute(req, homeId, async () =>
-        {
-            var result = await analyticService.GetChildAnalyticByChildIdLive(childId, year);
+            var result = await analyticService.GetAllParentsToOneChildAnalyticLive(homeId, year, childIdGuid);
             return new OkObjectResult(result);
         });
     }
