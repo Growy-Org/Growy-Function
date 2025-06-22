@@ -18,52 +18,12 @@ public class AssignmentController(
     # region Assignments
 
     // Read
-    [Function("GetAllAssignmentsByParent")]
-    public async Task<IActionResult> GetAllAssignmentsByParent(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "parent/{id}/assignments")]
-        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
-    {
-        if (!Guid.TryParse(id, out var parentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
 
-        var homeId = await parentService.GetHomeIdByParentId(parentId);
-        return await authService.SecureExecute(req, homeId, async () =>
-        {
-            var res = await assignmentService.GetAllAssignmentsByParentId(parentId,
-                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-            return new OkObjectResult(res);
-        });
-    }
-
-    [Function("GetAllAssignmentsByChild")]
-    public async Task<IActionResult> GetAllAssignmentsByChild(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "child/{id}/assignments")]
-        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
-    {
-        if (!Guid.TryParse(id, out var childId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
-
-        var homeId = await childService.GetHomeIdByChildId(childId);
-        return await authService.SecureExecute(req, homeId, async () =>
-        {
-            var res = await assignmentService.GetAllAssignmentsByChildId(childId,
-                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-            return new OkObjectResult(res);
-        });
-    }
-
-    [Function("GetAllAssignmentsByHome")]
-    public async Task<IActionResult> GetAllAssignmentsByHome(
+    [Function("GetAllAssignments")]
+    public async Task<IActionResult> GetAllAssignments(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assignments")]
-        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize,
+        [FromQuery] string? parentId, [FromQuery] string? childId)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
@@ -71,11 +31,31 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
+        if (parentId != null || !Guid.TryParse(id, out var parentIdGuid))
+        {
+            logger.LogWarning($"Invalid ID format: {parentId}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        if (childId != null || !Guid.TryParse(id, out var childIdGuid))
+        {
+            logger.LogWarning($"Invalid ID format: {parentId}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        var parentHomeId = await parentService.GetHomeIdByParentId(parentIdGuid);
+        var childHomeId = await childService.GetHomeIdByChildId(childIdGuid);
+
+        if (parentHomeId != homeId || childHomeId != homeId)
+        {
+            return new BadRequestObjectResult($"child and parent does not belongs to the home {homeId}");
+        }
+
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var res = await assignmentService.GetAllAssignmentsByHomeId(homeId,
+            var res = await assignmentService.GetAllAssignments(homeId,
                 pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE, parentIdGuid, childIdGuid);
             return new OkObjectResult(res);
         });
     }

@@ -38,9 +38,13 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         return assignments.Single();
     }
 
-    public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize)
+    public async Task<List<Assignment>> GetAllAssignments(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId)
     {
         using var con = await connectionFactory.GetDBConnection();
+        var extraQuery = "";
+        if (parentId != null) extraQuery += "AND a.AssignerId = @ParentId ";
+        if (childId != null) extraQuery += "AND a.AssigneeId = @ChildId";
         var query =
             $"""
                  SELECT *
@@ -48,47 +52,12 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
                  LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
                  LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
                  WHERE a.HomeId = @HomeId
+                 {extraQuery}
                  ORDER BY a.CreatedDateUtc ASC
                  LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize} 
              """;
         var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel,
-            new { HomeId = homeId });
-        return assignmentEntities.ToList();
-    }
-
-    public async Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId, int pageNumber, int pageSize)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                 SELECT *
-                 FROM {AssignmentsTable} a
-                 LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
-                 LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
-                 WHERE a.AssignerId = @AssignerId
-                 ORDER BY a.CreatedDateUtc ASC
-                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
-             """;
-        var assignmentEntities =
-            await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { AssignerId = parentId });
-        return assignmentEntities.ToList();
-    }
-
-    public async Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId, int pageNumber, int pageSize)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                 SELECT *
-                 FROM {AssignmentsTable} a
-                 LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
-                 LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
-                 WHERE a.AssigneeId = @AssigneeId
-                 ORDER BY a.CreatedDateUtc ASC
-                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
-             """;
-        var assignmentEntities =
-            await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { AssigneeId = childId });
+            new { HomeId = homeId, ChildId = childId, ParentId = parentId });
         return assignmentEntities.ToList();
     }
 

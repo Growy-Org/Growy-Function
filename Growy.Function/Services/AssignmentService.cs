@@ -30,23 +30,6 @@ public class AssignmentService(
         return assignment;
     }
 
-    public async Task<List<Assignment>> GetAllAssignmentsByChildId(Guid childId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all assignments by ChildId: {childId}");
-        var assignments = await assignmentRepository.GetAllAssignmentsByChildId(childId, pageNumber, pageSize);
-
-        foreach (var assignment in assignments)
-        {
-            logger.LogInformation($"Getting Children Info with ChildId: {childId}");
-            var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
-            assignment.SetSteps(steps);
-        }
-
-        logger.LogInformation(
-            $"Successfully getting all assignments by ChildId : {childId}");
-        return assignments;
-    }
-
     public async Task<Guid> GetHomeIdByAssignmentId(Guid assignmentId)
     {
         return await assignmentRepository.GetHomeIdByAssignmentId(assignmentId);
@@ -58,11 +41,11 @@ public class AssignmentService(
         return await assignmentRepository.GetHomeIdByAssignmentId(assignmentId);
     }
 
-
-    public async Task<List<Assignment>> GetAllAssignmentsByHomeId(Guid homeId, int pageNumber, int pageSize)
+    public async Task<List<Assignment>> GetAllAssignments(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId)
     {
-        logger.LogInformation($"Getting all assignments by Home: {homeId}");
-        var assignments = await assignmentRepository.GetAllAssignmentsByHomeId(homeId, pageNumber, pageSize);
+        logger.LogInformation($"Getting all assignments");
+        var assignments = await assignmentRepository.GetAllAssignments(homeId, pageNumber, pageSize, parentId, childId);
 
         foreach (var assignment in assignments)
         {
@@ -76,22 +59,6 @@ public class AssignmentService(
         return assignments;
     }
 
-    public async Task<List<Assignment>> GetAllAssignmentsByParentId(Guid parentId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all assignments by Parent: {parentId}");
-        var assignments = await assignmentRepository.GetAllAssignmentsByParentId(parentId, pageNumber, pageSize);
-
-        foreach (var assignment in assignments)
-        {
-            logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
-            var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
-            assignment.SetSteps(steps);
-        }
-
-        logger.LogInformation(
-            $"Successfully getting all assignments by Parent : {parentId}");
-        return assignments;
-    }
 
     // Create
     public async Task<Guid> CreateAssignment(Guid homeId, AssignmentRequest request)
