@@ -31,26 +31,47 @@ public class AssignmentController(
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
         }
 
-        if (parentId != null || !Guid.TryParse(id, out var parentIdGuid))
+        // Parent Id Validation
+        Guid? parentIdGuid = null;
+        if (!string.IsNullOrEmpty(parentId))
         {
-            logger.LogWarning($"Invalid ID format: {parentId}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+            if (Guid.TryParse(parentId, out var parentGuid))
+            {
+                parentIdGuid = parentGuid;
+                var parentHomeId = await parentService.GetHomeIdByParentId(parentGuid);
+                if (parentHomeId != homeId)
+                {
+                    return new BadRequestObjectResult($"parent {parentId} does not belongs to the home {homeId}");
+                }
+            }
+            else
+            {
+                logger.LogWarning($"Invalid Parent ID format: {parentId}");
+                return new BadRequestObjectResult($"Invalid parent ID format {parentId}. Please provide a valid GUID.");
+            }
+
         }
 
-        if (childId != null || !Guid.TryParse(id, out var childIdGuid))
+        // Parent Id Validation
+        Guid? childIdGuid = null;
+        if (!string.IsNullOrEmpty(childId))
         {
-            logger.LogWarning($"Invalid ID format: {parentId}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+            if (Guid.TryParse(childId, out var childGuid))
+            {
+                childIdGuid = childGuid;
+                var childHomeId = await childService.GetHomeIdByChildId(childGuid);
+                if (childHomeId != homeId)
+                {
+                    return new BadRequestObjectResult($"childId {childId} does not belongs to the home {homeId}");
+                }
+            }
+            else
+            {
+                logger.LogWarning($"Invalid Child ID format: {childId}");
+                return new BadRequestObjectResult($"Invalid child ID format {childId}. Please provide a valid GUID.");
+            }
         }
-
-        var parentHomeId = await parentService.GetHomeIdByParentId(parentIdGuid);
-        var childHomeId = await childService.GetHomeIdByChildId(childIdGuid);
-
-        if (parentHomeId != homeId || childHomeId != homeId)
-        {
-            return new BadRequestObjectResult($"child and parent does not belongs to the home {homeId}");
-        }
-
+        
         return await authService.SecureExecute(req, homeId, async () =>
         {
             var res = await assignmentService.GetAllAssignments(homeId,
