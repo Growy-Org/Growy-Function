@@ -6,6 +6,7 @@ namespace Growy.Function.Services.Interfaces;
 public interface IAssignmentService
 {
     // Read
+    public Task<int> GetAssignmentsCount(Guid homeId, Guid? parentId, Guid? childId);
     public Task<Assignment> GetAssignmentById(Guid assignmentId);
     public Task<List<Assignment>> GetAllAssignments(Guid homeId, int pageNumber, int pageSize, Guid? parentId, Guid? childId);
     public Task<Guid> GetHomeIdByAssignmentId(Guid assignmentId);

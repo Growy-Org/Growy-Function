@@ -16,6 +16,10 @@ public class AssignmentService(
     # region Assignments
 
     // Read
+    public async Task<int> GetAssignmentsCount(Guid homeId, Guid? parentId, Guid? childId)
+    {
+        return await assignmentRepository.GetAssignmentsCount(homeId, parentId, childId);
+    }
     public async Task<Assignment> GetAssignmentById(Guid assignmentId)
     {
         logger.LogInformation($"Getting assignment by Id: {assignmentId}");

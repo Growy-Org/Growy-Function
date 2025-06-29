@@ -18,7 +18,65 @@ public class AssignmentController(
     # region Assignments
 
     // Read
+    
+    [Function("GetAssignmentCount")]
+    public async Task<IActionResult> GetAssignmentCount(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assignments/count")]
+        HttpRequest req, string id, [FromQuery] string? parentId, [FromQuery] string? childId)
+    {
+        if (!Guid.TryParse(id, out var homeId))
+        {
+            logger.LogWarning($"Invalid ID format: {id}");
+            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
 
+        // Parent Id Validation
+        Guid? parentIdGuid = null;
+        if (!string.IsNullOrEmpty(parentId))
+        {
+            if (Guid.TryParse(parentId, out var parentGuid))
+            {
+                parentIdGuid = parentGuid;
+                var parentHomeId = await parentService.GetHomeIdByParentId(parentGuid);
+                if (parentHomeId != homeId)
+                {
+                    return new BadRequestObjectResult($"parent {parentId} does not belongs to the home {homeId}");
+                }
+            }
+            else
+            {
+                logger.LogWarning($"Invalid Parent ID format: {parentId}");
+                return new BadRequestObjectResult($"Invalid parent ID format {parentId}. Please provide a valid GUID.");
+            }
+
+        }
+
+        // Parent Id Validation
+        Guid? childIdGuid = null;
+        if (!string.IsNullOrEmpty(childId))
+        {
+            if (Guid.TryParse(childId, out var childGuid))
+            {
+                childIdGuid = childGuid;
+                var childHomeId = await childService.GetHomeIdByChildId(childGuid);
+                if (childHomeId != homeId)
+                {
+                    return new BadRequestObjectResult($"childId {childId} does not belongs to the home {homeId}");
+                }
+            }
+            else
+            {
+                logger.LogWarning($"Invalid Child ID format: {childId}");
+                return new BadRequestObjectResult($"Invalid child ID format {childId}. Please provide a valid GUID.");
+            }
+        }
+        
+        return await authService.SecureExecute(req, homeId, async () =>
+        {
+            var res = await assignmentService.GetAssignmentsCount(homeId, parentIdGuid, childIdGuid);
+            return new OkObjectResult(res);
+        });
+    }
     [Function("GetAllAssignments")]
     public async Task<IActionResult> GetAllAssignments(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assignments")]

@@ -6,6 +6,8 @@ namespace Growy.Function.Repositories.Interfaces;
 
 public interface IAssignmentRepository
 {
+    
+    public Task<int> GetAssignmentsCount(Guid homeId, Guid? parentId, Guid? childId);
     public Task<Guid> GetHomeIdByAssignmentId(Guid assignmentId);
     public Task<Assignment> GetAssignmentById(Guid assignmentId);
 

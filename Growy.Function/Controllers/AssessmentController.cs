@@ -34,7 +34,6 @@ public class AssessmentController(
         });
     }
 
-    // Read
     [Function("GetDqAssessment")]
     public async Task<IActionResult> GetDqAssessment(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "assessment/dqreport/{id}")]

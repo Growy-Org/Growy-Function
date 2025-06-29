@@ -38,6 +38,19 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         return assignments.Single();
     }
 
+    public async Task<int> GetAssignmentsCount(Guid homeId, Guid? parentId, Guid? childId)
+    {
+        using var con = await connectionFactory.GetDBConnection();
+        var extraQuery = "";
+        if (parentId != null) extraQuery += "AND a.AssignerId = @ParentId ";
+        if (childId != null) extraQuery += "AND a.AssigneeId = @ChildId";
+        var query =
+            $"""
+                 SELECT COUNT(*) FROM {AssignmentsTable} WHERE HomeId = @HomeId {extraQuery};
+             """;
+        return await con.QuerySingleAsync<int>(query, new { HomeId = homeId, ChildId = childId, ParentId = parentId });
+    }
+
     public async Task<List<Assignment>> GetAllAssignments(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
         Guid? childId)
     {
