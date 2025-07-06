@@ -16,10 +16,12 @@ public class AssignmentService(
     # region Assignments
 
     // Read
-    public async Task<int> GetAssignmentsCount(Guid homeId, Guid? parentId, Guid? childId)
+    public async Task<int> GetAssignmentsCount(Guid homeId, Guid? parentId, Guid? childId,
+        bool showOnlyIncomplete = false)
     {
-        return await assignmentRepository.GetAssignmentsCount(homeId, parentId, childId);
+        return await assignmentRepository.GetAssignmentsCount(homeId, parentId, childId, showOnlyIncomplete);
     }
+
     public async Task<Assignment> GetAssignmentById(Guid assignmentId)
     {
         logger.LogInformation($"Getting assignment by Id: {assignmentId}");
@@ -46,10 +48,12 @@ public class AssignmentService(
     }
 
     public async Task<List<Assignment>> GetAllAssignments(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
-        Guid? childId)
+        Guid? childId, bool showOnlyIncomplete = false)
     {
         logger.LogInformation($"Getting all assignments");
-        var assignments = await assignmentRepository.GetAllAssignments(homeId, pageNumber, pageSize, parentId, childId);
+        var assignments =
+            await assignmentRepository.GetAllAssignments(homeId, pageNumber, pageSize, parentId, childId,
+                showOnlyIncomplete);
 
         foreach (var assignment in assignments)
         {

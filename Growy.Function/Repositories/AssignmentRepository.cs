@@ -38,26 +38,22 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         return assignments.Single();
     }
 
-    public async Task<int> GetAssignmentsCount(Guid homeId, Guid? parentId, Guid? childId)
+    public async Task<int> GetAssignmentsCount(Guid homeId, Guid? parentId, Guid? childId,
+        bool showOnlyIncomplete = false)
     {
         using var con = await connectionFactory.GetDBConnection();
-        var extraQuery = "";
-        if (parentId != null) extraQuery += "AND a.AssignerId = @ParentId ";
-        if (childId != null) extraQuery += "AND a.AssigneeId = @ChildId";
         var query =
             $"""
-                 SELECT COUNT(*) FROM {AssignmentsTable} WHERE HomeId = @HomeId {extraQuery};
+                 SELECT COUNT(*) FROM {AssignmentsTable} a WHERE a.HomeId = @HomeId {GetConditionQuery(parentId, childId, showOnlyIncomplete)};
              """;
         return await con.QuerySingleAsync<int>(query, new { HomeId = homeId, ChildId = childId, ParentId = parentId });
     }
 
     public async Task<List<Assignment>> GetAllAssignments(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
-        Guid? childId)
+        Guid? childId, bool showOnlyIncomplete = false)
     {
         using var con = await connectionFactory.GetDBConnection();
-        var extraQuery = "";
-        if (parentId != null) extraQuery += "AND a.AssignerId = @ParentId ";
-        if (childId != null) extraQuery += "AND a.AssigneeId = @ChildId";
+
         var query =
             $"""
                  SELECT *
@@ -65,13 +61,22 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
                  LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
                  LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
                  WHERE a.HomeId = @HomeId
-                 {extraQuery}
+                 {GetConditionQuery(parentId, childId, showOnlyIncomplete)}
                  ORDER BY a.CreatedDateUtc ASC
                  LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize} 
              """;
         var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel,
             new { HomeId = homeId, ChildId = childId, ParentId = parentId });
         return assignmentEntities.ToList();
+    }
+
+    private string GetConditionQuery(Guid? parentId, Guid? childId, bool showOnlyIncomplete)
+    {
+        var extraQuery = "";
+        if (parentId != null) extraQuery += "AND a.AssignerId = @ParentId ";
+        if (childId != null) extraQuery += "AND a.AssigneeId = @ChildId ";
+        if (showOnlyIncomplete) extraQuery += "AND a.CompletedDateUtc IS NULL";
+        return extraQuery;
     }
 
     public async Task<Guid> InsertAssignment(Guid homeId, AssignmentRequest request)

@@ -18,16 +18,22 @@ public class AssignmentController(
     # region Assignments
 
     // Read
-    
+
     [Function("GetAssignmentCount")]
     public async Task<IActionResult> GetAssignmentCount(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assignments/count")]
-        HttpRequest req, string id, [FromQuery] string? parentId, [FromQuery] string? childId)
+        HttpRequest req, string id, [FromQuery] string? parentId, [FromQuery] string? childId,
+        [FromQuery] string? showOnlyIncomplete)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        if (!bool.TryParse(showOnlyIncomplete, out var showOnlyIncompleteBool))
+        {
+            showOnlyIncompleteBool = false;
         }
 
         // Parent Id Validation
@@ -48,7 +54,6 @@ public class AssignmentController(
                 logger.LogWarning($"Invalid Parent ID format: {parentId}");
                 return new BadRequestObjectResult($"Invalid parent ID format {parentId}. Please provide a valid GUID.");
             }
-
         }
 
         // Parent Id Validation
@@ -70,23 +75,30 @@ public class AssignmentController(
                 return new BadRequestObjectResult($"Invalid child ID format {childId}. Please provide a valid GUID.");
             }
         }
-        
+
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var res = await assignmentService.GetAssignmentsCount(homeId, parentIdGuid, childIdGuid);
+            var res = await assignmentService.GetAssignmentsCount(homeId, parentIdGuid, childIdGuid,
+                showOnlyIncompleteBool);
             return new OkObjectResult(res);
         });
     }
+
     [Function("GetAllAssignments")]
     public async Task<IActionResult> GetAllAssignments(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assignments")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize,
-        [FromQuery] string? parentId, [FromQuery] string? childId)
+        [FromQuery] string? parentId, [FromQuery] string? childId, [FromQuery] string? showOnlyIncomplete)
     {
         if (!Guid.TryParse(id, out var homeId))
         {
             logger.LogWarning($"Invalid ID format: {id}");
             return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
+        }
+
+        if (!bool.TryParse(showOnlyIncomplete, out var showOnlyIncompleteBool))
+        {
+            showOnlyIncompleteBool = false;
         }
 
         // Parent Id Validation
@@ -107,7 +119,6 @@ public class AssignmentController(
                 logger.LogWarning($"Invalid Parent ID format: {parentId}");
                 return new BadRequestObjectResult($"Invalid parent ID format {parentId}. Please provide a valid GUID.");
             }
-
         }
 
         // Parent Id Validation
@@ -129,12 +140,13 @@ public class AssignmentController(
                 return new BadRequestObjectResult($"Invalid child ID format {childId}. Please provide a valid GUID.");
             }
         }
-        
+
         return await authService.SecureExecute(req, homeId, async () =>
         {
             var res = await assignmentService.GetAllAssignments(homeId,
                 pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE, parentIdGuid, childIdGuid);
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE, parentIdGuid, childIdGuid
+                , showOnlyIncompleteBool);
             return new OkObjectResult(res);
         });
     }
