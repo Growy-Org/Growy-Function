@@ -1,8 +1,8 @@
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
+using Growy.Function.Utils;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribute;
@@ -10,7 +10,6 @@ using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribut
 namespace Growy.Function.Controllers;
 
 public class AppUserController(
-    ILogger<AppUserController> logger,
     IAuthService authService)
 {
     private const string MsAuthIdp = "MS-AZURE-ENTRA";
@@ -20,11 +19,8 @@ public class AppUserController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secure-home-ping/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {

@@ -1,6 +1,7 @@
 using Growy.Function.Exceptions;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
+using Growy.Function.Utils;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
@@ -20,11 +21,8 @@ public class ChildController(
         HttpRequest req,
         string id, [FromBody] ChildRequest request)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -38,11 +36,8 @@ public class ChildController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "child/{id}")]
         HttpRequest req, string id, [FromBody] ChildRequest request)
     {
-        if (!Guid.TryParse(id, out var childId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, childId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await childService.GetHomeIdByChildId(childId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -57,11 +52,8 @@ public class ChildController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "child/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var childId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, childId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await childService.GetHomeIdByChildId(childId);
         return await authService.SecureExecute(req, homeId, async () =>

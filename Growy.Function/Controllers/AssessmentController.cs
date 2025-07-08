@@ -1,7 +1,7 @@
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
+using Growy.Function.Utils;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribute;
@@ -9,7 +9,6 @@ using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribut
 namespace Growy.Function.Controllers;
 
 public class AssessmentController(
-    ILogger<AssessmentController> logger,
     IAssessmentService assessmentService,
     IAuthService authService)
 {
@@ -19,11 +18,8 @@ public class AssessmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assessment/dqreports")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -39,11 +35,8 @@ public class AssessmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "assessment/dqreport/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var assessmentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, assessmentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assessmentService.GetHomeIdByDqAssessmentId(assessmentId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -58,11 +51,8 @@ public class AssessmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assessment/dqreports/count")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -77,11 +67,8 @@ public class AssessmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/assessment/dqreport")]
         HttpRequest req, string id, [FromBody] DevelopmentReportRequest request)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -96,11 +83,8 @@ public class AssessmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assessment/dqreport/{id}")]
         HttpRequest req, string id, [FromBody] DevelopmentReportRequest request)
     {
-        if (!Guid.TryParse(id, out var assessmentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, assessmentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assessmentService.GetHomeIdByDqAssessmentId(assessmentId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -116,11 +100,8 @@ public class AssessmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "assessment/dqreport/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var assessmentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, assessmentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assessmentService.GetHomeIdByDqAssessmentId(assessmentId);
         return await authService.SecureExecute(req, homeId, async () =>

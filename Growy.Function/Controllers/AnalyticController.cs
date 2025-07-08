@@ -1,13 +1,12 @@
 using Growy.Function.Services.Interfaces;
+using Growy.Function.Utils;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Growy.Function.Controllers;
 
 public class AnalyticController(
-    ILogger<AnalyticController> logger,
     IAnalyticService analyticService,
     IChildService childService,
     IAuthService authService
@@ -18,11 +17,8 @@ public class AnalyticController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/home/{id}")]
         HttpRequest req, string id, [FromQuery] int? year)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -31,33 +27,21 @@ public class AnalyticController(
         });
     }
 
-
     [Function("GetAnalyticsToOneChild")]
     public async Task<IActionResult> GetParentAnalytics(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/home/{id}/child/{childId}")]
         HttpRequest req, string id, string childId, [FromQuery] int? year)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
-        if (!Guid.TryParse(childId, out var childIdGuid))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
-
-        var homeIdFromChild = await childService.GetHomeIdByChildId(childIdGuid);
-        if (homeId != homeIdFromChild)
-        {
-            return new BadRequestObjectResult($"child id {childIdGuid} provided does not belong to the home {homeId}");
-        }
+        var (childErr, childIdGuid) = await childId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        if (childErr != string.Empty) return new BadRequestObjectResult(childErr);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var result = await analyticService.GetAllParentsToOneChildAnalyticLive(homeId, year, childIdGuid);
+            var result =
+                await analyticService.GetAllParentsToOneChildAnalyticLive(homeId, year, childIdGuid ?? Guid.Empty);
             return new OkObjectResult(result);
         });
     }

@@ -10,7 +10,6 @@ using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribut
 namespace Growy.Function.Controllers;
 
 public class AssignmentController(
-    ILogger<AssignmentController> logger,
     IAssignmentService assignmentService,
     IParentService parentService,
     IChildService childService,

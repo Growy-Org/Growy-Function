@@ -1,14 +1,13 @@
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
+using Growy.Function.Utils;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Growy.Function.Controllers;
 
 public class PenaltyController(
-    ILogger<PenaltyController> logger,
     IPenaltyService penaltyService,
     IParentService parentService,
     IChildService childService,
@@ -20,11 +19,8 @@ public class PenaltyController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "parent/{id}/penalties")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        if (!Guid.TryParse(id, out var parentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, parentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await parentService.GetHomeIdByParentId(parentId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -41,11 +37,8 @@ public class PenaltyController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "child/{id}/penalties")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        if (!Guid.TryParse(id, out var childId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, childId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await childService.GetHomeIdByChildId(childId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -62,11 +55,8 @@ public class PenaltyController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/penalties")]
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -82,11 +72,8 @@ public class PenaltyController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "penalty/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var penaltyId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, penaltyId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await penaltyService.GetHomeIdByPenaltyId(penaltyId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -102,11 +89,8 @@ public class PenaltyController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/penalty")]
         HttpRequest req, string id, [FromBody] PenaltyRequest penaltyRequest)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -121,11 +105,8 @@ public class PenaltyController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "penalty/{id}")]
         HttpRequest req, string id, [FromBody] PenaltyRequest request)
     {
-        if (!Guid.TryParse(id, out var penaltyId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, penaltyId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await penaltyService.GetHomeIdByPenaltyId(penaltyId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -141,11 +122,8 @@ public class PenaltyController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "penalty/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var penaltyId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, penaltyId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await penaltyService.GetHomeIdByPenaltyId(penaltyId);
         return await authService.SecureExecute(req, homeId, async () =>

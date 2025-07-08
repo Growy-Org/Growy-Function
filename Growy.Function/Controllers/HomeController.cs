@@ -2,6 +2,7 @@ using System.Security.Authentication;
 using Growy.Function.Exceptions;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
+using Growy.Function.Utils;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +12,6 @@ using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribut
 namespace Growy.Function.Controllers;
 
 public class HomeController(
-    ILogger<HomeController> logger,
     IHomeService homeService,
     IAuthService authService)
 {
@@ -22,11 +22,8 @@ public class HomeController(
         HttpRequest req,
         string id)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -76,11 +73,8 @@ public class HomeController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "home/{id}")]
         HttpRequest req, string id, [FromBody] HomeRequest request)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId,
             async () =>
@@ -97,11 +91,8 @@ public class HomeController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "home/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
