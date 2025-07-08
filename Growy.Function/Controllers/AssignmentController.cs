@@ -1,5 +1,6 @@
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
+using Growy.Function.Utils;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
@@ -25,11 +26,8 @@ public class AssignmentController(
         HttpRequest req, string id, [FromQuery] string? parentId, [FromQuery] string? childId,
         [FromQuery] string? showOnlyIncomplete)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         if (!bool.TryParse(showOnlyIncomplete, out var showOnlyIncompleteBool))
         {
@@ -37,44 +35,12 @@ public class AssignmentController(
         }
 
         // Parent Id Validation
-        Guid? parentIdGuid = null;
-        if (!string.IsNullOrEmpty(parentId))
-        {
-            if (Guid.TryParse(parentId, out var parentGuid))
-            {
-                parentIdGuid = parentGuid;
-                var parentHomeId = await parentService.GetHomeIdByParentId(parentGuid);
-                if (parentHomeId != homeId)
-                {
-                    return new BadRequestObjectResult($"parent {parentId} does not belongs to the home {homeId}");
-                }
-            }
-            else
-            {
-                logger.LogWarning($"Invalid Parent ID format: {parentId}");
-                return new BadRequestObjectResult($"Invalid parent ID format {parentId}. Please provide a valid GUID.");
-            }
-        }
+        var (parentIdErr, parentIdGuid) = await parentId.VerifyIdFromHome(homeId, parentService.GetHomeIdByParentId);
+        if (parentIdErr != string.Empty) return new BadRequestObjectResult(err);
 
-        // Parent Id Validation
-        Guid? childIdGuid = null;
-        if (!string.IsNullOrEmpty(childId))
-        {
-            if (Guid.TryParse(childId, out var childGuid))
-            {
-                childIdGuid = childGuid;
-                var childHomeId = await childService.GetHomeIdByChildId(childGuid);
-                if (childHomeId != homeId)
-                {
-                    return new BadRequestObjectResult($"childId {childId} does not belongs to the home {homeId}");
-                }
-            }
-            else
-            {
-                logger.LogWarning($"Invalid Child ID format: {childId}");
-                return new BadRequestObjectResult($"Invalid child ID format {childId}. Please provide a valid GUID.");
-            }
-        }
+        // Child Id Validation
+        var (childIdErr, childIdGuid) = await parentId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        if (childIdErr != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -90,11 +56,8 @@ public class AssignmentController(
         HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize,
         [FromQuery] string? parentId, [FromQuery] string? childId, [FromQuery] string? showOnlyIncomplete)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         if (!bool.TryParse(showOnlyIncomplete, out var showOnlyIncompleteBool))
         {
@@ -102,44 +65,12 @@ public class AssignmentController(
         }
 
         // Parent Id Validation
-        Guid? parentIdGuid = null;
-        if (!string.IsNullOrEmpty(parentId))
-        {
-            if (Guid.TryParse(parentId, out var parentGuid))
-            {
-                parentIdGuid = parentGuid;
-                var parentHomeId = await parentService.GetHomeIdByParentId(parentGuid);
-                if (parentHomeId != homeId)
-                {
-                    return new BadRequestObjectResult($"parent {parentId} does not belongs to the home {homeId}");
-                }
-            }
-            else
-            {
-                logger.LogWarning($"Invalid Parent ID format: {parentId}");
-                return new BadRequestObjectResult($"Invalid parent ID format {parentId}. Please provide a valid GUID.");
-            }
-        }
+        var (parentIdErr, parentIdGuid) = await parentId.VerifyIdFromHome(homeId, parentService.GetHomeIdByParentId);
+        if (parentIdErr != string.Empty) return new BadRequestObjectResult(err);
 
-        // Parent Id Validation
-        Guid? childIdGuid = null;
-        if (!string.IsNullOrEmpty(childId))
-        {
-            if (Guid.TryParse(childId, out var childGuid))
-            {
-                childIdGuid = childGuid;
-                var childHomeId = await childService.GetHomeIdByChildId(childGuid);
-                if (childHomeId != homeId)
-                {
-                    return new BadRequestObjectResult($"childId {childId} does not belongs to the home {homeId}");
-                }
-            }
-            else
-            {
-                logger.LogWarning($"Invalid Child ID format: {childId}");
-                return new BadRequestObjectResult($"Invalid child ID format {childId}. Please provide a valid GUID.");
-            }
-        }
+        // Child Id Validation
+        var (childIdErr, childIdGuid) = await parentId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        if (childIdErr != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -156,11 +87,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "assignment/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var assignmentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, assignmentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -176,11 +104,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/assignment")]
         HttpRequest req, string id, [FromBody] AssignmentRequest assignmentRequest)
     {
-        if (!Guid.TryParse(id, out var homeId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, homeId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -195,11 +120,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment/{id}")]
         HttpRequest req, string id, [FromBody] AssignmentRequest request)
     {
-        if (!Guid.TryParse(id, out var assignmentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, assignmentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -214,11 +136,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment/{id}/complete")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var assignmentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, assignmentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -233,11 +152,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment/{id}/incomplete")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var assignmentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, assignmentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -253,11 +169,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "assignment/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var assignmentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, assignmentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -277,11 +190,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "assignment/{id}/step")]
         HttpRequest req, string id, [FromBody] StepRequest stepRequest)
     {
-        if (!Guid.TryParse(id, out var assignmentId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, assignmentId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -297,11 +207,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step/{id}")]
         HttpRequest req, string id, [FromBody] StepRequest request)
     {
-        if (!Guid.TryParse(id, out var stepId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, stepId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByStepId(stepId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -316,11 +223,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step/{id}/complete")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var stepId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, stepId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByStepId(stepId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -335,11 +239,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step/{id}/incomplete")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var stepId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, stepId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByStepId(stepId);
         return await authService.SecureExecute(req, homeId, async () =>
@@ -355,11 +256,8 @@ public class AssignmentController(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "step/{id}")]
         HttpRequest req, string id)
     {
-        if (!Guid.TryParse(id, out var stepId))
-        {
-            logger.LogWarning($"Invalid ID format: {id}");
-            return new BadRequestObjectResult("Invalid ID format. Please provide a valid GUID.");
-        }
+        var (err, stepId) = id.VerifyId();
+        if (err != string.Empty) return new BadRequestObjectResult(err);
 
         var homeId = await assignmentService.GetHomeIdByStepId(stepId);
         return await authService.SecureExecute(req, homeId, async () =>
