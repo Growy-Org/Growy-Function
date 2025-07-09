@@ -7,10 +7,11 @@ namespace Growy.Function.Repositories.Interfaces;
 public interface IAchievementRepository
 {
     public Task<Guid> GetHomeIdByAchievementId(Guid achievementId);
-    public Task<List<Achievement>> GetAllAchievementsByHomeId(Guid homeId, int pageNumber, int pageSize);
-    public Task<Achievement> GetAchievementById(Guid achievementId);
-    public Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId, int pageNumber, int pageSize);
-    public Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId, int pageNumber, int pageSize);
+    public Task<int> GetAchievementsCount(Guid homeId, Guid? parentId, Guid? childId, bool showOnlyNotAchieved = false);
+
+    public Task<List<Achievement>> GetAllAchievements(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId, bool showOnlyNotAchieved = false);
+
     public Task<Guid> InsertAchievement(Guid homeId, AchievementRequest request);
     public Task<Guid> EditAchievementByAchievementId(Guid achievementId, AchievementRequest request);
 

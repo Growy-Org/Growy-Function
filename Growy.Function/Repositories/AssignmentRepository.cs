@@ -23,21 +23,6 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         return await con.QuerySingleAsync<Guid>(query, new { Id = assignmentId });
     }
 
-    public async Task<Assignment> GetAssignmentById(Guid assignmentId)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                 SELECT *
-                 FROM {AssignmentsTable} a
-                 LEFT JOIN {ChildrenTable} c ON a.AssigneeId = c.Id
-                 LEFT JOIN {ParentTable} p ON a.AssignerId = p.Id
-                 WHERE a.Id = @Id
-             """;
-        var assignments = await con.QueryAsync(query, _mapEntitiesToAssignmentModel, new { Id = assignmentId });
-        return assignments.Single();
-    }
-
     public async Task<int> GetAssignmentsCount(Guid homeId, Guid? parentId, Guid? childId,
         bool showOnlyIncomplete = false)
     {
@@ -68,15 +53,6 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         var assignmentEntities = await con.QueryAsync(query, _mapEntitiesToAssignmentModel,
             new { HomeId = homeId, ChildId = childId, ParentId = parentId });
         return assignmentEntities.ToList();
-    }
-
-    private string GetConditionQuery(Guid? parentId, Guid? childId, bool showOnlyIncomplete)
-    {
-        var extraQuery = "";
-        if (parentId != null) extraQuery += "AND a.AssignerId = @ParentId ";
-        if (childId != null) extraQuery += "AND a.AssigneeId = @ChildId ";
-        if (showOnlyIncomplete) extraQuery += "AND a.CompletedDateUtc IS NULL";
-        return extraQuery;
     }
 
     public async Task<Guid> InsertAssignment(Guid homeId, AssignmentRequest request)
@@ -121,6 +97,15 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         using var con = await connectionFactory.GetDBConnection();
         var query = $"DELETE FROM {AssignmentsTable} WHERE Id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = assignmentId });
+    }
+
+    private string GetConditionQuery(Guid? parentId, Guid? childId, bool showOnlyIncomplete)
+    {
+        var extraQuery = "";
+        if (parentId != null) extraQuery += "AND a.AssignerId = @ParentId ";
+        if (childId != null) extraQuery += "AND a.AssigneeId = @ChildId ";
+        if (showOnlyIncomplete) extraQuery += "AND a.CompletedDateUtc IS NULL";
+        return extraQuery;
     }
 
     private readonly Func<AssignmentEntity, ChildEntity, ParentEntity, Assignment> _mapEntitiesToAssignmentModel =

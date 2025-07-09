@@ -22,20 +22,6 @@ public class AssignmentService(
         return await assignmentRepository.GetAssignmentsCount(homeId, parentId, childId, showOnlyIncomplete);
     }
 
-    public async Task<Assignment> GetAssignmentById(Guid assignmentId)
-    {
-        logger.LogInformation($"Getting assignment by Id: {assignmentId}");
-        var assignment = await assignmentRepository.GetAssignmentById(assignmentId);
-
-        logger.LogInformation($"Getting Steps Info with assignment: {assignment.Id}");
-        var steps = await stepRepository.GetAllStepsByAssignmentId(assignment.Id);
-        assignment.SetSteps(steps);
-
-        logger.LogInformation(
-            $"Successfully getting assignment by Id: {assignment.Id}");
-        return assignment;
-    }
-
     public async Task<Guid> GetHomeIdByAssignmentId(Guid assignmentId)
     {
         return await assignmentRepository.GetHomeIdByAssignmentId(assignmentId);
@@ -50,7 +36,7 @@ public class AssignmentService(
     public async Task<List<Assignment>> GetAllAssignments(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
         Guid? childId, bool showOnlyIncomplete = false)
     {
-        logger.LogInformation($"Getting all assignments");
+        logger.LogInformation("Getting all assignments");
         var assignments =
             await assignmentRepository.GetAllAssignments(homeId, pageNumber, pageSize, parentId, childId,
                 showOnlyIncomplete);

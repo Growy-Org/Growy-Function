@@ -15,46 +15,28 @@ public class AchievementService(
     #region Achievements
 
     // Read
+    public async Task<int> GetAchievementsCount(Guid homeId, Guid? parentId, Guid? childId,
+        bool showOnlyNotAchieved = false)
+    {
+        return await achievementRepository.GetAchievementsCount(homeId, parentId, childId, showOnlyNotAchieved);
+    }
+
+    public async Task<List<Achievement>> GetAllAchievements(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId,
+        bool showOnlyNotAchieved = false)
+    {
+        logger.LogInformation("Getting all achievements");
+        var achievements =
+            await achievementRepository.GetAllAchievements(homeId, pageNumber, pageSize, parentId, childId,
+                showOnlyNotAchieved);
+        logger.LogInformation(
+            $"Successfully getting all achievements by Home : {homeId}");
+        return achievements;
+    }
+
     public Task<Guid> GetHomeIdByAchievementId(Guid achievementId)
     {
         return achievementRepository.GetHomeIdByAchievementId(achievementId);
-    }
-    
-    public async Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all achievements by Parent: {parentId}");
-        var achievements = await achievementRepository.GetAllAchievementsByParentId(parentId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all achievements by Parent : {parentId}");
-        return achievements;
-    }
-
-    public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all achievements by ChildId: {childId}");
-        var achievements = await achievementRepository.GetAllAchievementsByChildId(childId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all achievements by ChildId : {childId}");
-        return achievements;
-    }
-
-    public async Task<List<Achievement>> GetAllAchievementsByHomeId(Guid homeId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all achievements by HomeId: {homeId}");
-        var achievements = await achievementRepository.GetAllAchievementsByHomeId(homeId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all achievements by HomeId : {homeId}");
-        return achievements;
-    }
-
-    public async Task<Achievement> GetAchievementById(Guid achievementId)
-    {
-        logger.LogInformation($"Getting achievement by Id: {achievementId}");
-        var achievement = await achievementRepository.GetAchievementById(achievementId);
-
-        logger.LogInformation(
-            $"Successfully getting achievement by Id: {achievement.Id}");
-        return achievement;
     }
 
     // Create

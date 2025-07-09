@@ -10,8 +10,8 @@ namespace Growy.Function.Repositories;
 public class AchievementRepository(IConnectionFactory connectionFactory) : IAchievementRepository
 {
     private const string AchievementsTable = "inventory.achievements";
-    public const string ChildrenTable = "inventory.children";
-    public const string ParentTable = "inventory.parents";
+    private const string ChildrenTable = "inventory.children";
+    private const string ParentTable = "inventory.parents";
 
     public async Task<Guid> GetHomeIdByAchievementId(Guid achievementId)
     {
@@ -23,22 +23,20 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
         return await con.QuerySingleAsync<Guid>(query, new { Id = achievementId });
     }
 
-    public async Task<Achievement> GetAchievementById(Guid achievementId)
+    public async Task<int> GetAchievementsCount(Guid homeId, Guid? parentId, Guid? childId,
+        bool showOnlyNotAchieved = false)
     {
         using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
-                 SELECT *
-                 FROM {AchievementsTable} a
-                 LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
-                 LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
-                 WHERE a.Id = @Id
+                 SELECT COUNT(*) FROM {AchievementsTable} a WHERE a.HomeId = @HomeId {GetConditionQuery(parentId, childId, showOnlyNotAchieved)};
              """;
-        var achievements = await con.QueryAsync(query, _mapEntitiesToAchievementModel, new { Id = achievementId });
-        return achievements.Single();
+        return await con.QuerySingleAsync<int>(query, new { HomeId = homeId, ChildId = childId, ParentId = parentId });
     }
 
-    public async Task<List<Achievement>> GetAllAchievementsByHomeId(Guid homeId, int pageNumber, int pageSize)
+    public async Task<List<Achievement>> GetAllAchievements(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId,
+        bool showOnlyNotAchieved = false)
     {
         using var con = await connectionFactory.GetDBConnection();
         var query =
@@ -48,56 +46,16 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
                  LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
                  LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
                  WHERE a.HomeId = @HomeId
+                 {GetConditionQuery(parentId, childId, showOnlyNotAchieved)}
                  ORDER BY a.CreatedDateUtc ASC
                  LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var achievements =
             await con.QueryAsync(query, _mapEntitiesToAchievementModel,
-                new { HomeId = homeId });
+                new { HomeId = homeId, ChildId = childId, ParentId = parentId });
         return achievements.ToList();
     }
-
-    public async Task<List<Achievement>> GetAllAchievementsByParentId(Guid parentId, int pageNumber, int pageSize)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                 SELECT *
-                 FROM {AchievementsTable} a
-                 LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
-                 LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
-                 WHERE a.VisionaryId = @VisionaryId
-                 ORDER BY a.CreatedDateUtc ASC
-                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
-             """;
-
-        var achievements =
-            await con.QueryAsync(query, _mapEntitiesToAchievementModel,
-                new { VisionaryId = parentId });
-        return achievements.ToList();
-    }
-
-    public async Task<List<Achievement>> GetAllAchievementsByChildId(Guid childId, int pageNumber, int pageSize)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                 SELECT *
-                 FROM {AchievementsTable} a
-                 LEFT JOIN {ChildrenTable} c ON a.AchieverId = c.Id
-                 LEFT JOIN {ParentTable} p ON a.VisionaryId = p.Id
-                 WHERE a.AchieverId = @AchieverId
-                 ORDER BY a.CreatedDateUtc ASC
-                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
-             """;
-
-        var achievements =
-            await con.QueryAsync(query, _mapEntitiesToAchievementModel,
-                new { AchieverId = childId });
-        return achievements.ToList();
-    }
-
 
     public async Task<Guid> InsertAchievement(Guid homeId, AchievementRequest request)
     {
@@ -143,6 +101,15 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
         using var con = await connectionFactory.GetDBConnection();
         var query = $"DELETE FROM {AchievementsTable} where id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = achievementId });
+    }
+
+    private string GetConditionQuery(Guid? parentId, Guid? childId, bool showOnlyNotAchieved)
+    {
+        var extraQuery = "";
+        if (parentId != null) extraQuery += "AND a.VisionaryId = @ParentId ";
+        if (childId != null) extraQuery += "AND a.AchieverId = @ChildId ";
+        if (showOnlyNotAchieved) extraQuery += "AND a.AchievedDateUtc IS NULL";
+        return extraQuery;
     }
 
     private readonly Func<AchievementEntity, ChildEntity, ParentEntity, Achievement> _mapEntitiesToAchievementModel =

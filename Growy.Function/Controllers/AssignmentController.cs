@@ -2,7 +2,6 @@ using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
 using Growy.Function.Utils;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribute;
@@ -18,7 +17,6 @@ public class AssignmentController(
     # region Assignments
 
     // Read
-
     [Function("GetAssignmentCount")]
     public async Task<IActionResult> GetAssignmentCount(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/assignments/count")]
@@ -77,22 +75,6 @@ public class AssignmentController(
                 pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
                 pageSize ?? Constants.DEFAULT_PAGE_SIZE, parentIdGuid, childIdGuid
                 , showOnlyIncompleteBool);
-            return new OkObjectResult(res);
-        });
-    }
-
-    [Function("GetAssignmentById")]
-    public async Task<IActionResult> GetAssignmentById(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "assignment/{id}")]
-        HttpRequest req, string id)
-    {
-        var (err, assignmentId) = id.VerifyId();
-        if (err != string.Empty) return new BadRequestObjectResult(err);
-
-        var homeId = await assignmentService.GetHomeIdByAssignmentId(assignmentId);
-        return await authService.SecureExecute(req, homeId, async () =>
-        {
-            var res = await assignmentService.GetAssignmentById(assignmentId);
             return new OkObjectResult(res);
         });
     }

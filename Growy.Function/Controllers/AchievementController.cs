@@ -14,71 +14,64 @@ public class AchievementController(
     IAuthService authService)
 {
     // Read
-    [Function("GetAllAchievementsByParent")]
-    public async Task<IActionResult> GetAllAchievementsByParent(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "parent/{id}/achievements")]
-        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
-    {
-        var (err, parentId) = id.VerifyId();
-        if (err != string.Empty) return new BadRequestObjectResult(err);
-
-        var homeId = await parentService.GetHomeIdByParentId(parentId);
-        return await authService.SecureExecute(req, homeId, async () =>
-        {
-            var res = await achievementService.GetAllAchievementsByParentId(parentId,
-                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-            return new OkObjectResult(res);
-        });
-    }
-
-    [Function("GetAllAchievementsByChild")]
-    public async Task<IActionResult> GetAllAchievementsByChild(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "child/{id}/achievements")]
-        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
-    {
-        var (err, childId) = id.VerifyId();
-        if (err != string.Empty) return new BadRequestObjectResult(err);
-
-        var homeId = await childService.GetHomeIdByChildId(childId);
-        return await authService.SecureExecute(req, homeId, async () =>
-        {
-            var res = await achievementService.GetAllAchievementsByChildId(childId,
-                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-            return new OkObjectResult(res);
-        });
-    }
-
-    [Function("GetAllAchievementsByHome")]
-    public async Task<IActionResult> GetAllAchievementsByHome(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/achievements")]
-        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    [Function("GetAchievementsCount")]
+    public async Task<IActionResult> GetAchievementsCount(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/achievements/count")]
+        HttpRequest req, string id, [FromQuery] string? parentId, [FromQuery] string? childId,
+        [FromQuery] string? showOnlyNotAchieved)
     {
         var (err, homeId) = id.VerifyId();
         if (err != string.Empty) return new BadRequestObjectResult(err);
 
+        if (!bool.TryParse(showOnlyNotAchieved, out var showOnlyNotAchievedBool))
+        {
+            showOnlyNotAchievedBool = false;
+        }
+
+        // Parent Id Validation
+        var (parentIdErr, parentIdGuid) = await parentId.VerifyIdFromHome(homeId, parentService.GetHomeIdByParentId);
+        if (parentIdErr != string.Empty) return new BadRequestObjectResult(err);
+
+        // Child Id Validation
+        var (childIdErr, childIdGuid) = await parentId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        if (childIdErr != string.Empty) return new BadRequestObjectResult(err);
+
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var res = await achievementService.GetAllAchievementsByHomeId(homeId,
-                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            var res = await achievementService.GetAchievementsCount(homeId, parentIdGuid, childIdGuid,
+                showOnlyNotAchievedBool);
             return new OkObjectResult(res);
         });
     }
 
-    [Function("GetAchievementById")]
-    public async Task<IActionResult> GetAchievementById(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "achievement/{id}")]
-        HttpRequest req, string id)
+    [Function("GetAllAchievements")]
+    public async Task<IActionResult> GetAllAchievements(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/achievements")]
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize,
+        [FromQuery] string? parentId, [FromQuery] string? childId, [FromQuery] string? showOnlyNotAchieved)
     {
-        var (err, achievementId) = id.VerifyId();
+        var (err, homeId) = id.VerifyId();
         if (err != string.Empty) return new BadRequestObjectResult(err);
 
-        var homeId = await achievementService.GetHomeIdByAchievementId(achievementId);
+        if (!bool.TryParse(showOnlyNotAchieved, out var showOnlyNotAchievedBool))
+        {
+            showOnlyNotAchievedBool = false;
+        }
+
+        // Parent Id Validation
+        var (parentIdErr, parentIdGuid) = await parentId.VerifyIdFromHome(homeId, parentService.GetHomeIdByParentId);
+        if (parentIdErr != string.Empty) return new BadRequestObjectResult(err);
+
+        // Child Id Validation
+        var (childIdErr, childIdGuid) = await parentId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        if (childIdErr != string.Empty) return new BadRequestObjectResult(err);
+
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var res = await achievementService.GetAchievementById(achievementId);
+            var res = await achievementService.GetAllAchievements(homeId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE, parentIdGuid, childIdGuid
+                , showOnlyNotAchievedBool);
             return new OkObjectResult(res);
         });
     }
