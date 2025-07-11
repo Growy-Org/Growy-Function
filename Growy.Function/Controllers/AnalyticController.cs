@@ -35,7 +35,7 @@ public class AnalyticController(
         var (err, homeId) = id.VerifyId();
         if (err != string.Empty) return new BadRequestObjectResult(err);
 
-        var (childErr, childIdGuid) = await childId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        var (childErr, childIdGuid) = await childId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId, true);
         if (childErr != string.Empty) return new BadRequestObjectResult(childErr);
 
         return await authService.SecureExecute(req, homeId, async () =>

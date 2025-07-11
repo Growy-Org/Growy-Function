@@ -5,7 +5,7 @@ namespace Growy.Function.Utils;
 public static class ValidatorExtension
 {
     public static async Task<(string errorMessage, Guid? okResult)> VerifyIdFromHome(this string? id, Guid homeId,
-        Func<Guid, Task<Guid>> retrieveHomeFunc, bool ensureIdExist = true)
+        Func<Guid, Task<Guid>> retrieveHomeFunc, bool ensureIdExist = false)
     {
         if (string.IsNullOrEmpty(id))
         {

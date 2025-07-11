@@ -33,11 +33,11 @@ public class AssignmentController(
 
         // Parent Id Validation
         var (parentIdErr, parentIdGuid) = await parentId.VerifyIdFromHome(homeId, parentService.GetHomeIdByParentId);
-        if (parentIdErr != string.Empty) return new BadRequestObjectResult(err);
+        if (parentIdErr != string.Empty) return new BadRequestObjectResult(parentIdErr);
 
         // Child Id Validation
         var (childIdErr, childIdGuid) = await parentId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
-        if (childIdErr != string.Empty) return new BadRequestObjectResult(err);
+        if (childIdErr != string.Empty) return new BadRequestObjectResult(childIdErr);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
@@ -63,11 +63,11 @@ public class AssignmentController(
 
         // Parent Id Validation
         var (parentIdErr, parentIdGuid) = await parentId.VerifyIdFromHome(homeId, parentService.GetHomeIdByParentId);
-        if (parentIdErr != string.Empty) return new BadRequestObjectResult(err);
+        if (parentIdErr != string.Empty) return new BadRequestObjectResult(parentIdErr);
 
         // Child Id Validation
         var (childIdErr, childIdGuid) = await parentId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
-        if (childIdErr != string.Empty) return new BadRequestObjectResult(err);
+        if (childIdErr != string.Empty) return new BadRequestObjectResult(childIdErr);
 
         return await authService.SecureExecute(req, homeId, async () =>
         {
