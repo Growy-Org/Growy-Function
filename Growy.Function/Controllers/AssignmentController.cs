@@ -81,7 +81,7 @@ public class AssignmentController(
 
     // Create
     [Function("CreateAssignment")]
-    public async Task<IActionResult> CreateAssignmentToHome(
+    public async Task<IActionResult> CreateAssignment(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/assignment")]
         HttpRequest req, string id, [FromBody] AssignmentRequest assignmentRequest)
     {
