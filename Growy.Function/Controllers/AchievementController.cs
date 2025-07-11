@@ -33,7 +33,7 @@ public class AchievementController(
         if (parentIdErr != string.Empty) return new BadRequestObjectResult(parentIdErr);
 
         // Child Id Validation
-        var (childIdErr, childIdGuid) = await parentId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        var (childIdErr, childIdGuid) = await childId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
         if (childIdErr != string.Empty) return new BadRequestObjectResult(childIdErr);
 
         return await authService.SecureExecute(req, homeId, async () =>
@@ -63,7 +63,7 @@ public class AchievementController(
         if (parentIdErr != string.Empty) return new BadRequestObjectResult(parentIdErr);
 
         // Child Id Validation
-        var (childIdErr, childIdGuid) = await parentId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        var (childIdErr, childIdGuid) = await childId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
         if (childIdErr != string.Empty) return new BadRequestObjectResult(childIdErr);
 
         return await authService.SecureExecute(req, homeId, async () =>
