@@ -13,21 +13,6 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
     private const string ChildrenTable = "inventory.children";
     private const string ParentTable = "inventory.parents";
 
-    public async Task<Penalty> GetPenaltyById(Guid penaltyId)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                 SELECT *
-                 FROM {PenaltyTable} a
-                 LEFT JOIN {ChildrenTable} c ON a.ViolatorId = c.Id
-                 LEFT JOIN {ParentTable} p ON a.EnforcerId = p.Id
-                 WHERE a.Id = @Id
-             """;
-        var penalties = await con.QueryAsync(query, _mapEntitiesToPenaltyModel, new { Id = penaltyId });
-        return penalties.Single();
-    }
-
     public async Task<Guid> GetHomeIdByPenaltyId(Guid penaltyId)
     {
         using var con = await connectionFactory.GetDBConnection();
@@ -38,7 +23,18 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         return await con.QuerySingleAsync<Guid>(query, new { Id = penaltyId });
     }
 
-    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize)
+    public async Task<int> GetPenaltiesCount(Guid homeId, Guid? parentId, Guid? childId)
+    {
+        using var con = await connectionFactory.GetDBConnection();
+        var query =
+            $"""
+                 SELECT COUNT(*) FROM {PenaltyTable} penalty WHERE penalty.HomeId = @HomeId {GetConditionQuery(parentId, childId)};
+             """;
+        return await con.QuerySingleAsync<int>(query, new { HomeId = homeId, ChildId = childId, ParentId = parentId });
+    }
+
+    public async Task<List<Penalty>> GetAllPenalties(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId)
     {
         using var con = await connectionFactory.GetDBConnection();
         var query =
@@ -48,6 +44,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
                 LEFT JOIN {ChildrenTable} c ON penalty.ViolatorId = c.Id
                 LEFT JOIN {ParentTable} p ON penalty.EnforcerId = p.Id
                 WHERE penalty.HomeId = @HomeId
+                {GetConditionQuery(parentId, childId)}
                 ORDER BY p.CreatedDateUtc ASC
                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
@@ -58,45 +55,6 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         return penaltyEntities.ToList();
     }
 
-    public async Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId, int pageNumber, int pageSize)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                SELECT *
-                FROM {PenaltyTable} penalty
-                LEFT JOIN {ChildrenTable} c ON penalty.ViolatorId = c.Id
-                LEFT JOIN {ParentTable} p ON penalty.EnforcerId = p.Id
-                WHERE penalty.EnforcerId = @EnforcerId
-                ORDER BY p.CreatedDateUtc ASC
-                LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
-             """;
-
-        var penaltyEntities =
-            await con.QueryAsync(query, _mapEntitiesToPenaltyModel,
-                new { Enforcerid = parentId });
-        return penaltyEntities.ToList();
-    }
-
-    public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId, int pageNumber, int pageSize)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                SELECT *
-                FROM {PenaltyTable} penalty
-                LEFT JOIN {ChildrenTable} c ON penalty.ViolatorId = c.Id
-                LEFT JOIN {ParentTable} p ON penalty.EnforcerId = p.Id
-                WHERE penalty.ViolatorId = @ViolatorId
-                ORDER BY p.CreatedDateUtc ASC
-                LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
-             """;
-
-        var penaltyEntities =
-            await con.QueryAsync(query, _mapEntitiesToPenaltyModel,
-                new { ViolatorId = childId });
-        return penaltyEntities.ToList();
-    }
 
     public async Task<CreatePenaltyEntityResponse> InsertPenalty(Guid homeId, PenaltyRequest request)
     {
@@ -136,6 +94,14 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         var query =
             $"DELETE FROM {PenaltyTable} where id = @Id RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id;";
         return await con.QuerySingleAsync<DeletePenaltyEntityResponse>(query, new { Id = penaltyId });
+    }
+
+    private string GetConditionQuery(Guid? parentId, Guid? childId)
+    {
+        var extraQuery = "";
+        if (parentId != null) extraQuery += "AND penalty.EnforcerId = @ParentId ";
+        if (childId != null) extraQuery += "AND penalty.ViolatorId = @ChildId ";
+        return extraQuery;
     }
 
     private readonly Func<PenaltyEntity, ChildEntity, ParentEntity, Penalty> _mapEntitiesToPenaltyModel =

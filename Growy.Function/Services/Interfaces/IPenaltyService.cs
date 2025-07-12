@@ -6,10 +6,11 @@ namespace Growy.Function.Services.Interfaces;
 public interface IPenaltyService
 {
     // Read
-    public Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId, int pageNumber, int pageSize);
-    public Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId, int pageNumber, int pageSize);
-    public Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize);
-    public Task<Penalty> GetPenaltyById(Guid penaltyId);
+    public Task<int> GetPenaltiesCount(Guid homeId, Guid? parentId, Guid? childId);
+
+    public Task<List<Penalty>> GetAllPenalties(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId);
+
     public Task<Guid> GetHomeIdByPenaltyId(Guid penaltyId);
 
     // Create

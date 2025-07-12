@@ -15,48 +15,30 @@ public class WishService(
     # region Wishes
 
     // Read
+    public async Task<int> GetWishesCount(Guid homeId, Guid? parentId, Guid? childId,
+        bool showOnlyNotFulfilled = false)
+    {
+        return await wishRepository.GetWishesCount(homeId, parentId, childId, showOnlyNotFulfilled);
+    }
+
+    public async Task<List<Wish>> GetAllWishes(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId,
+        bool showOnlyNotFulfilled = false)
+    {
+        logger.LogInformation("Getting all achievements");
+        var wishes =
+            await wishRepository.GetAllWishes(homeId, pageNumber, pageSize, parentId, childId,
+                showOnlyNotFulfilled);
+        logger.LogInformation(
+            $"Successfully getting all achievements by Home : {homeId}");
+        return wishes;
+    }
 
     public Task<Guid> GetHomeIdByWishId(Guid wishId)
     {
         return wishRepository.GetHomeIdByWishId(wishId);
     }
 
-    public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all wishes by Parent: {parentId}");
-        var wishes = await wishRepository.GetAllWishesByParentId(parentId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all wishes by Parent : {parentId}");
-        return wishes;
-    }
-
-    public async Task<List<Wish>> GetAllWishesByChildId(Guid childId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all wishes by ChildId: {childId}");
-        var wishes = await wishRepository.GetAllWishesByChildId(childId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all wishes by ChildId : {childId}");
-        return wishes;
-    }
-
-    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all wishes by Home: {homeId}");
-        var wishes = await wishRepository.GetAllWishesByHomeId(homeId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all wishes by Home : {homeId}");
-        return wishes;
-    }
-
-    public async Task<Wish> GetWishById(Guid wishId)
-    {
-        logger.LogInformation($"Getting wish by Id: {wishId}");
-        var wish = await wishRepository.GetWishById(wishId);
-
-        logger.LogInformation(
-            $"Successfully getting wish by Id: {wish.Id}");
-        return wish;
-    }
 
     // Create
     public async Task<Guid> CreateWish(Guid homeId, WishRequest wish)

@@ -15,46 +15,24 @@ public class PenaltyService(
     #region Penalties
 
     // Read
+    public async Task<int> GetPenaltiesCount(Guid homeId, Guid? parentId, Guid? childId)
+    {
+        return await penaltyRepository.GetPenaltiesCount(homeId, parentId, childId);
+    }
+
+    public async Task<List<Penalty>> GetAllPenalties(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId)
+    {
+        logger.LogInformation($"Getting all penalties by Home: {homeId}");
+        var penalties = await penaltyRepository.GetAllPenalties(homeId, pageNumber, pageSize, parentId, childId);
+        logger.LogInformation(
+            $"Successfully getting all penalties by Home : {homeId}");
+        return penalties;
+    }
+
     public async Task<Guid> GetHomeIdByPenaltyId(Guid penaltyId)
     {
         return await penaltyRepository.GetHomeIdByPenaltyId(penaltyId);
-    }
-
-    public async Task<List<Penalty>> GetAllPenaltiesByParentId(Guid parentId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all penalties by Parent: {parentId}");
-        var penalties = await penaltyRepository.GetAllPenaltiesByParentId(parentId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all penalties by Parent : {parentId}");
-        return penalties;
-    }
-
-    public async Task<List<Penalty>> GetAllPenaltiesByChildId(Guid childId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all penalties by ChildId: {childId}");
-        var penalties = await penaltyRepository.GetAllPenaltiesByChildId(childId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all penalties by ChildId : {childId}");
-        return penalties;
-    }
-
-    public async Task<List<Penalty>> GetAllPenaltiesByHomeId(Guid homeId, int pageNumber, int pageSize)
-    {
-        logger.LogInformation($"Getting all penalties by HomeId: {homeId}");
-        var penalties = await penaltyRepository.GetAllPenaltiesByHomeId(homeId, pageNumber, pageSize);
-        logger.LogInformation(
-            $"Successfully getting all penalties by HomeId : {homeId}");
-        return penalties;
-    }
-
-    public async Task<Penalty> GetPenaltyById(Guid penaltyId)
-    {
-        logger.LogInformation($"Getting penalty by Id: {penaltyId}");
-        var penalty = await penaltyRepository.GetPenaltyById(penaltyId);
-
-        logger.LogInformation(
-            $"Successfully getting penalty by Id: {penalty.Id}");
-        return penalty;
     }
 
     // Create

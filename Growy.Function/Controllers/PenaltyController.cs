@@ -15,71 +15,51 @@ public class PenaltyController(
     IAuthService authService)
 {
     // Read
-    [Function("GetAllPenaltiesByParent")]
-    public async Task<IActionResult> GetAllPenaltiesByParent(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "parent/{id}/penalties")]
-        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
-    {
-        var (err, parentId) = id.VerifyId();
-        if (err != string.Empty) return new BadRequestObjectResult(err);
-
-        var homeId = await parentService.GetHomeIdByParentId(parentId);
-        return await authService.SecureExecute(req, homeId, async () =>
-        {
-            var res = await penaltyService.GetAllPenaltiesByParentId(homeId,
-                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-            return new OkObjectResult(res);
-        });
-    }
-
-    [Function("GetAllPenaltiesByChild")]
-    public async Task<IActionResult> GetAlPenaltiesByChild(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "child/{id}/penalties")]
-        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
-    {
-        var (err, childId) = id.VerifyId();
-        if (err != string.Empty) return new BadRequestObjectResult(err);
-
-        var homeId = await childService.GetHomeIdByChildId(childId);
-        return await authService.SecureExecute(req, homeId, async () =>
-        {
-            var res = await penaltyService.GetAllPenaltiesByChildId(childId,
-                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
-            return new OkObjectResult(res);
-        });
-    }
-
-    [Function("GetAllPenaltiesByHome")]
-    public async Task<IActionResult> GetAllPenaltiesByHome(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/penalties")]
-        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize)
+    [Function("GetPenaltiesCount")]
+    public async Task<IActionResult> GetPenaltiesCount(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/penalties/count")]
+        HttpRequest req, string id, [FromQuery] string? parentId, [FromQuery] string? childId)
     {
         var (err, homeId) = id.VerifyId();
         if (err != string.Empty) return new BadRequestObjectResult(err);
 
+        // Parent Id Validation
+        var (parentIdErr, parentIdGuid) = await parentId.VerifyIdFromHome(homeId, parentService.GetHomeIdByParentId);
+        if (parentIdErr != string.Empty) return new BadRequestObjectResult(parentIdErr);
+
+        // Child Id Validation
+        var (childIdErr, childIdGuid) = await childId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        if (childIdErr != string.Empty) return new BadRequestObjectResult(childIdErr);
+
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var res = await penaltyService.GetAllPenaltiesByHomeId(homeId,
-                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
-                pageSize ?? Constants.DEFAULT_PAGE_SIZE);
+            var res = await penaltyService.GetPenaltiesCount(homeId, parentIdGuid, childIdGuid);
             return new OkObjectResult(res);
         });
     }
 
-    [Function("GetPenaltyById")]
-    public async Task<IActionResult> GetPenaltyById(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "penalty/{id}")]
-        HttpRequest req, string id)
+    [Function("GetAllPenalties")]
+    public async Task<IActionResult> GetAllPenalties(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/penalties")]
+        HttpRequest req, string id, [FromQuery] int? pageNumber, [FromQuery] int? pageSize,
+        [FromQuery] string? parentId, [FromQuery] string? childId)
     {
-        var (err, penaltyId) = id.VerifyId();
+        var (err, homeId) = id.VerifyId();
         if (err != string.Empty) return new BadRequestObjectResult(err);
 
-        var homeId = await penaltyService.GetHomeIdByPenaltyId(penaltyId);
+        // Parent Id Validation
+        var (parentIdErr, parentIdGuid) = await parentId.VerifyIdFromHome(homeId, parentService.GetHomeIdByParentId);
+        if (parentIdErr != string.Empty) return new BadRequestObjectResult(parentIdErr);
+
+        // Child Id Validation
+        var (childIdErr, childIdGuid) = await childId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId);
+        if (childIdErr != string.Empty) return new BadRequestObjectResult(childIdErr);
+
         return await authService.SecureExecute(req, homeId, async () =>
         {
-            var res = await penaltyService.GetPenaltyById(penaltyId);
+            var res = await penaltyService.GetAllPenalties(homeId,
+                pageNumber ?? Constants.DEFAULT_PAGE_NUMBER,
+                pageSize ?? Constants.DEFAULT_PAGE_SIZE, parentIdGuid, childIdGuid);
             return new OkObjectResult(res);
         });
     }

@@ -23,22 +23,19 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         return await con.QuerySingleAsync<Guid>(query, new { Id = wishId });
     }
 
-    public async Task<Wish> GetWishById(Guid wishId)
+    public async Task<int> GetWishesCount(Guid homeId, Guid? parentId, Guid? childId,
+        bool showOnlyNotFulfilled = false)
     {
         using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
-                 SELECT *
-                 FROM {WishesTable} a
-                 LEFT JOIN {ChildrenTable} c ON a.WisherId = c.Id
-                 LEFT JOIN {ParentTable} p ON a.GenieId = p.Id
-                 WHERE a.Id = @Id
+                 SELECT COUNT(*) FROM {WishesTable} w WHERE w.HomeId = @HomeId {GetConditionQuery(parentId, childId, showOnlyNotFulfilled)};
              """;
-        var wishes = await con.QueryAsync(query, _mapEntitiesToWishModel, new { Id = wishId });
-        return wishes.Single();
+        return await con.QuerySingleAsync<int>(query, new { HomeId = homeId, ChildId = childId, ParentId = parentId });
     }
 
-    public async Task<List<Wish>> GetAllWishesByHomeId(Guid homeId, int pageNumber, int pageSize)
+    public async Task<List<Wish>> GetAllWishes(Guid homeId, int pageNumber, int pageSize, Guid? parentId,
+        Guid? childId, bool showOnlyNotFulfilled = false)
     {
         using var con = await connectionFactory.GetDBConnection();
         var query =
@@ -48,53 +45,14 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
                  LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
                  LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
                  WHERE w.HomeId = @HomeId
+                 {GetConditionQuery(parentId, childId, showOnlyNotFulfilled)}
                  ORDER BY w.CreatedDateUtc ASC
                  LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
              """;
 
         var wishEntities =
             await con.QueryAsync(query, _mapEntitiesToWishModel,
-                new { HomeId = homeId });
-        return wishEntities.ToList();
-    }
-
-    public async Task<List<Wish>> GetAllWishesByParentId(Guid parentId, int pageNumber, int pageSize)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                 SELECT *
-                 FROM {WishesTable} w
-                 LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
-                 LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
-                 WHERE w.GenieId = @GenieId
-                 ORDER BY w.CreatedDateUtc ASC
-                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
-             """;
-
-        var wishEntities =
-            await con.QueryAsync(query, _mapEntitiesToWishModel,
-                new { GenieId = parentId });
-        return wishEntities.ToList();
-    }
-
-    public async Task<List<Wish>> GetAllWishesByChildId(Guid childId, int pageNumber, int pageSize)
-    {
-        using var con = await connectionFactory.GetDBConnection();
-        var query =
-            $"""
-                 SELECT *
-                 FROM {WishesTable} w
-                 LEFT JOIN {ChildrenTable} c ON w.WisherId = c.Id
-                 LEFT JOIN {ParentTable} p ON w.GenieId = p.Id
-                 WHERE w.WisherId = @WisherId
-                 ORDER BY w.CreatedDateUtc ASC
-                 LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}
-             """;
-
-        var wishEntities =
-            await con.QueryAsync(query, _mapEntitiesToWishModel,
-                new { WisherId = childId });
+                new { HomeId = homeId, ChildId = childId, ParentId = parentId });
         return wishEntities.ToList();
     }
 
@@ -142,6 +100,15 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         using var con = await connectionFactory.GetDBConnection();
         var query = $"DELETE FROM {WishesTable} where id = @Id;";
         await con.ExecuteScalarAsync<Guid>(query, new { Id = wishId });
+    }
+
+    private string GetConditionQuery(Guid? parentId, Guid? childId, bool showOnlyNotFulfilled)
+    {
+        var extraQuery = "";
+        if (parentId != null) extraQuery += "AND w.GenieId = @ParentId ";
+        if (childId != null) extraQuery += "AND w.WisherId = @ChildId ";
+        if (showOnlyNotFulfilled) extraQuery += "AND w.FulFilledDateUtc IS NULL";
+        return extraQuery;
     }
 
     private readonly Func<WishEntity, ChildEntity, ParentEntity, Wish> _mapEntitiesToWishModel = (w, c, p) =>
