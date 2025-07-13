@@ -62,7 +62,7 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
         wishEntity.HomeId = homeId;
         using var con = await connectionFactory.GetDBConnection();
         var query =
-            $"INSERT INTO {WishesTable} (Name, HomeId, Description, GenieId, WisherId) VALUES (@Name, @HomeId, @Description, @GenieId, @WisherId) RETURNING Id";
+            $"INSERT INTO {WishesTable} (Name, HomeId, Description, GenieId, WisherId, PointsCost) VALUES (@Name, @HomeId, @Description, @GenieId, @WisherId, @PointsCost) RETURNING Id";
         return await con.ExecuteScalarAsync<Guid>(query, wishEntity);
     }
 

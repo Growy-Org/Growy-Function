@@ -62,7 +62,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         penaltyEntity.HomeId = homeId;
         using var con = await connectionFactory.GetDBConnection();
         var query =
-            $"INSERT INTO {PenaltyTable} (Name, HomeId, PointsDeducted, Reason, ViolatorId, EnforcerId) VALUES (@Name, @HomeId, @PointsDeducted, @Reason, @ViolatorId, @EnforcerId) RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id";
+            $"INSERT INTO {PenaltyTable} (Name, HomeId, PointsDeducted, Description, ViolatorId, EnforcerId) VALUES (@Name, @HomeId, @PointsDeducted, @Description, @ViolatorId, @EnforcerId) RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id";
         return await con.QuerySingleAsync<CreatePenaltyEntityResponse>(query, penaltyEntity);
     }
 
@@ -76,7 +76,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
                 WITH Old AS (SELECT PointsDeducted, ViolatorId FROM {PenaltyTable} WHERE Id = @Id)
                 UPDATE {PenaltyTable} 
                 SET Name = @Name,
-                 Reason = @Reason,
+                 Description = @Description,
                  PointsDeducted = @PointsDeducted,
                  EnforcerId = @EnforcerId,
                  ViolatorId = @ViolatorId

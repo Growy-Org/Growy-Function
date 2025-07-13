@@ -164,6 +164,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ChildId = childId,
             Name = _faker.Random.Word(),
             Description = _faker.Lorem.Sentence(50),
+            PointsCost = _faker.Random.Int(100, 9999),
         };
         var wishRequest2 = new WishRequest()
         {
@@ -171,6 +172,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ChildId = childId2,
             Name = _faker.Random.Word(),
             Description = _faker.Lorem.Sentence(50),
+            PointsCost = _faker.Random.Int(100, 9999),
         };
 
         await _wishRepo.InsertWish(homeId, wishRequest1);
@@ -201,7 +203,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             ParentId = parentId,
             ChildId = childId,
             Name = "Penalty 1",
-            Reason = _faker.Lorem.Sentence(50),
+            Description = _faker.Lorem.Sentence(50),
             PointsDeducted = _faker.Random.Int(100, 500),
         };
 

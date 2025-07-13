@@ -115,7 +115,7 @@ public static class ModelConversionExtension
             EnforcerId = r.ParentId,
             ViolatorId = r.ChildId,
             Name = r.Name,
-            Reason = r.Reason,
+            Description = r.Description,
             PointsDeducted = r.PointsDeducted
         };
     }

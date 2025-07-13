@@ -109,7 +109,7 @@ public static class EntityConversionExtension
         {
             Id = p.Id,
             Name = p.Name,
-            Reason = p.Reason,
+            Description = p.Description,
             PointsDeducted = p.PointsDeducted,
             CreatedDateUtc = p.CreatedDateUtc,
             UpdatedDateUtc = p.UpdatedDateUtc,
