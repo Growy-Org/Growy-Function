@@ -29,19 +29,17 @@ public class AnalyticController(
 
     [Function("GetAnalyticsToOneChild")]
     public async Task<IActionResult> GetParentAnalytics(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/home/{id}/child/{childId}")]
-        HttpRequest req, string id, string childId, [FromQuery] int? year)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "analytic/child/{id}")]
+        HttpRequest req, string id, [FromQuery] int? year)
     {
-        var (err, homeId) = id.VerifyId();
+        var (err, childId) = id.VerifyId();
         if (err != string.Empty) return new BadRequestObjectResult(err);
 
-        var (childErr, childIdGuid) = await childId.VerifyIdFromHome(homeId, childService.GetHomeIdByChildId, true);
-        if (childErr != string.Empty) return new BadRequestObjectResult(childErr);
-
+        var homeId = await childService.GetHomeIdByChildId(childId);
         return await authService.SecureExecute(req, homeId, async () =>
         {
             var result =
-                await analyticService.GetAllParentsToOneChildAnalyticLive(homeId, year, childIdGuid ?? Guid.Empty);
+                await analyticService.GetAllParentsToOneChildAnalyticLive(homeId, year, childId);
             return new OkObjectResult(result);
         });
     }
