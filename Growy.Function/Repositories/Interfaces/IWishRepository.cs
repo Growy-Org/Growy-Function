@@ -1,3 +1,4 @@
+using System.Data;
 using Growy.Function.Entities.EntityResponse;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
@@ -14,6 +15,9 @@ public interface IWishRepository
 
     public Task<Guid> InsertWish(Guid homeId, WishRequest request);
     public Task<Guid> EditWishByWishId(Guid wishId, WishRequest request);
-    public Task<EditWishEntityResponse> EditWishFulFillStatusByWishId(Guid wishId, bool isFulFilled);
+
+    public Task<EditWishEntityResponse> EditWishFulFillStatusByWishId(Guid wishId, bool isFulFilled, IDbConnection con,
+        IDbTransaction transaction);
+
     public Task DeleteWishByWishId(Guid wishId);
 }

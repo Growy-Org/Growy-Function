@@ -9,6 +9,7 @@ namespace Growy.Function.Services;
 public class AchievementService(
     IChildRepository childRepository,
     IAchievementRepository achievementRepository,
+    IConnectionFactory connectionFactory,
     ILogger<AchievementService> logger)
     : IAchievementService
 {
@@ -62,16 +63,21 @@ public class AchievementService(
     public async Task<Guid> EditAchievementGrants(Guid achievementId, bool isAchievementGranted)
     {
         logger.LogInformation($"{(isAchievementGranted ? "Granting" : "Revoking")} achievement bonus");
+        using var con = await connectionFactory.GetDBConnection();
+        con.Open();
+        using var transaction = con.BeginTransaction();
         var response =
-            await achievementRepository.EditAchievementGrantByAchievementId(achievementId, isAchievementGranted);
+            await achievementRepository.EditAchievementGrantByAchievementId(achievementId, isAchievementGranted, con,
+                transaction);
         logger.LogInformation(
             $"Successfully edit achievement grant with id: {response.Id}");
 
         var childId = await childRepository.EditPointsByChildId(response.ChildId,
-            isAchievementGranted ? response.Points : -response.Points);
+            isAchievementGranted ? response.Points : -response.Points, con, transaction);
 
         logger.LogInformation(
             $"Successfully {(isAchievementGranted ? "adding" : "removing")} {response.Points} Points {(isAchievementGranted ? "to" : "from")} child profile with id: {childId}");
+        transaction.Commit();
         return response.Id;
     }
 

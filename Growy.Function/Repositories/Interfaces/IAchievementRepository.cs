@@ -1,3 +1,4 @@
+using System.Data;
 using Growy.Function.Entities.EntityResponse;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
@@ -16,7 +17,7 @@ public interface IAchievementRepository
     public Task<Guid> EditAchievementByAchievementId(Guid achievementId, AchievementRequest request);
 
     public Task<EditAchievementEntityResponse> EditAchievementGrantByAchievementId(Guid achievementId,
-        bool isAchievementGranted);
+        bool isAchievementGranted, IDbConnection con, IDbTransaction transaction);
 
     public Task DeleteAchievementByAchievementId(Guid achievementId);
 }

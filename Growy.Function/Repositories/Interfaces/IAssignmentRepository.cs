@@ -1,3 +1,4 @@
+using System.Data;
 using Growy.Function.Entities.EntityResponse;
 using Growy.Function.Models;
 using Growy.Function.Models.Dtos;
@@ -14,6 +15,7 @@ public interface IAssignmentRepository
 
     public Task<Guid> InsertAssignment(Guid homeId, AssignmentRequest request);
     public Task<Guid> EditAssignmentByAssignmentId(Guid assignmentId, AssignmentRequest request);
-    public Task<EditAssignmentEntityResponse> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted);
+    public Task<EditAssignmentEntityResponse> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted, IDbConnection con,
+        IDbTransaction transaction);
     public Task DeleteAssignmentByAssignmentId(Guid assignmentId);
 }

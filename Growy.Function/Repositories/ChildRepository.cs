@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 using Growy.Function.Entities;
 using Growy.Function.Models;
@@ -37,12 +38,13 @@ public class ChildRepository(IConnectionFactory connectionFactory) : IChildRepos
         return await con.ExecuteScalarAsync<Guid>(query, childEntity);
     }
 
-    public async Task<Guid> EditPointsByChildId(Guid childId, int deltaPoints)
+    public async Task<Guid> EditPointsByChildId(Guid childId, int deltaPoints, IDbConnection con,
+        IDbTransaction transaction)
     {
-        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {ChildrenTable} SET PointsEarned = PointsEarned + @PointsDelta WHERE Id = @Id RETURNING Id";
-        return await con.ExecuteScalarAsync<Guid>(query, new { Id = childId, PointsDelta = deltaPoints });
+        return await con.ExecuteScalarAsync<Guid>(query, new { Id = childId, PointsDelta = deltaPoints },
+            transaction: transaction);
     }
 
     public async Task<Guid> EditChild(Guid childId, ChildRequest child)

@@ -104,6 +104,7 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             DOB = _faker.Date.Past(18),
             Role = _faker.PickRandom(ParentRole.FATHER, ParentRole.MOTHER),
         };
+
         var parent2 = new ParentRequest
         {
             Name = _faker.Name.FullName(),
@@ -207,7 +208,8 @@ public class DBTestHelper(FunctionTestFixture fixture) : IClassFixture<FunctionT
             PointsDeducted = _faker.Random.Int(100, 500),
         };
 
-        await _penaltyRepo.InsertPenalty(homeId, penaltyRequest);
+        var con = await fixture.ConnectionFactory.GetDBConnection();
+        await _penaltyRepo.InsertPenalty(homeId, penaltyRequest, con, con.BeginTransaction());
 
         var dqReport = new DevelopmentReportRequest
         {

@@ -9,6 +9,7 @@ namespace Growy.Function.Services;
 public class WishService(
     IChildRepository childRepository,
     IWishRepository wishRepository,
+    IConnectionFactory connectionFactory,
     ILogger<WishService> logger)
     : IWishService
 {
@@ -39,7 +40,6 @@ public class WishService(
         return wishRepository.GetHomeIdByWishId(wishId);
     }
 
-
     // Create
     public async Task<Guid> CreateWish(Guid homeId, WishRequest wish)
     {
@@ -63,16 +63,21 @@ public class WishService(
     public async Task<Guid> SetWishFulFilled(Guid wishId, bool isFulFilled)
     {
         logger.LogInformation($"{(isFulFilled ? "Full Filling" : "Un Full Filling")} wish by Parent");
+        using var con = await connectionFactory.GetDBConnection();
+        con.Open();
+        using var transaction = con.BeginTransaction();
         var response =
-            await wishRepository.EditWishFulFillStatusByWishId(wishId, isFulFilled);
+            await wishRepository.EditWishFulFillStatusByWishId(wishId, isFulFilled, con, transaction);
         logger.LogInformation(
             $"Successfully edit full fill status with id: {response.Id} by Parent");
 
         var childId = await childRepository.EditPointsByChildId(response.ChildId,
-            isFulFilled ? -response.Points : response.Points);
+            isFulFilled ? -response.Points : response.Points, con, transaction);
 
         logger.LogInformation(
             $"Successfully {(isFulFilled ? "reducing" : "adding")} {response.Points} Points {(isFulFilled ? "from" : "back")} child profile with id: {childId} by Parent");
+
+        transaction.Commit();
         return response.Id;
     }
 

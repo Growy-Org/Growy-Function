@@ -9,6 +9,7 @@ namespace Growy.Function.Services;
 public class AssignmentService(
     IChildRepository childRepository,
     IAssignmentRepository assignmentRepository,
+    IConnectionFactory connectionFactory,
     IStepRepository stepRepository,
     ILogger<AssignmentService> logger)
     : IAssignmentService
@@ -77,14 +78,19 @@ public class AssignmentService(
     public async Task<Guid> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted)
     {
         logger.LogInformation($"Setting Assignment :{assignmentId} to {(isCompleted ? "Completed" : "In-Complete")}");
-        var response = await assignmentRepository.EditAssignmentCompleteStatus(assignmentId, isCompleted);
+        using var con = await connectionFactory.GetDBConnection();
+        con.Open();
+        using var transaction = con.BeginTransaction();
+        var response =
+            await assignmentRepository.EditAssignmentCompleteStatus(assignmentId, isCompleted, con, transaction);
         logger.LogInformation(
             $"Successfully Setting Assignment : {response.Id} completed status");
         var childId = await childRepository.EditPointsByChildId(response.ChildId,
-            isCompleted ? response.Points : -response.Points);
+            isCompleted ? response.Points : -response.Points, con, transaction);
 
         logger.LogInformation(
             $"Successfully {(isCompleted ? "adding" : "removing")} {response.Points} Points {(isCompleted ? "to" : "from")} child profile with id: {childId}");
+        transaction.Commit();
         return assignmentId;
     }
 

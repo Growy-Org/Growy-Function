@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Entities;
@@ -86,13 +87,13 @@ public class WishRepository(IConnectionFactory connectionFactory) : IWishReposit
     }
 
     public async Task<EditWishEntityResponse> EditWishFulFillStatusByWishId(Guid wishId,
-        bool isFulFilled)
+        bool isFulFilled, IDbConnection con, IDbTransaction transaction)
     {
-        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {WishesTable} SET FulFilledDateUtc = @FulFilledDateUtc WHERE Id = @Id RETURNING Id, WisherId AS ChildId, PointsCost AS Points;";
         return await con.QuerySingleAsync<EditWishEntityResponse>(query,
-            new { Id = wishId, FulFilledDateUtc = isFulFilled ? DateTime.UtcNow : (DateTime?)null });
+            new { Id = wishId, FulFilledDateUtc = isFulFilled ? DateTime.UtcNow : (DateTime?)null },
+            transaction: transaction);
     }
 
     public async Task DeleteWishByWishId(Guid wishId)

@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Entities;
@@ -55,22 +56,21 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
         return penaltyEntities.ToList();
     }
 
-
-    public async Task<CreatePenaltyEntityResponse> InsertPenalty(Guid homeId, PenaltyRequest request)
+    public async Task<CreatePenaltyEntityResponse> InsertPenalty(Guid homeId, PenaltyRequest request, IDbConnection con,
+        IDbTransaction transaction)
     {
         var penaltyEntity = request.ToPenaltyEntity();
         penaltyEntity.HomeId = homeId;
-        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"INSERT INTO {PenaltyTable} (Name, HomeId, PointsDeducted, Description, ViolatorId, EnforcerId) VALUES (@Name, @HomeId, @PointsDeducted, @Description, @ViolatorId, @EnforcerId) RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id";
-        return await con.QuerySingleAsync<CreatePenaltyEntityResponse>(query, penaltyEntity);
+        return await con.QuerySingleAsync<CreatePenaltyEntityResponse>(query, penaltyEntity, transaction: transaction);
     }
 
-    public async Task<EditPenaltyEntityResponse> EditPenaltyByPenaltyId(Guid penaltyId, PenaltyRequest request)
+    public async Task<EditPenaltyEntityResponse> EditPenaltyByPenaltyId(Guid penaltyId, PenaltyRequest request,
+        IDbConnection con, IDbTransaction transaction)
     {
         var penaltyEntity = request.ToPenaltyEntity();
         penaltyEntity.Id = penaltyId;
-        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"""
                 WITH Old AS (SELECT PointsDeducted, ViolatorId FROM {PenaltyTable} WHERE Id = @Id)
@@ -85,15 +85,17 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
                 (SELECT PointsDeducted FROM Old) AS OldPointsDeducted,
                 (SELECT ViolatorId FROM Old) AS OldChildId;
              """;
-        return await con.QuerySingleAsync<EditPenaltyEntityResponse>(query, penaltyEntity);
+
+        return await con.QuerySingleAsync<EditPenaltyEntityResponse>(query, penaltyEntity, transaction: transaction);
     }
 
-    public async Task<DeletePenaltyEntityResponse> DeletePenaltyByPenaltyId(Guid penaltyId)
+    public async Task<DeletePenaltyEntityResponse> DeletePenaltyByPenaltyId(Guid penaltyId, IDbConnection con,
+        IDbTransaction transaction)
     {
-        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"DELETE FROM {PenaltyTable} where id = @Id RETURNING PointsDeducted as Points, ViolatorId AS ChildId, Id;";
-        return await con.QuerySingleAsync<DeletePenaltyEntityResponse>(query, new { Id = penaltyId });
+        return await con.QuerySingleAsync<DeletePenaltyEntityResponse>(query, new { Id = penaltyId },
+            transaction: transaction);
     }
 
     private string GetConditionQuery(Guid? parentId, Guid? childId)

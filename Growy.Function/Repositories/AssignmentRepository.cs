@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Entities;
@@ -83,13 +84,15 @@ public class AssignmentRepository(IConnectionFactory connectionFactory) : IAssig
         return await con.ExecuteScalarAsync<Guid>(query, assignmentEntity);
     }
 
-    public async Task<EditAssignmentEntityResponse> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted)
+    public async Task<EditAssignmentEntityResponse> EditAssignmentCompleteStatus(Guid assignmentId, bool isCompleted,
+        IDbConnection con,
+        IDbTransaction transaction)
     {
-        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {AssignmentsTable} SET CompletedDateUtc = @CompletedDateUtc WHERE Id = @Id RETURNING Id, AssigneeId AS ChildId, Points;";
         return await con.QuerySingleAsync<EditAssignmentEntityResponse>(query,
-            new { Id = assignmentId, CompletedDateUtc = isCompleted ? DateTime.UtcNow : (DateTime?)null });
+            new { Id = assignmentId, CompletedDateUtc = isCompleted ? DateTime.UtcNow : (DateTime?)null },
+            transaction: transaction);
     }
 
     public async Task DeleteAssignmentByAssignmentId(Guid assignmentId)

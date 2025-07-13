@@ -1,3 +1,4 @@
+using System.Data;
 using Dapper;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Entities;
@@ -87,13 +88,13 @@ public class AchievementRepository(IConnectionFactory connectionFactory) : IAchi
     }
 
     public async Task<EditAchievementEntityResponse> EditAchievementGrantByAchievementId(Guid achievementId,
-        bool isAchievementGranted)
+        bool isAchievementGranted, IDbConnection con, IDbTransaction transaction)
     {
-        using var con = await connectionFactory.GetDBConnection();
         var query =
             $"UPDATE {AchievementsTable} SET AchievedDateUtc = @AchievedDateUtc WHERE Id = @Id RETURNING Id, AchieverId AS ChildId, PointsGranted AS Points;";
         return await con.QuerySingleAsync<EditAchievementEntityResponse>(query,
-            new { Id = achievementId, AchievedDateUtc = isAchievementGranted ? DateTime.UtcNow : (DateTime?)null });
+            new { Id = achievementId, AchievedDateUtc = isAchievementGranted ? DateTime.UtcNow : (DateTime?)null },
+            transaction: transaction);
     }
 
     public async Task DeleteAchievementByAchievementId(Guid achievementId)
