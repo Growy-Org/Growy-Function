@@ -51,7 +51,7 @@ public class PenaltyRepository(IConnectionFactory connectionFactory) : IPenaltyR
 
         var penaltyEntities =
             await con.QueryAsync(query, _mapEntitiesToPenaltyModel,
-                new { HomeId = homeId });
+                new { HomeId = homeId, ChildId = childId, ParentId = parentId });
         return penaltyEntities.ToList();
     }
 
