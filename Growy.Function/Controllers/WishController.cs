@@ -76,7 +76,7 @@ public class WishController(
             return new OkObjectResult(res);
         });
     }
-  
+
 
     // Create
     [Function("CreateWish")]

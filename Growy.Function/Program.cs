@@ -1,9 +1,12 @@
+using Growy.Function;
 using Growy.Function.Options;
 using Growy.Function.Repositories;
 using Growy.Function.Repositories.Interfaces;
 using Growy.Function.Services;
 using Growy.Function.Services.Interfaces;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Configurations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -42,7 +45,11 @@ var host = new HostBuilder()
         services.AddSingleton<IAssessmentRepository, AssessmentRepository>();
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
+
+        // Open Api - Swagger Config
+        services.AddSingleton<DefaultOpenApiConfigurationOptions, CustomOpenApiConfigurationOptions>();
     })
+    .ConfigureOpenApi()
     .Build();
 
 host.Run();

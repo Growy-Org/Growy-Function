@@ -115,7 +115,7 @@ public static class EntityConversionExtension
             UpdatedDateUtc = p.UpdatedDateUtc,
         };
     }
-    
+
     public static DevelopmentQuotientResult ToDevelopmentQuotientResult(this DevelopmentQuotientResultEntity d)
     {
         return new DevelopmentQuotientResult

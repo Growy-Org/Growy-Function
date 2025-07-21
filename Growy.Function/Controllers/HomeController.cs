@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Authentication;
 using Growy.Function.Exceptions;
 using Growy.Function.Models.Dtos;
@@ -7,6 +8,9 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+using Microsoft.OpenApi.Models;
 using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribute;
 
 namespace Growy.Function.Controllers;
@@ -51,6 +55,12 @@ public class HomeController(
 
     // Create
     [Function("AddHome")]
+    [OpenApiOperation(operationId: "AddHome", tags: new[] { "Home" }, Summary = "Add a new Home", Description = "This endpoint adds a new home record.")]
+    [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(HomeRequest), Required = true, Description = "The home details to create.")]
+    [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Guid), Description = "Home Guid Id")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
     public async Task<IActionResult> AddHome(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home")]
         HttpRequest req, [FromBody] HomeRequest request)
