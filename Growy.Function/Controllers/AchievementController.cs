@@ -1,9 +1,13 @@
+using System.Net;
 using Growy.Function.Models.Dtos;
 using Growy.Function.Services.Interfaces;
 using Growy.Function.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+using Microsoft.OpenApi.Models;
 using FromBodyAttribute = Microsoft.Azure.Functions.Worker.Http.FromBodyAttribute;
 
 namespace Growy.Function.Controllers;
@@ -16,6 +20,31 @@ public class AchievementController(
 {
     // Read
     [Function("GetAchievementsCount")]
+    [OpenApiOperation(operationId: "GetAchievementCount", tags: new[] { "Achievement" },
+        Summary = "Get Achievement Count",
+        Description =
+            "Retrieve the count of Achievements for a specific Home, optionally filtered by Parent ID, Child ID, or achieved status.")]
+    [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string),
+        Summary = "Home ID",
+        Description = "The unique identifier of the home")]
+    [OpenApiParameter(name: "parentId", In = ParameterLocation.Query, Required = false, Type = typeof(string),
+        Summary = "Parent ID filter",
+        Description = "Optional parent ID to filter the Achievements")]
+    [OpenApiParameter(name: "childId", In = ParameterLocation.Query, Required = false, Type = typeof(string),
+        Summary = "Child ID filter",
+        Description = "Optional child ID to filter the Achievements")]
+    [OpenApiParameter(name: "showOnlyIncomplete", In = ParameterLocation.Query, Required = false, Type = typeof(string),
+        Summary = "Not achieved filter",
+        Description = "Optional flag to show only not achieved Achievements (e.g., 'true')")]
+    [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer,
+        BearerFormat = "JWT")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+        bodyType: typeof(int),
+        Summary = "Achievements count",
+        Description = "Returns the count of Achievements matching the filter criteria")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> GetAchievementsCount(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "home/{id}/achievements/count")]
         HttpRequest req, string id, [FromQuery] string? parentId, [FromQuery] string? childId,

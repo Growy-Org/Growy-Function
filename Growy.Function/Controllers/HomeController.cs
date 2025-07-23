@@ -179,7 +179,7 @@ public class HomeController(
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
         Description = "Not authorized to perform this action")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Conflict,
-        Description = "Home record could not be delete due to related records not deleted")]
+        Description = "Home record could not be deleted due to related records not deleted")]
     public async Task<IActionResult> DeleteHome(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "home/{id}")]
         HttpRequest req, string id)

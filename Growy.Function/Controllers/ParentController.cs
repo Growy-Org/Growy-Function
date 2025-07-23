@@ -109,7 +109,7 @@ public class ParentController(
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
         Description = "Not authorized to perform this action")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Conflict,
-        Description = "Home record could not be delete due to related records not deleted")]
+        Description = "Parent record could not be deleted due to related records not deleted")]
     public async Task<IActionResult> DeleteParent(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "parent/{id}")]
         HttpRequest req, string id)
