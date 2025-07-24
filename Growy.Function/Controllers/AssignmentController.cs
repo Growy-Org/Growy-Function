@@ -31,19 +31,19 @@ public class AssignmentController(
         Summary = "Home ID",
         Description = "The unique identifier of the home")]
     [OpenApiParameter(name: "parentId", In = ParameterLocation.Query, Required = false, Type = typeof(string),
-        Summary = "Parent ID filter",
+        Summary = "Parent ID Filter",
         Description = "Optional parent ID to filter the assignments")]
     [OpenApiParameter(name: "childId", In = ParameterLocation.Query, Required = false, Type = typeof(string),
-        Summary = "Child ID filter",
+        Summary = "Child ID Filter",
         Description = "Optional child ID to filter the assignments")]
-    [OpenApiParameter(name: "showOnlyIncomplete", In = ParameterLocation.Query, Required = false, Type = typeof(string),
-        Summary = "Incomplete filter",
+    [OpenApiParameter(name: "showOnlyIncomplete", In = ParameterLocation.Query, Required = false, Type = typeof(bool),
+        Summary = "Incomplete Filter",
         Description = "Optional flag to show only incomplete assignments (e.g., 'true')")]
     [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer,
         BearerFormat = "JWT")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
         bodyType: typeof(int),
-        Summary = "Assignments count",
+        Summary = "Assignments Count",
         Description = "Returns the count of Assignments matching the filter criteria")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
@@ -97,7 +97,7 @@ public class AssignmentController(
     [OpenApiParameter(name: "childId", In = ParameterLocation.Query, Required = false, Type = typeof(string),
         Summary = "Child ID Filter",
         Description = "Optional Child ID to filter the Assignments")]
-    [OpenApiParameter(name: "showOnlyIncomplete", In = ParameterLocation.Query, Required = false, Type = typeof(string),
+    [OpenApiParameter(name: "showOnlyIncomplete", In = ParameterLocation.Query, Required = false, Type = typeof(bool),
         Summary = "Incomplete Filter",
         Description = "Optional flag to return only incomplete Assignments (e.g., 'true')")]
     [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer,
@@ -157,7 +157,8 @@ public class AssignmentController(
         Summary = "Assignment Created",
         Description = "Returns the ID of the created Assignment")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> CreateAssignment(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "home/{id}/assignment")]
         HttpRequest req, string id, [FromBody] AssignmentRequest assignmentRequest)
@@ -184,12 +185,13 @@ public class AssignmentController(
         Description = "The updated Assignment object")]
     [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer,
         BearerFormat = "JWT")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NoContent,
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+        bodyType: typeof(Guid),
         Summary = "Assignment Updated",
-        Description = "The Assignment was successfully updated")]
+        Description = "Returns the ID of the Assignment")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Assignment not found")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> EditAssignment(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment/{id}")]
         HttpRequest req, string id, [FromBody] AssignmentRequest request)
@@ -214,12 +216,13 @@ public class AssignmentController(
         Description = "The unique identifier of the Assignment to complete")]
     [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer,
         BearerFormat = "JWT")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NoContent,
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+        bodyType: typeof(Guid),
         Summary = "Assignment Completed",
-        Description = "The Assignment was successfully marked as complete")]
+        Description = "Returns the ID of the Assignment")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Assignment not found")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> CompleteAssignment(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment/{id}/complete")]
         HttpRequest req, string id)
@@ -244,12 +247,13 @@ public class AssignmentController(
         Description = "The unique identifier of the Assignment to mark as incomplete")]
     [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer,
         BearerFormat = "JWT")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NoContent,
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+        bodyType: typeof(Guid),
         Summary = "Assignment Marked Incomplete",
-        Description = "The Assignment was successfully marked as incomplete")]
+        Description = "Returns the ID of the Assignment")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Assignment not found")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> UnCompleteAssignment(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "assignment/{id}/incomplete")]
         HttpRequest req, string id)
@@ -279,8 +283,8 @@ public class AssignmentController(
         Summary = "Assignment Deleted",
         Description = "The Assignment was successfully deleted")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Assignment not found")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Conflict,
         Description = "Assignment record could not be deleted due to related records not deleted")]
     public async Task<IActionResult> DeleteAssignment(
@@ -304,7 +308,7 @@ public class AssignmentController(
 
     // Create
     [Function("CreateStep")]
-    [OpenApiOperation(operationId: "CreateStep", tags: new[] { "Step" , "Assignment" },
+    [OpenApiOperation(operationId: "CreateStep", tags: new[] { "Step", "Assignment" },
         Summary = "Create Step",
         Description = "Create a new Step for a specific Assignment.")]
     [OpenApiParameter(name: "id", In = ParameterLocation.Path, Required = true, Type = typeof(string),
@@ -319,7 +323,8 @@ public class AssignmentController(
         Summary = "Step Created",
         Description = "Returns the ID of the created Step")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> CreateStep(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "assignment/{id}/step")]
         HttpRequest req, string id, [FromBody] StepRequest stepRequest)
@@ -347,12 +352,13 @@ public class AssignmentController(
         Description = "The updated Step object")]
     [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer,
         BearerFormat = "JWT")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NoContent,
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+        bodyType: typeof(Guid),
         Summary = "Step Updated",
-        Description = "The Step was successfully updated")]
+        Description = "Returns the ID of the Step")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Step not found")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> EditStep(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step/{id}")]
         HttpRequest req, string id, [FromBody] StepRequest request)
@@ -377,12 +383,13 @@ public class AssignmentController(
         Description = "The unique identifier of the Step to complete")]
     [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer,
         BearerFormat = "JWT")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NoContent,
-        Summary = "Step Completed",
-        Description = "The Step was successfully marked as complete")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+        bodyType: typeof(Guid),
+        Summary = "Step marked as complete",
+        Description = "Returns the ID of the Step")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Step not found")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> CompleteStep(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step/{id}/complete")]
         HttpRequest req, string id)
@@ -407,12 +414,13 @@ public class AssignmentController(
         Description = "The unique identifier of the Step to mark as incomplete")]
     [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer,
         BearerFormat = "JWT")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NoContent,
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json",
+        bodyType: typeof(Guid),
         Summary = "Step Marked Incomplete",
-        Description = "The Step was successfully marked as incomplete")]
+        Description = "Returns the ID of the Step")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Step not found")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> UnCompleteStep(
         [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "step/{id}/incomplete")]
         HttpRequest req, string id)
@@ -443,7 +451,8 @@ public class AssignmentController(
         Description = "The Step was successfully deleted")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Description = "Invalid request")]
     [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Step not found")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Description = "Not authorized to perform this action")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized,
+        Description = "Not authorized to perform this action")]
     public async Task<IActionResult> DeleteStep(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "step/{id}")]
         HttpRequest req, string id)
